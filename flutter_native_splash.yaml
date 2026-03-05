@@ -1,0 +1,22 @@
+flutter_native_splash:
+  # =======================
+  # Global splash settings
+  # =======================
+
+  # background_image: assets/images/splash_back_im.png
+  color: "#005AAB"
+  # image: assets/images/splash_image.png
+
+  android: true
+  ios: true
+  web: false
+
+  # =======================
+  # Android 12+
+  # =======================
+  android_12:
+    color: "#005AAB"
+    # image: assets/images/splash_back_im.png
+    fullscreen: true
+
+

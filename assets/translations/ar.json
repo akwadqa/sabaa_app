@@ -1,0 +1,27 @@
+{
+    "this_number_is_already_exist": "هذا الرقم موجود بالفعل.",
+    "please_check_your_internet_connection_and_try_again_later": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى لاحقًا.",
+    "something_went_wrong_please_try_again_later": "حدث خطأ ما. حاول مرة أخرى لاحقًا.",
+    "unauthorized_message": "غير مصرح به. يرجى تسجيل الدخول مرة أخرى.",
+    "internal_server_error_message": "خطأ في الخادم الداخلي. حاول مرة أخرى لاحقًا.",
+    "field_operations_portal": "بوابة العمليات الميدانية",
+    "sabaa": "سبأ",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "forget_password": "نسيت كلمة المرور؟",
+    "field_required": "هذا الحقل مطلوب",
+    "please_enter_password": "يرجى إدخال كلمة المرور",
+    "password_length_error": "يجب أن تكون كلمة المرور {0} أحرف على الأقل",
+    "password_mismatch": "كلمتا المرور غير متطابقتين",
+  
+    "please_enter_customer_name": "يرجى إدخال اسم العميل",
+    "please_enter_user_name": "يرجى إدخال اسم المستخدم",
+  
+    "please_enter_qatar_id": "يرجى إدخال الرقم الشخصي القطري",
+    "invalid_qatar_id": "الرقم الشخصي القطري غير صالح",
+  
+    "please_enter_phone_number": "يرجى إدخال رقم الهاتف",
+    "invalid_phone_number": "رقم الهاتف غير صالح"
+
+}
