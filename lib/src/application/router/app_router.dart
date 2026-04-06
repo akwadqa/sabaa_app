@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 
 
 import 'package:sabaa/features/auth/signIn/presentation/screens/sign_in_screen.dart';
+import 'package:sabaa/features/customers/domain/model/customer_model.dart';
+import 'package:sabaa/features/customers/presentation/screens/customer_details_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
+import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
 import 'app_routes.dart';
@@ -19,7 +22,7 @@ class AppRouter {
   AppRouter(Ref ref) : goRouter = _createRouter(ref);
 
   static GoRouter _createRouter(Ref ref) {
-    String initialRoute = AppRoutes.splashScreen;
+    String initialRoute = AppRoutes.mainScreen;
     return GoRouter(
       navigatorKey: rootKey,
       initialLocation: initialRoute,
@@ -95,12 +98,44 @@ class AppRouter {
         ),
       
        GoRoute(
+          path: AppRoutes.mainScreen,
+          name: AppRoutes.mainScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: MainScreen(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+            );
+          },
+        ),
+    
+       GoRoute(
           path: AppRoutes.homeScreen,
           name: AppRoutes.homeScreen,
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
               child: HomeScreen(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+            );
+          },
+        ),
+    
+       GoRoute(
+          path: AppRoutes.customerDetailsScreen,
+          name: AppRoutes.customerDetailsScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: CustomerDetailsPage(customer:  state.extra as Customer,),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {

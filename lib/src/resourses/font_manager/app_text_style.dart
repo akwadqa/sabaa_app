@@ -13,12 +13,16 @@ class AppTextStyle {
   );
   static TextStyle interSemiBold16 = GoogleFonts.inter(
     fontWeight: FontWeight.w700,
-    fontSize: 18,
+    fontSize: 16,
     
   );
   static TextStyle interSemiBold14 = GoogleFonts.inter(
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
     fontSize: 14,
+  );
+  static TextStyle interSemiBold12 = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
   );
 
   //? inter medium :

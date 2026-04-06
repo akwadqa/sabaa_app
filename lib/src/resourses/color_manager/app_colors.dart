@@ -4,19 +4,30 @@ import 'package:flutter/material.dart';
 
 abstract class AppColors {
   static const Color primary = Color(0xFF005AAB);
-  static const Color secondPrimary = Color(0xFFF6EAE5);
+  static const Color secondPrimary = Color(0xFF135BEC);
+  static const Color thirdPrimary = Color(0xFFF6EAE5);
   static const Color primaryOpacity = Color(0xFFFFECDC);
-  static const Color background = Color(0xFFF5F5F5);
+  static const Color primaryBg =  Color(0xFFBED3FF);
+  static const Color background = Color(0xFFF6F6F8);
   
   static const Color chipBorder = Color(0xFFC0BAB9);
 
   static const Color primaryBorder = Color(0xFFE4D7D3);
   
-  static const Color thirdPrimary = Color(0xFFA981BB);
+  // static const Color thirdPrimary = Color(0xFFA981BB);
   static const Color purbleOpacity = Color(0xFFA0A3E3);
   
   static const Color grey97 = Color(0xFF979797);
-
+  static const accent     = Color(0xFFF37B24);
+  static const surface    = Colors.white;
+  static const textPrimary    = Color(0xFF0F172A);
+  static const textSecondary  = Color(0xFF64748B);
+  static const textHeading    = Color(0xFF111418);
+  static const metricPurple   = Color(0xFFCBC8FF);
+  static const metricPink     = Color(0xFFFFC8CD);
+  static const dateBadge      = Color(0xFFE8F3FE);
+  static const navBorder      = Color(0xFFE2E8F0);
+  static const cardShadow     = Color(0x19005AAB);
   // static const Color background = Color(0xffFAFAF9);
 
   
@@ -24,14 +35,39 @@ abstract class AppColors {
   static const Color dividerColor = Color(0xFFe9e9e9);
   static const Color white = Color(0xFFFFFFFF);
   static const Color cardWhite = Color(0xFFF5F5F5);
-  static const Color redOpacity = Color(0xFFFFF6E5);
-  static const Color orangeOpacity = Color(0xFFFFF6E5);
-  static const Color greenOpacity = Color(0xFFE9F7EF);
-  static const Color shadow = Color(0x3F3B41C5);
+  static const Color shadow = Color(0x0C000000);
   static const Color dark = Color(0xFF201C11);
   static const Color borderGrey = Color(0xFFe8e8e8);
-  static const Color borderGrey2 = Color(0xFFe2e2e2);
-  static const Color switchBackground = Color(0xFFF3F4F6);
+
+
+  static const Color stockImageBg      = Color(0xFFF3F4F6);
+
+  static const Color stockHighBg       = Color(0xFFDCFCE7);
+  static const Color stockHighText     = Color(0xFF15803D);
+  static const Color stockMedBg        = Color(0xFFFEF9C3);
+  static const Color stockMedText      = Color(0xFFA16207);
+  static const Color stockLowBg        = Color(0xFFFEE2E2);
+  static const Color stockLowText      = Color(0xFFB91C1C);
+ 
+  // ── Customers feature — visit status badges ───────────────────
+
+  static const Color statusOpenText    = Color(0xFF9333EA);
+  static const Color statusPendingBg   = Color(0xFFFFEDD5);
+  static const Color statusPendingText = Color(0xFFC2410C);
+  static const Color statusVisitedAmount = Color(0xFF94A3B8);
+ 
+  // ── Customers feature — avatar palettes ───────────────────────
+  static const Color avatarOrangeText  = Color(0xFFEA580C);
+  static const Color avatarBlueBg      = Color(0xFFDBEAFE);
+  static const Color avatarBlueText    = Color(0xFF2563EB);
+  static const Color avatarPurpleBg    = Color(0xFFF3E8FF);
+  static const Color imageBorderBlue   = Color(0x33137FEC);
+ 
+  // ── Shared UI ─────────────────────────────────────────────────
+  static const Color chevronBg         = Color(0xFFF1F5F9);
+
+
+
 
   static const MaterialColor primarySwatch = MaterialColor(
     0xFFFD4057, // Base color
@@ -50,11 +86,8 @@ abstract class AppColors {
   );
   static const Color gray = Color(0xFFAAAAAA);
 
-  static const Color rose = Color(0xFFF8D5CC);
   static const Color darkRed = Color(0xFFBC0000);
-  static const Color textDart = Color(0xFF191210);
-  static const Color red = Color(0xFFBD2C06);
-  static const Color lightRedBackground = Color(0xFFF6EAE5);
+  static const Color red = Color(0xFFEF4444);
 
   static const Color bodyColor = Color(0xFF576B74);
   static const Color black = Color(0xFF000000);
