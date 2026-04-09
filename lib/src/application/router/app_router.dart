@@ -8,6 +8,7 @@ import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/customers/presentation/screens/customer_details_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
+import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
 import 'app_routes.dart';
@@ -136,6 +137,21 @@ class AppRouter {
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
               child: CustomerDetailsPage(customer:  state.extra as Customer,),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+            );
+          },
+        ),
+       GoRoute(
+          path: AppRoutes.newOrderScreen,
+          name: AppRoutes.newOrderScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: NewOrderPage(customerName: state.extra as String,),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {

@@ -1,85 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/home/presentation/controller/home_controller.dart';
+import 'package:sabaa/features/home/presentation/controller/home_state.dart';
 import 'package:sabaa/features/home/presentation/widgets/date_badge_widget.dart';
 import 'package:sabaa/features/home/presentation/widgets/home_banner.dart';
 import 'package:sabaa/features/home/presentation/widgets/performance_card.dart';
 import 'package:sabaa/features/home/presentation/widgets/quick_action_card_button.dart';
+import 'package:sabaa/features/home/presentation/widgets/section_header.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/functions/app_spacing.dart';
-import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
-import '../widgets/section_header.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  static const List<PerformanceMetric> _metrics = [
-    PerformanceMetric(
-      label: 'sales_volume',
-      value: r'$1,250',
-      iconColor: AppColors.metricPurple,
-      icon: Icons.inventory_2_outlined,
-    ),
-    PerformanceMetric(
-      label: "todays_visits",
-      value: '10',
-      iconColor: AppColors.metricPink,
-      icon: Icons.trending_up_rounded,
-    ),
-  ];
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncState = ref.watch(homeControllerProvider);
 
-  List<QuickAction> _buildActions(BuildContext context) => [
-        QuickAction(
-          label: 'begin_trip',
-          color: AppColors.primary,
-          icon: Icons.local_shipping_outlined,
-          onTap: () {},
-        ),
-        QuickAction(
-          label: 'new_order',
-          color: AppColors.accent,
-          icon: Icons.shopping_cart_outlined,
-          onTap: () {},
-        ),
-      ];
+    return asyncState.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (e, _) => Scaffold(
+        body: Center(child: Text('$e')),
+      ),
+      data: (state) => _HomeBody(state: state),
+    );
+  }
+}
+
+// ── Body — only rebuilt when state changes ────────────────────────────────────
+
+class _HomeBody extends ConsumerWidget {
+  const _HomeBody({required this.state});
+
+  final HomeState state;
 
   @override
-  Widget build(BuildContext context) {
-    final actions = _buildActions(context);
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              20.verticalSpace,
-              const HeaderBanner(userName: 'Alex'),
-              24.verticalSpace,
-              SectionHeader(
-                title: "todays_performance",
-                trailing: const DateBadge(label: 'APR 24, 2026'),
-              ),
-              16.verticalSpace,
-              Row(
-                children: _metrics
-                    .map<Widget>((m) => PerformanceCard(metric: m))
-                    .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                    .toList()
-                  ..removeLast(),
-              ),
-              24.verticalSpace,
-              const SectionHeader(title: 'quick_actions'),
-              16.verticalSpace,
-              Row(
-                children: actions
-                    .map<Widget>((a) => QuickActionCardButton(action: a))
-                    .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                    .toList()
-                  ..removeLast(),
-              ),
-              24.verticalSpace,
-            ],
+      body: RefreshIndicator(
+        onRefresh: () =>
+            ref.read(homeControllerProvider.notifier).refresh(),
+        child: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                20.verticalSpace,
+
+                // ── Banner ───────────────────────────────────────────
+                HeaderBanner(userName: state.userName),
+                24.verticalSpace,
+
+                // ── Today's Performance ──────────────────────────────
+                SectionHeader(
+                  title:    'todays_performance',
+                  trailing: DateBadge(label: state.todayDate),
+                ),
+                16.verticalSpace,
+                Row(
+                  children: state.metrics
+                      .map<Widget>((m) => PerformanceCard(metric: m))
+                      .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
+                      .toList()
+                    ..removeLast(),
+                ),
+                24.verticalSpace,
+
+                // ── Quick Actions ────────────────────────────────────
+                const SectionHeader(title: 'quick_actions'),
+                16.verticalSpace,
+                Row(
+                  children: state.quickActions
+                      .map<Widget>(
+                        (a) => QuickActionCardButton(
+                          action: a,
+                          onTap:  a.onTap
+                        ),
+                      )
+                      .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
+                      .toList()
+                    ..removeLast(),
+                ),
+                24.verticalSpace,
+
+                // ── Loading / Error overlay (non-blocking) ───────────
+                if (state.pageState is AsyncLoading)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

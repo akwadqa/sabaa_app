@@ -65,6 +65,7 @@ abstract class AppColors {
  
   // ── Shared UI ─────────────────────────────────────────────────
   static const Color chevronBg         = Color(0xFFF1F5F9);
+  static const Color blueGrey         = Color(0xFF617589);
 
 
 
@@ -88,6 +89,7 @@ abstract class AppColors {
 
   static const Color darkRed = Color(0xFFBC0000);
   static const Color red = Color(0xFFEF4444);
+  static const Color lightRed = Color(0xFFEF4444);
 
   static const Color bodyColor = Color(0xFF576B74);
   static const Color black = Color(0xFF000000);

@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
@@ -39,6 +41,7 @@ class CustomerDetailsPage extends StatelessWidget {
           icon:      Icons.shopping_cart_outlined,
           isPrimary: true,
           onTap: () {
+            context.push(AppRoutes.newOrderScreen,extra: customer.name);
           },
         ),
         CustomerAction(
@@ -108,7 +111,7 @@ class CustomerDetailsPage extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.white,
+      backgroundColor:AppColors.background,
       elevation: 0,
       centerTitle: true,
       leading: GestureDetector(
@@ -123,14 +126,10 @@ class CustomerDetailsPage extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.more_vert, color: AppColors.textPrimary),
           onPressed: () {
-            // TODO: show options menu
           },
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Divider(height: 1, color: AppColors.navBorder),
-      ),
+     
     );
   }
 }

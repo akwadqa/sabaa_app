@@ -17,19 +17,23 @@ class QuickAction {
   final IconData icon;
   final VoidCallback onTap;
 }
- 
 class QuickActionCardButton extends StatelessWidget {
-  const QuickActionCardButton({super.key, required this.action});
- 
+  const QuickActionCardButton({
+    super.key,
+    required this.action,
+    required this.onTap,
+  });
+
   final QuickAction action;
- 
+  final VoidCallback     onTap;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: action.onTap,
+        onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             color: action.color,
             borderRadius: BorderRadius.circular(12),
@@ -38,10 +42,10 @@ class QuickActionCardButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(action.icon, color: Colors.white, size: 26),
-              8.verticalSpace,
+              const SizedBox(height: 8),
               Text(
                 action.label.tr(),
-                style: AppTextStyle.interSemiBold14.copyWith(
+                style: AppTextStyle.interSemiBold16.copyWith(
                   color: Colors.white,
                 ),
               ),

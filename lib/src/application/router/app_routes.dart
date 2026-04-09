@@ -9,5 +9,6 @@ abstract class AppRoutes {
   static const String homeScreen = '/home';
   static const String mainScreen = '/main';
   static const String customerDetailsScreen = '/customer_details';
+  static const String newOrderScreen = '/new_order';
 
 }

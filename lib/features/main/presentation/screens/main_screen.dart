@@ -1,38 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:sabaa/features/customers/presentation/screens/customers_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
+import 'package:sabaa/features/my_route/presentation/screens/my_route_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
-// Placeholder pages for other tabs
-class _RoutePage extends StatelessWidget {
-  const _RoutePage();
-  @override
-  Widget build(BuildContext context) => const Center(child: Text('Route'));
-}
+final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 
-class _CustomersPage extends StatelessWidget {
-  const _CustomersPage();
-  @override
-  Widget build(BuildContext context) => const Center(child: Text('Customers'));
-}
-
-class _StockPage extends StatelessWidget {
-  const _StockPage();
-  @override
-  Widget build(BuildContext context) => const Center(child: Text('Stock'));
-}
-
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
 
   static const List<NavDestination> _destinations = [
     NavDestination(
@@ -43,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     NavDestination(
       label: 'nav_route',
       icon: Icons.map_outlined,
-      page: _RoutePage(),
+      page: MyRoutePage(),
     ),
     NavDestination(
       label: 'nav_customers',
@@ -57,28 +36,26 @@ class _MainScreenState extends State<MainScreen> {
     ),
   ];
 
-  void _onNavTap(int index) {
-    if (index == _currentIndex) return;
-    setState(() => _currentIndex = index);
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(bottomNavIndexProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       bottomNavigationBar: _BottomNavBar(
         destinations: _destinations,
-        currentIndex: _currentIndex,
-        onTap: _onNavTap,
+        currentIndex: currentIndex,
+        onTap: (index) {
+          ref.read(bottomNavIndexProvider.notifier).state = index;
+        },
       ),
       body: IndexedStack(
-        index: _currentIndex,
+        index: currentIndex,
         children: _destinations.map((d) => d.page).toList(),
       ),
     );
   }
 }
-
 // ─────────────────────────────────────────────
 // Bottom nav bar widget (private to this file)
 // ─────────────────────────────────────────────

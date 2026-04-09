@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
+import '../../../../../src/core/shared_widgets/custom_button_widget.dart';
 import '../../../domain/model/customer_action.dart';
 
 class CustomerDetailsAction extends StatelessWidget {
@@ -25,29 +27,37 @@ class _Primary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton.icon(
-        onPressed: action.onTap,
-        icon: Icon(action.icon, color: AppColors.white, size: 20),
-        label: Text(
-          action.labelKey.tr(),
-          style: AppTextStyle.interBold18.copyWith(
-            fontSize: 16,
-            color: AppColors.white,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-    );
+    return 
+    
+    CustomButtonWidget(
+      
+              text: '',
+              
+              onTap:action.onTap,
+              isFiled: action.isPrimary,
+              height: 56,
+              width: double.infinity,
+              backgroundColor: ! action.isPrimary ? AppColors.gray : AppColors.primary,
+              radius: 12,
+                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                   spacing: 12,
+                   children: [
+                     Icon(action.icon, color: AppColors.white, size: 25),
+                     Text(
+                           action.labelKey.tr(),
+                           style: AppTextStyle.interBold18.copyWith(
+                             fontSize: 16,
+                             color: AppColors.white,
+                           ),
+                         ),
+                   ],
+                 ),
+           
+            );
+    
+    
+    
   }
 }
 
@@ -60,28 +70,35 @@ class _Secondary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: OutlinedButton.icon(
-        onPressed: action.onTap,
-        icon: Icon(action.icon, color: AppColors.textPrimary, size: 20),
-        label: Text(
-          action.labelKey.tr(),
-          style: AppTextStyle.interBold18.copyWith(
-            fontSize: 16,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          backgroundColor: AppColors.white,
-          foregroundColor: AppColors.textPrimary,
-          side: const BorderSide(color: AppColors.navBorder),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-    );
+
+   return 
+   
+     CustomButtonWidget(
+      
+              text: '',
+              
+              onTap: () => action.onTap,
+              isFiled: action.isPrimary,
+              height: 56,
+              width: double.infinity,
+              backgroundColor: AppColors.white,
+              radius: 12,
+                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                   spacing: 12,
+                   children: [
+                     Icon(action.icon, color: AppColors.textPrimary, size: 25),
+                     Text(
+                           action.labelKey.tr(),
+                           style: AppTextStyle.interBold18.copyWith(
+                             fontSize: 16,
+                             color: AppColors.textPrimary,
+                           ),
+                         ),
+                   ],
+                 ),
+           
+            );
+
   }
 }
