@@ -17,8 +17,8 @@ class SignInRepository {
   final SignInRemoteDataSource _remoteDataSource;
 
   SignInRepository(this._remoteDataSource);
-  Future<ApiResponse<SigninResponseModel>> signIn(String phone) async {
-    final response = await _remoteDataSource.signIn(phone);
+  Future<ApiResponse<SigninResponseModel>> signIn(String userName,String password) async {
+    final response = await _remoteDataSource.signIn(userName,password);
   
     if (response.status == 200) {
       return response;

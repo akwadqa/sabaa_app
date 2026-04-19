@@ -6,12 +6,12 @@ class ServicesUrls {
   static String prodBaseUrl = '';
   static String devBaseUrl = '';
   static String imageUrl = '';
-  static String mapApiKey = '';
+  // static String mapApiKey = '';
   static void init() {
     prodBaseUrl = dotenv.get(DotenvKeys.prodBaseUrl);
     devBaseUrl = dotenv.get(DotenvKeys.devBaseUrl);
     imageUrl = dotenv.get(DotenvKeys.imageUrl);
-    mapApiKey = dotenv.get(DotenvKeys.mapApiKey);
+    // mapApiKey = dotenv.get(DotenvKeys.mapApiKey);
     debugPrint('mnor $prodBaseUrl');
   }
 

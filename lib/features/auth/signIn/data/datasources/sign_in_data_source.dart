@@ -12,12 +12,13 @@ class SignInRemoteDataSource {
   SignInRemoteDataSource(this._networkService);
 
 
-Future<ApiResponse<SigninResponseModel>> signIn(String phone) async {
+Future<ApiResponse<SigninResponseModel>> signIn(String email,String password) async {
   try {
     final response = await _networkService.post(
       ApiEndPoints.signIn,
       queryParameters: {
-        "mobile_no":phone,
+        "email":email,
+        "password":password,
       },
     );
 

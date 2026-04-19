@@ -14,10 +14,10 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$SigninResponseModel {
-  @JsonKey(name: 'mobile_number')
-  String get mobileNumber;
-  @JsonKey(name: 'user_exist')
-  bool get userExist;
+  @JsonKey(name: 'token')
+  String get token;
+  @JsonKey(name: 'user')
+  UserModel get user;
 
   /// Create a copy of SigninResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -35,19 +35,17 @@ mixin _$SigninResponseModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is SigninResponseModel &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.userExist, userExist) ||
-                other.userExist == userExist));
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.user, user) || other.user == user));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mobileNumber, userExist);
+  int get hashCode => Object.hash(runtimeType, token, user);
 
   @override
   String toString() {
-    return 'SigninResponseModel(mobileNumber: $mobileNumber, userExist: $userExist)';
+    return 'SigninResponseModel(token: $token, user: $user)';
   }
 }
 
@@ -58,8 +56,10 @@ abstract mixin class $SigninResponseModelCopyWith<$Res> {
       _$SigninResponseModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'mobile_number') String mobileNumber,
-      @JsonKey(name: 'user_exist') bool userExist});
+      {@JsonKey(name: 'token') String token,
+      @JsonKey(name: 'user') UserModel user});
+
+  $UserModelCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -75,19 +75,29 @@ class _$SigninResponseModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? mobileNumber = null,
-    Object? userExist = null,
+    Object? token = null,
+    Object? user = null,
   }) {
     return _then(_self.copyWith(
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      token: null == token
+          ? _self.token
+          : token // ignore: cast_nullable_to_non_nullable
               as String,
-      userExist: null == userExist
-          ? _self.userExist
-          : userExist // ignore: cast_nullable_to_non_nullable
-              as bool,
+      user: null == user
+          ? _self.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
     ));
+  }
+
+  /// Create a copy of SigninResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_self.user, (value) {
+      return _then(_self.copyWith(user: value));
+    });
   }
 }
 
@@ -184,15 +194,15 @@ extension SigninResponseModelPatterns on SigninResponseModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)?
+    TResult Function(@JsonKey(name: 'token') String token,
+            @JsonKey(name: 'user') UserModel user)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _SigninResponseModel() when $default != null:
-        return $default(_that.mobileNumber, _that.userExist);
+        return $default(_that.token, _that.user);
       case _:
         return orElse();
     }
@@ -213,14 +223,14 @@ extension SigninResponseModelPatterns on SigninResponseModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)
+    TResult Function(@JsonKey(name: 'token') String token,
+            @JsonKey(name: 'user') UserModel user)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SigninResponseModel():
-        return $default(_that.mobileNumber, _that.userExist);
+        return $default(_that.token, _that.user);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -240,14 +250,14 @@ extension SigninResponseModelPatterns on SigninResponseModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)?
+    TResult? Function(@JsonKey(name: 'token') String token,
+            @JsonKey(name: 'user') UserModel user)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SigninResponseModel() when $default != null:
-        return $default(_that.mobileNumber, _that.userExist);
+        return $default(_that.token, _that.user);
       case _:
         return null;
     }
@@ -258,17 +268,17 @@ extension SigninResponseModelPatterns on SigninResponseModel {
 @JsonSerializable()
 class _SigninResponseModel implements SigninResponseModel {
   const _SigninResponseModel(
-      {@JsonKey(name: 'mobile_number') required this.mobileNumber,
-      @JsonKey(name: 'user_exist') required this.userExist});
+      {@JsonKey(name: 'token') required this.token,
+      @JsonKey(name: 'user') required this.user});
   factory _SigninResponseModel.fromJson(Map<String, dynamic> json) =>
       _$SigninResponseModelFromJson(json);
 
   @override
-  @JsonKey(name: 'mobile_number')
-  final String mobileNumber;
+  @JsonKey(name: 'token')
+  final String token;
   @override
-  @JsonKey(name: 'user_exist')
-  final bool userExist;
+  @JsonKey(name: 'user')
+  final UserModel user;
 
   /// Create a copy of SigninResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -291,19 +301,17 @@ class _SigninResponseModel implements SigninResponseModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _SigninResponseModel &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.userExist, userExist) ||
-                other.userExist == userExist));
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.user, user) || other.user == user));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mobileNumber, userExist);
+  int get hashCode => Object.hash(runtimeType, token, user);
 
   @override
   String toString() {
-    return 'SigninResponseModel(mobileNumber: $mobileNumber, userExist: $userExist)';
+    return 'SigninResponseModel(token: $token, user: $user)';
   }
 }
 
@@ -316,8 +324,11 @@ abstract mixin class _$SigninResponseModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'mobile_number') String mobileNumber,
-      @JsonKey(name: 'user_exist') bool userExist});
+      {@JsonKey(name: 'token') String token,
+      @JsonKey(name: 'user') UserModel user});
+
+  @override
+  $UserModelCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -333,103 +344,148 @@ class __$SigninResponseModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? mobileNumber = null,
-    Object? userExist = null,
+    Object? token = null,
+    Object? user = null,
   }) {
     return _then(_SigninResponseModel(
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      token: null == token
+          ? _self.token
+          : token // ignore: cast_nullable_to_non_nullable
               as String,
-      userExist: null == userExist
-          ? _self.userExist
-          : userExist // ignore: cast_nullable_to_non_nullable
-              as bool,
+      user: null == user
+          ? _self.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserModel,
     ));
+  }
+
+  /// Create a copy of SigninResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserModelCopyWith<$Res> get user {
+    return $UserModelCopyWith<$Res>(_self.user, (value) {
+      return _then(_self.copyWith(user: value));
+    });
   }
 }
 
 /// @nodoc
-mixin _$LoginValidation {
-  @JsonKey(name: 'mobile_number')
-  String get mobileNumber;
-  @JsonKey(name: 'user_exist')
-  bool get userExist;
+mixin _$UserModel {
+  @JsonKey(name: 'userId')
+  String get userId;
+  @JsonKey(name: 'email')
+  String get email;
+  @JsonKey(name: 'fullName')
+  String get fullName;
+  @JsonKey(name: 'isEnabled')
+  bool get isEnabled;
+  @JsonKey(name: 'warehouse')
+  String get warehouse;
+  @JsonKey(name: 'role')
+  String get role;
 
-  /// Create a copy of LoginValidation
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  $LoginValidationCopyWith<LoginValidation> get copyWith =>
-      _$LoginValidationCopyWithImpl<LoginValidation>(
-          this as LoginValidation, _$identity);
+  $UserModelCopyWith<UserModel> get copyWith =>
+      _$UserModelCopyWithImpl<UserModel>(this as UserModel, _$identity);
 
-  /// Serializes this LoginValidation to a JSON map.
+  /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is LoginValidation &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.userExist, userExist) ||
-                other.userExist == userExist));
+            other is UserModel &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
+            (identical(other.isEnabled, isEnabled) ||
+                other.isEnabled == isEnabled) &&
+            (identical(other.warehouse, warehouse) ||
+                other.warehouse == warehouse) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mobileNumber, userExist);
+  int get hashCode => Object.hash(
+      runtimeType, userId, email, fullName, isEnabled, warehouse, role);
 
   @override
   String toString() {
-    return 'LoginValidation(mobileNumber: $mobileNumber, userExist: $userExist)';
+    return 'UserModel(userId: $userId, email: $email, fullName: $fullName, isEnabled: $isEnabled, warehouse: $warehouse, role: $role)';
   }
 }
 
 /// @nodoc
-abstract mixin class $LoginValidationCopyWith<$Res> {
-  factory $LoginValidationCopyWith(
-          LoginValidation value, $Res Function(LoginValidation) _then) =
-      _$LoginValidationCopyWithImpl;
+abstract mixin class $UserModelCopyWith<$Res> {
+  factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) =
+      _$UserModelCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'mobile_number') String mobileNumber,
-      @JsonKey(name: 'user_exist') bool userExist});
+      {@JsonKey(name: 'userId') String userId,
+      @JsonKey(name: 'email') String email,
+      @JsonKey(name: 'fullName') String fullName,
+      @JsonKey(name: 'isEnabled') bool isEnabled,
+      @JsonKey(name: 'warehouse') String warehouse,
+      @JsonKey(name: 'role') String role});
 }
 
 /// @nodoc
-class _$LoginValidationCopyWithImpl<$Res>
-    implements $LoginValidationCopyWith<$Res> {
-  _$LoginValidationCopyWithImpl(this._self, this._then);
+class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
+  _$UserModelCopyWithImpl(this._self, this._then);
 
-  final LoginValidation _self;
-  final $Res Function(LoginValidation) _then;
+  final UserModel _self;
+  final $Res Function(UserModel) _then;
 
-  /// Create a copy of LoginValidation
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? mobileNumber = null,
-    Object? userExist = null,
+    Object? userId = null,
+    Object? email = null,
+    Object? fullName = null,
+    Object? isEnabled = null,
+    Object? warehouse = null,
+    Object? role = null,
   }) {
     return _then(_self.copyWith(
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      userExist: null == userExist
-          ? _self.userExist
-          : userExist // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      fullName: null == fullName
+          ? _self.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as String,
+      isEnabled: null == isEnabled
+          ? _self.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      warehouse: null == warehouse
+          ? _self.warehouse
+          : warehouse // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
-/// Adds pattern-matching-related methods to [LoginValidation].
-extension LoginValidationPatterns on LoginValidation {
+/// Adds pattern-matching-related methods to [UserModel].
+extension UserModelPatterns on UserModel {
   /// A variant of `map` that fallback to returning `orElse`.
   ///
   /// It is equivalent to doing:
@@ -444,12 +500,12 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>(
-    TResult Function(_LoginValidation value)? $default, {
+    TResult Function(_UserModel value)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation() when $default != null:
+      case _UserModel() when $default != null:
         return $default(_that);
       case _:
         return orElse();
@@ -471,11 +527,11 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult map<TResult extends Object?>(
-    TResult Function(_LoginValidation value) $default,
+    TResult Function(_UserModel value) $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation():
+      case _UserModel():
         return $default(_that);
       case _:
         throw StateError('Unexpected subclass');
@@ -496,11 +552,11 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_LoginValidation value)? $default,
+    TResult? Function(_UserModel value)? $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation() when $default != null:
+      case _UserModel() when $default != null:
         return $default(_that);
       case _:
         return null;
@@ -521,15 +577,21 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)?
+    TResult Function(
+            @JsonKey(name: 'userId') String userId,
+            @JsonKey(name: 'email') String email,
+            @JsonKey(name: 'fullName') String fullName,
+            @JsonKey(name: 'isEnabled') bool isEnabled,
+            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'role') String role)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation() when $default != null:
-        return $default(_that.mobileNumber, _that.userExist);
+      case _UserModel() when $default != null:
+        return $default(_that.userId, _that.email, _that.fullName,
+            _that.isEnabled, _that.warehouse, _that.role);
       case _:
         return orElse();
     }
@@ -550,14 +612,20 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)
+    TResult Function(
+            @JsonKey(name: 'userId') String userId,
+            @JsonKey(name: 'email') String email,
+            @JsonKey(name: 'fullName') String fullName,
+            @JsonKey(name: 'isEnabled') bool isEnabled,
+            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'role') String role)
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation():
-        return $default(_that.mobileNumber, _that.userExist);
+      case _UserModel():
+        return $default(_that.userId, _that.email, _that.fullName,
+            _that.isEnabled, _that.warehouse, _that.role);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -577,14 +645,20 @@ extension LoginValidationPatterns on LoginValidation {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(@JsonKey(name: 'mobile_number') String mobileNumber,
-            @JsonKey(name: 'user_exist') bool userExist)?
+    TResult? Function(
+            @JsonKey(name: 'userId') String userId,
+            @JsonKey(name: 'email') String email,
+            @JsonKey(name: 'fullName') String fullName,
+            @JsonKey(name: 'isEnabled') bool isEnabled,
+            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'role') String role)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
-      case _LoginValidation() when $default != null:
-        return $default(_that.mobileNumber, _that.userExist);
+      case _UserModel() when $default != null:
+        return $default(_that.userId, _that.email, _that.fullName,
+            _that.isEnabled, _that.warehouse, _that.role);
       case _:
         return null;
     }
@@ -593,31 +667,47 @@ extension LoginValidationPatterns on LoginValidation {
 
 /// @nodoc
 @JsonSerializable()
-class _LoginValidation implements LoginValidation {
-  const _LoginValidation(
-      {@JsonKey(name: 'mobile_number') required this.mobileNumber,
-      @JsonKey(name: 'user_exist') required this.userExist});
-  factory _LoginValidation.fromJson(Map<String, dynamic> json) =>
-      _$LoginValidationFromJson(json);
+class _UserModel implements UserModel {
+  const _UserModel(
+      {@JsonKey(name: 'userId') required this.userId,
+      @JsonKey(name: 'email') required this.email,
+      @JsonKey(name: 'fullName') required this.fullName,
+      @JsonKey(name: 'isEnabled') required this.isEnabled,
+      @JsonKey(name: 'warehouse') required this.warehouse,
+      @JsonKey(name: 'role') required this.role});
+  factory _UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
   @override
-  @JsonKey(name: 'mobile_number')
-  final String mobileNumber;
+  @JsonKey(name: 'userId')
+  final String userId;
   @override
-  @JsonKey(name: 'user_exist')
-  final bool userExist;
+  @JsonKey(name: 'email')
+  final String email;
+  @override
+  @JsonKey(name: 'fullName')
+  final String fullName;
+  @override
+  @JsonKey(name: 'isEnabled')
+  final bool isEnabled;
+  @override
+  @JsonKey(name: 'warehouse')
+  final String warehouse;
+  @override
+  @JsonKey(name: 'role')
+  final String role;
 
-  /// Create a copy of LoginValidation
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @pragma('vm:prefer-inline')
-  _$LoginValidationCopyWith<_LoginValidation> get copyWith =>
-      __$LoginValidationCopyWithImpl<_LoginValidation>(this, _$identity);
+  _$UserModelCopyWith<_UserModel> get copyWith =>
+      __$UserModelCopyWithImpl<_UserModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$LoginValidationToJson(
+    return _$UserModelToJson(
       this,
     );
   }
@@ -626,61 +716,90 @@ class _LoginValidation implements LoginValidation {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _LoginValidation &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.userExist, userExist) ||
-                other.userExist == userExist));
+            other is _UserModel &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.fullName, fullName) ||
+                other.fullName == fullName) &&
+            (identical(other.isEnabled, isEnabled) ||
+                other.isEnabled == isEnabled) &&
+            (identical(other.warehouse, warehouse) ||
+                other.warehouse == warehouse) &&
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mobileNumber, userExist);
+  int get hashCode => Object.hash(
+      runtimeType, userId, email, fullName, isEnabled, warehouse, role);
 
   @override
   String toString() {
-    return 'LoginValidation(mobileNumber: $mobileNumber, userExist: $userExist)';
+    return 'UserModel(userId: $userId, email: $email, fullName: $fullName, isEnabled: $isEnabled, warehouse: $warehouse, role: $role)';
   }
 }
 
 /// @nodoc
-abstract mixin class _$LoginValidationCopyWith<$Res>
-    implements $LoginValidationCopyWith<$Res> {
-  factory _$LoginValidationCopyWith(
-          _LoginValidation value, $Res Function(_LoginValidation) _then) =
-      __$LoginValidationCopyWithImpl;
+abstract mixin class _$UserModelCopyWith<$Res>
+    implements $UserModelCopyWith<$Res> {
+  factory _$UserModelCopyWith(
+          _UserModel value, $Res Function(_UserModel) _then) =
+      __$UserModelCopyWithImpl;
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'mobile_number') String mobileNumber,
-      @JsonKey(name: 'user_exist') bool userExist});
+      {@JsonKey(name: 'userId') String userId,
+      @JsonKey(name: 'email') String email,
+      @JsonKey(name: 'fullName') String fullName,
+      @JsonKey(name: 'isEnabled') bool isEnabled,
+      @JsonKey(name: 'warehouse') String warehouse,
+      @JsonKey(name: 'role') String role});
 }
 
 /// @nodoc
-class __$LoginValidationCopyWithImpl<$Res>
-    implements _$LoginValidationCopyWith<$Res> {
-  __$LoginValidationCopyWithImpl(this._self, this._then);
+class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
+  __$UserModelCopyWithImpl(this._self, this._then);
 
-  final _LoginValidation _self;
-  final $Res Function(_LoginValidation) _then;
+  final _UserModel _self;
+  final $Res Function(_UserModel) _then;
 
-  /// Create a copy of LoginValidation
+  /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? mobileNumber = null,
-    Object? userExist = null,
+    Object? userId = null,
+    Object? email = null,
+    Object? fullName = null,
+    Object? isEnabled = null,
+    Object? warehouse = null,
+    Object? role = null,
   }) {
-    return _then(_LoginValidation(
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+    return _then(_UserModel(
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
-      userExist: null == userExist
-          ? _self.userExist
-          : userExist // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _self.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      fullName: null == fullName
+          ? _self.fullName
+          : fullName // ignore: cast_nullable_to_non_nullable
+              as String,
+      isEnabled: null == isEnabled
+          ? _self.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      warehouse: null == warehouse
+          ? _self.warehouse
+          : warehouse // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }

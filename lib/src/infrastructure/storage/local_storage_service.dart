@@ -77,7 +77,7 @@ class LocalStorageService {
     final updated = current.copyWith(
       fullName: fullName ?? current.fullName,
       // email: email??current.email,
-      mobileNumber: phone??current.mobileNumber,
+      // mobileNumber: phone??current.mobileNumber,
     );
 
     await _userBox.put(0, updated);

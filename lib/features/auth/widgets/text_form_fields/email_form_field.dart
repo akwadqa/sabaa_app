@@ -8,10 +8,10 @@ import 'package:queen_validators/queen_validators.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 
-class UserNameFormField extends StatelessWidget {
-  const UserNameFormField({super.key, this.onSaved, required this.userNameController});
+class EmailFormField extends StatelessWidget {
+  const EmailFormField({super.key, this.onSaved, required this.emailController});
   final void Function(String?)? onSaved;
-  final TextEditingController userNameController;
+  final TextEditingController emailController;
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +19,16 @@ class UserNameFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.tr("user_name"),
+          context.tr("email"),
           style:
               AppTextStyle.interSemiBold16,
         ).onlyPadding(start: 8),
         8.verticalSpace,
         TextFormField(
-          controller: userNameController,
+          controller: emailController,
           style: TextStyle(color: AppColors.gray),
           decoration: InputDecoration(
-            hintText: context.tr('user_name'),
+            hintText: context.tr('email'),
             hintStyle: Theme.of(context)
                 .textTheme
                 .labelSmall!

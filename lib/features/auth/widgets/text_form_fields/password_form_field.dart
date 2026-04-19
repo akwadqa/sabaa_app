@@ -62,7 +62,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
               },
             ),
           ),
-          onSaved: widget.onSaved,
+          onChanged: widget.onSaved,
           validator: (pass) => AppValidation.validatePassword(pass, context),
         ),
       ],

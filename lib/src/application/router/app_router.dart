@@ -23,7 +23,7 @@ class AppRouter {
   AppRouter(Ref ref) : goRouter = _createRouter(ref);
 
   static GoRouter _createRouter(Ref ref) {
-    String initialRoute = AppRoutes.mainScreen;
+    String initialRoute = AppRoutes.splashScreen;
     return GoRouter(
       navigatorKey: rootKey,
       initialLocation: initialRoute,

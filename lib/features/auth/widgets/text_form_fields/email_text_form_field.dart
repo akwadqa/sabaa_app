@@ -7,8 +7,10 @@ import 'package:queen_validators/queen_validators.dart';
 
 
 class EmailTextFormField extends StatelessWidget {
-  const EmailTextFormField({super.key, this.onSaved});
+  const EmailTextFormField({super.key, this.onSaved, required this.emailController});
   final void Function(String?)? onSaved;
+  final TextEditingController emailController;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,6 +23,7 @@ class EmailTextFormField extends StatelessWidget {
         ).onlyPadding(start: 8),
         8.verticalSpace,
         TextFormField(
+          controller: emailController,
           style: TextStyle(color: AppColors.gray),
           decoration: InputDecoration(
             hintText: context.tr('email'),
@@ -35,7 +38,7 @@ class EmailTextFormField extends StatelessWidget {
             IsEmail(context.tr('emailValidatorMessage'))
           ]),
           keyboardType: TextInputType.emailAddress,
-          onSaved: onSaved,
+          onChanged: onSaved,
         ),
       ],
     );

@@ -103,6 +103,9 @@ class $AssetsImagesGen {
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
+  /// File path: assets/lottie/circle-loader.json
+  String get circleLoader => 'assets/lottie/circle-loader.json';
+
   /// File path: assets/lottie/ic_loading_primary.json
   String get icLoadingPrimary => 'assets/lottie/ic_loading_primary.json';
 
@@ -117,7 +120,7 @@ class $AssetsLottieGen {
 
   /// List of all assets
   List<String> get values =>
-      [icLoadingPrimary, icLoadingWhite, icSuccessWhite, splash];
+      [circleLoader, icLoadingPrimary, icLoadingWhite, icSuccessWhite, splash];
 }
 
 class $AssetsTranslationsGen {

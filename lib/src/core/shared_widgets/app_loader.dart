@@ -11,7 +11,7 @@ class AppLoader extends StatelessWidget {
         child: Lottie.asset(
       width: 50,
       height: 50,
-      Assets.lottie.icLoadingWhite,
+      Assets.lottie.circleLoader,
       // Assets.lottie.processingCircle,
       repeat: true,
       

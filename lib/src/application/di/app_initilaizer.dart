@@ -31,13 +31,13 @@ abstract class AppInitializer {
     // await container.read(notificationServiceProvider).initialize();
 
     //-- ENV FILE LOAD  --
-    // await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: '.env');
     //-- Hive initialize --
     await Hive.initFlutter();
     await HiveInitializer.initialize();
 
     //-- Load base URL's  --
-    // ServicesUrls.init();
+    ServicesUrls.init();
 
     FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
     ErrorWidget.builder = (FlutterErrorDetails details) {

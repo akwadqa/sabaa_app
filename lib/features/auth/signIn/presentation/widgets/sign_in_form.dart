@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/auth/signIn/presentation/controller/sign_in_controller.dart';
+import 'package:sabaa/features/auth/widgets/text_form_fields/email_text_form_field.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/login_page_number_field.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/password_form_field.dart';
-import 'package:sabaa/features/auth/widgets/text_form_fields/user_name_form_field.dart';
+import 'package:sabaa/features/auth/widgets/text_form_fields/email_form_field.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_dialogs.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
@@ -22,7 +23,7 @@ class SignInForm extends ConsumerStatefulWidget {
 class _SignInFormState extends ConsumerState<SignInForm> {
   // String? _phoneNumber;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController userNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class _SignInFormState extends ConsumerState<SignInForm> {
       if (next is AsyncData && prev is AsyncLoading) {
         // context.maybePop().then((_) {
         debugPrint("Success check");
-        if (next.value!.signinResponseModel!.userExist) {
+        if (next.value!.signinResponseModel!.user.isEnabled) {
           context.push(AppRoutes.homeScreen,
              );
         } 
@@ -48,11 +49,19 @@ class _SignInFormState extends ConsumerState<SignInForm> {
       child: Column(
         spacing: 22,
         children: [
-          UserNameFormField(
-            userNameController: userNameController,
+          EmailTextFormField(
+            emailController: emailController,
+            onSaved: (value) {
+                ref.read(signInControllerProvider.notifier).updateEmail(value!);
+
+            },
           ),
           PasswordFormField(
             passwordController: passwordController,
+              onSaved: (value) {
+                ref.read(signInControllerProvider.notifier).updatePassword(value!);
+
+            },
           ),
            Align(
       alignment: AlignmentGeometry.bottomEnd,
@@ -87,17 +96,17 @@ class _SignInFormState extends ConsumerState<SignInForm> {
             if (signInProvider is AsyncLoading) {
               return AppLoader();
             }
-
-            final isEmpty =
-                ref.watch(signInControllerProvider).value!.isPhoneFilled ??
-                    false;
+final isEnabled = signInProvider.value?.isFormValid ?? false;
+            final isEmpty =emailController.text.isEmpty;
+                // ref.watch(signInControllerProvider).value!.isVerify ??
+                //     false;
             return CustomButtonWidget(
               text: 'login'.tr(),
-              onTap: () => !isEmpty ? null : _submit(ref),
+              onTap: () => !isEnabled ? null : _submit(ref),
               isFiled: true,
               height: 48,
               width: double.infinity,
-              backgroundColor: !isEmpty ? AppColors.gray : AppColors.primary,
+              backgroundColor: !isEnabled ? AppColors.gray : AppColors.primary,
               radius: 8,
             );
             // return Container();
@@ -116,12 +125,8 @@ class _SignInFormState extends ConsumerState<SignInForm> {
       _formKey.currentState?.save();
       await ref
           .read(signInControllerProvider.notifier)
-          .signIn(userNameController.text)
-          .then((_) {
-        ref.read(signInControllerProvider.notifier)
-          ..makeResendButtonVisible(false)
-          ..makeConfirmButtonVisible(true);
-      });
+          .signIn(emailController.text,passwordController.text);
+        
     }
   }
 }

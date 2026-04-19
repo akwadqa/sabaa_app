@@ -1,30 +1,29 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:sabaa/features/auth/signIn/domain/model/signin_response_model.dart';
 
 class SignInState {
-  final bool? isPhoneFilled;
+  final String email;
+  final String password;
+  final bool isFormValid;
   final SigninResponseModel? signinResponseModel;
-    final bool? isVerify;
-  final bool? isResend;
 
   SignInState({
-    this.isPhoneFilled,
+    this.email = '',
+    this.password = '',
+    this.isFormValid = false,
     this.signinResponseModel,
-    this.isVerify,
-    this.isResend,
   });
 
   SignInState copyWith({
-    bool? isPhoneFilled,
+    String? email,
+    String? password,
+    bool? isFormValid,
     SigninResponseModel? signinResponseModel,
-    bool? isVerify,
-    bool? isResend,
   }) {
     return SignInState(
-      isPhoneFilled: isPhoneFilled ?? this.isPhoneFilled,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      isFormValid: isFormValid ?? this.isFormValid,
       signinResponseModel: signinResponseModel ?? this.signinResponseModel,
-      isVerify: isVerify ?? this.isVerify,
-      isResend: isResend ?? this.isResend,
     );
   }
 }

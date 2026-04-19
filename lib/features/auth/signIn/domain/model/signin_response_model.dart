@@ -6,8 +6,8 @@ part 'signin_response_model.g.dart';
 @freezed
 abstract class SigninResponseModel with _$SigninResponseModel {
   const factory SigninResponseModel({
-    @JsonKey(name: 'mobile_number') required String mobileNumber,
-    @JsonKey(name: 'user_exist') required bool userExist,
+    @JsonKey(name: 'token') required String token,
+    @JsonKey(name: 'user') required UserModel user,
   }) = _SigninResponseModel;
 
   factory SigninResponseModel.fromJson(Map<String, dynamic> json) =>
@@ -15,12 +15,16 @@ abstract class SigninResponseModel with _$SigninResponseModel {
 }
 
 @freezed
-abstract class LoginValidation with _$LoginValidation {
-  const factory LoginValidation({
-    @JsonKey(name: 'mobile_number') required String mobileNumber,
-    @JsonKey(name: 'user_exist') required bool userExist,
-  }) = _LoginValidation;
+abstract class UserModel with _$UserModel {
+  const factory UserModel({
+    @JsonKey(name: 'userId') required String userId,
+    @JsonKey(name: 'email') required String email,
+    @JsonKey(name: 'fullName') required String fullName,
+    @JsonKey(name: 'isEnabled') required bool isEnabled,
+    @JsonKey(name: 'warehouse') required String warehouse,
+    @JsonKey(name: 'role') required String role,
+  }) = _UserModel;
 
-  factory LoginValidation.fromJson(Map<String, dynamic> json) =>
-      _$LoginValidationFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 }

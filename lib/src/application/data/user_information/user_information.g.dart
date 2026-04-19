@@ -8,16 +8,18 @@ part of 'user_information.dart';
 
 _UserInformation _$UserInformationFromJson(Map<String, dynamic> json) =>
     _UserInformation(
-      token: json['token'] as String,
+      userId: json['userId'] as String,
       fullName: json['full_name'] as String,
-      mobileNumber: json['mobile_no'] as String,
+      role: json['role'] as String,
       email: json['email'] as String?,
+      warehouse: json['warehouse'] as String?,
     );
 
 Map<String, dynamic> _$UserInformationToJson(_UserInformation instance) =>
     <String, dynamic>{
-      'token': instance.token,
+      'userId': instance.userId,
       'full_name': instance.fullName,
-      'mobile_no': instance.mobileNumber,
+      'role': instance.role,
       'email': instance.email,
+      'warehouse': instance.warehouse,
     };

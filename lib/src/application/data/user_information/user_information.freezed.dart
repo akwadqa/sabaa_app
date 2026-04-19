@@ -15,15 +15,17 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserInformation {
   @HiveField(0)
-  String get token;
+  String get userId;
   @HiveField(1)
   @JsonKey(name: "full_name")
   String get fullName;
   @HiveField(2)
-  @JsonKey(name: "mobile_no")
-  String get mobileNumber;
+  @JsonKey(name: "role")
+  String get role;
   @HiveField(3)
   String? get email;
+  @HiveField(4)
+  String? get warehouse;
 
   /// Create a copy of UserInformation
   /// with the given fields replaced by the non-null parameter values.
@@ -41,22 +43,23 @@ mixin _$UserInformation {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is UserInformation &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.email, email) || other.email == email));
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.warehouse, warehouse) ||
+                other.warehouse == warehouse));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, token, fullName, mobileNumber, email);
+      Object.hash(runtimeType, userId, fullName, role, email, warehouse);
 
   @override
   String toString() {
-    return 'UserInformation(token: $token, fullName: $fullName, mobileNumber: $mobileNumber, email: $email)';
+    return 'UserInformation(userId: $userId, fullName: $fullName, role: $role, email: $email, warehouse: $warehouse)';
   }
 }
 
@@ -67,10 +70,11 @@ abstract mixin class $UserInformationCopyWith<$Res> {
       _$UserInformationCopyWithImpl;
   @useResult
   $Res call(
-      {@HiveField(0) String token,
+      {@HiveField(0) String userId,
       @HiveField(1) @JsonKey(name: "full_name") String fullName,
-      @HiveField(2) @JsonKey(name: "mobile_no") String mobileNumber,
-      @HiveField(3) String? email});
+      @HiveField(2) @JsonKey(name: "role") String role,
+      @HiveField(3) String? email,
+      @HiveField(4) String? warehouse});
 }
 
 /// @nodoc
@@ -86,27 +90,32 @@ class _$UserInformationCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? token = null,
+    Object? userId = null,
     Object? fullName = null,
-    Object? mobileNumber = null,
+    Object? role = null,
     Object? email = freezed,
+    Object? warehouse = freezed,
   }) {
     return _then(_self.copyWith(
-      token: null == token
-          ? _self.token
-          : token // ignore: cast_nullable_to_non_nullable
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      role: null == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
               as String,
       email: freezed == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouse: freezed == warehouse
+          ? _self.warehouse
+          : warehouse // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -206,18 +215,19 @@ extension UserInformationPatterns on UserInformation {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            @HiveField(0) String token,
+            @HiveField(0) String userId,
             @HiveField(1) @JsonKey(name: "full_name") String fullName,
-            @HiveField(2) @JsonKey(name: "mobile_no") String mobileNumber,
-            @HiveField(3) String? email)?
+            @HiveField(2) @JsonKey(name: "role") String role,
+            @HiveField(3) String? email,
+            @HiveField(4) String? warehouse)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _UserInformation() when $default != null:
-        return $default(
-            _that.token, _that.fullName, _that.mobileNumber, _that.email);
+        return $default(_that.userId, _that.fullName, _that.role, _that.email,
+            _that.warehouse);
       case _:
         return orElse();
     }
@@ -239,17 +249,18 @@ extension UserInformationPatterns on UserInformation {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            @HiveField(0) String token,
+            @HiveField(0) String userId,
             @HiveField(1) @JsonKey(name: "full_name") String fullName,
-            @HiveField(2) @JsonKey(name: "mobile_no") String mobileNumber,
-            @HiveField(3) String? email)
+            @HiveField(2) @JsonKey(name: "role") String role,
+            @HiveField(3) String? email,
+            @HiveField(4) String? warehouse)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UserInformation():
-        return $default(
-            _that.token, _that.fullName, _that.mobileNumber, _that.email);
+        return $default(_that.userId, _that.fullName, _that.role, _that.email,
+            _that.warehouse);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -270,17 +281,18 @@ extension UserInformationPatterns on UserInformation {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            @HiveField(0) String token,
+            @HiveField(0) String userId,
             @HiveField(1) @JsonKey(name: "full_name") String fullName,
-            @HiveField(2) @JsonKey(name: "mobile_no") String mobileNumber,
-            @HiveField(3) String? email)?
+            @HiveField(2) @JsonKey(name: "role") String role,
+            @HiveField(3) String? email,
+            @HiveField(4) String? warehouse)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UserInformation() when $default != null:
-        return $default(
-            _that.token, _that.fullName, _that.mobileNumber, _that.email);
+        return $default(_that.userId, _that.fullName, _that.role, _that.email,
+            _that.warehouse);
       case _:
         return null;
     }
@@ -291,27 +303,31 @@ extension UserInformationPatterns on UserInformation {
 @JsonSerializable()
 class _UserInformation implements UserInformation {
   _UserInformation(
-      {@HiveField(0) required this.token,
+      {@HiveField(0) required this.userId,
       @HiveField(1) @JsonKey(name: "full_name") required this.fullName,
-      @HiveField(2) @JsonKey(name: "mobile_no") required this.mobileNumber,
-      @HiveField(3) required this.email});
+      @HiveField(2) @JsonKey(name: "role") required this.role,
+      @HiveField(3) required this.email,
+      @HiveField(4) required this.warehouse});
   factory _UserInformation.fromJson(Map<String, dynamic> json) =>
       _$UserInformationFromJson(json);
 
   @override
   @HiveField(0)
-  final String token;
+  final String userId;
   @override
   @HiveField(1)
   @JsonKey(name: "full_name")
   final String fullName;
   @override
   @HiveField(2)
-  @JsonKey(name: "mobile_no")
-  final String mobileNumber;
+  @JsonKey(name: "role")
+  final String role;
   @override
   @HiveField(3)
   final String? email;
+  @override
+  @HiveField(4)
+  final String? warehouse;
 
   /// Create a copy of UserInformation
   /// with the given fields replaced by the non-null parameter values.
@@ -333,22 +349,23 @@ class _UserInformation implements UserInformation {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _UserInformation &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            (identical(other.mobileNumber, mobileNumber) ||
-                other.mobileNumber == mobileNumber) &&
-            (identical(other.email, email) || other.email == email));
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.warehouse, warehouse) ||
+                other.warehouse == warehouse));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, token, fullName, mobileNumber, email);
+      Object.hash(runtimeType, userId, fullName, role, email, warehouse);
 
   @override
   String toString() {
-    return 'UserInformation(token: $token, fullName: $fullName, mobileNumber: $mobileNumber, email: $email)';
+    return 'UserInformation(userId: $userId, fullName: $fullName, role: $role, email: $email, warehouse: $warehouse)';
   }
 }
 
@@ -361,10 +378,11 @@ abstract mixin class _$UserInformationCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@HiveField(0) String token,
+      {@HiveField(0) String userId,
       @HiveField(1) @JsonKey(name: "full_name") String fullName,
-      @HiveField(2) @JsonKey(name: "mobile_no") String mobileNumber,
-      @HiveField(3) String? email});
+      @HiveField(2) @JsonKey(name: "role") String role,
+      @HiveField(3) String? email,
+      @HiveField(4) String? warehouse});
 }
 
 /// @nodoc
@@ -380,27 +398,32 @@ class __$UserInformationCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? token = null,
+    Object? userId = null,
     Object? fullName = null,
-    Object? mobileNumber = null,
+    Object? role = null,
     Object? email = freezed,
+    Object? warehouse = freezed,
   }) {
     return _then(_UserInformation(
-      token: null == token
-          ? _self.token
-          : token // ignore: cast_nullable_to_non_nullable
+      userId: null == userId
+          ? _self.userId
+          : userId // ignore: cast_nullable_to_non_nullable
               as String,
       fullName: null == fullName
           ? _self.fullName
           : fullName // ignore: cast_nullable_to_non_nullable
               as String,
-      mobileNumber: null == mobileNumber
-          ? _self.mobileNumber
-          : mobileNumber // ignore: cast_nullable_to_non_nullable
+      role: null == role
+          ? _self.role
+          : role // ignore: cast_nullable_to_non_nullable
               as String,
       email: freezed == email
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouse: freezed == warehouse
+          ? _self.warehouse
+          : warehouse // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }

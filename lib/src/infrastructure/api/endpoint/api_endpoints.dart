@@ -1,5 +1,5 @@
 class ApiEndPoints {
-  static const domain = "sabaa.api";
+  static const domain = "van_sales.van_sales.api";
 
   //? --- Home ---
   static const String homeServices = 'sabaa.api.category.home_page';
@@ -7,7 +7,7 @@ class ApiEndPoints {
 
 
   //? --- AUTH ---
-  static const String signIn = '$domain.auth.send_otp';
+  static const String signIn = '$domain.auth.login';
   static const String signUp = '$domain.auth.sign_up';
   static const String verifyOtp = '$domain.auth.verify_otp';
 
