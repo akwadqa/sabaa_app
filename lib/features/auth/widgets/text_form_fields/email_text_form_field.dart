@@ -24,7 +24,7 @@ class EmailTextFormField extends StatelessWidget {
         8.verticalSpace,
         TextFormField(
           controller: emailController,
-          style: TextStyle(color: AppColors.gray),
+          // style: TextStyle(color: AppColors.gray),
           decoration: InputDecoration(
             hintText: context.tr('email'),
             hintStyle: Theme.of(context)

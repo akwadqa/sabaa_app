@@ -4,13 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/auth/signIn/presentation/controller/sign_in_controller.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/email_text_form_field.dart';
-import 'package:sabaa/features/auth/widgets/text_form_fields/login_page_number_field.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/password_form_field.dart';
-import 'package:sabaa/features/auth/widgets/text_form_fields/email_form_field.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
-import 'package:sabaa/src/core/shared_widgets/app_dialogs.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
+import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
+import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 class SignInForm extends ConsumerStatefulWidget {
@@ -32,18 +31,15 @@ class _SignInFormState extends ConsumerState<SignInForm> {
         // context.maybePop().then((_) {
         debugPrint("Success check");
         if (next.value!.signinResponseModel!.user.isEnabled) {
-          context.push(AppRoutes.homeScreen,
-             );
-        } 
-        // _showDialog();
-        // });
+          context.push(
+            AppRoutes.homeScreen,
+          );
+        }
       } else if (next is AsyncError) {
-        showErrorDialog(context, next.error.toString());
+        AppToast.errorToast(next.error.toString());
       }
     });
 
-    // final phoneNotifier =
-    //     ref.watch(signInControllerProvider.notifier).phoneController;
     return Form(
       key: _formKey,
       child: Column(
@@ -52,54 +48,26 @@ class _SignInFormState extends ConsumerState<SignInForm> {
           EmailTextFormField(
             emailController: emailController,
             onSaved: (value) {
-                ref.read(signInControllerProvider.notifier).updateEmail(value!);
-
+              ref.read(signInControllerProvider.notifier).updateEmail(value!);
             },
           ),
           PasswordFormField(
             passwordController: passwordController,
-              onSaved: (value) {
-                ref.read(signInControllerProvider.notifier).updatePassword(value!);
-
+            onSaved: (value) {
+              ref
+                  .read(signInControllerProvider.notifier)
+                  .updatePassword(value!);
             },
           ),
-           Align(
-      alignment: AlignmentGeometry.bottomEnd,
-      child: GestureDetector(
-        onTap: () {
-          // context.pushReplacement(AppRoutes.mainScreen);
-        },
-        child: Text(
-                  'forget_password'.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-      ),
-    ),
-          // LoginPageNumberField(
-          //   phoneController,
-          //   onChange: (phone) {
-          //     ref
-          //         .read(signInControllerProvider.notifier)
-          //         .checkPhoneFilled(phone!.number.isNotEmpty);
-          //     // ref
-          //     //     .read(signInControllerProvider.notifier)
-          //     //     .changePhoneNumber(phone?.number ?? "");
-          //     setState(() {});
-          //   },
-          // ),
+          20.verticalSpace,
           Consumer(builder: (context, ref, child) {
             final signInProvider = ref.watch(signInControllerProvider);
 
             if (signInProvider is AsyncLoading) {
               return AppLoader();
             }
-final isEnabled = signInProvider.value?.isFormValid ?? false;
-            final isEmpty =emailController.text.isEmpty;
-                // ref.watch(signInControllerProvider).value!.isVerify ??
-                //     false;
+            final isEnabled = signInProvider.value?.isFormValid ?? false;
+
             return CustomButtonWidget(
               text: 'login'.tr(),
               onTap: () => !isEnabled ? null : _submit(ref),
@@ -125,8 +93,7 @@ final isEnabled = signInProvider.value?.isFormValid ?? false;
       _formKey.currentState?.save();
       await ref
           .read(signInControllerProvider.notifier)
-          .signIn(emailController.text,passwordController.text);
-        
+          .signIn(emailController.text, passwordController.text);
     }
   }
 }

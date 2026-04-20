@@ -39,7 +39,7 @@ class SplashScreen extends ConsumerWidget {
           // }
 
           // ===== Not authenticated =====
-          if (!isAuth||isFirstTime) {
+          if (!isAuth) {
             context.goNamed(AppRoutes.signInScreen);
             return;
           }

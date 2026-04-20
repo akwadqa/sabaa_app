@@ -12,7 +12,7 @@ class HomeDatasource {
   Future<ApiResponse<HomeDashboardModel>> getDashboard() async {
     try {
       final response = await _networkService.get(
-        ApiEndPoints.homeServices, 
+        ApiEndPoints.homeDashboard, 
         queryParameters: {},
       );
 

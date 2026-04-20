@@ -8,6 +8,8 @@ import 'package:sabaa/features/home/presentation/widgets/home_banner.dart';
 import 'package:sabaa/features/home/presentation/widgets/performance_card.dart';
 import 'package:sabaa/features/home/presentation/widgets/quick_action_card_button.dart';
 import 'package:sabaa/features/home/presentation/widgets/section_header.dart';
+import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
+import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/functions/app_spacing.dart';
 
@@ -19,12 +21,8 @@ class HomeScreen extends ConsumerWidget {
     final asyncState = ref.watch(homeControllerProvider);
 
     return asyncState.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (e, _) => Scaffold(
-        body: Center(child: Text('$e')),
-      ),
+      loading: () => AppLoader(),
+      error: (e, _) => AppErrorWidget(),
       data: (state) => _HomeBody(state: state),
     );
   }
@@ -67,8 +65,7 @@ class _HomeBody extends ConsumerWidget {
                   children: state.metrics
                       .map<Widget>((m) => PerformanceCard(metric: m))
                       .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                      .toList()
-                    ..removeLast(),
+                      .toList(),
                 ),
                 24.verticalSpace,
 
@@ -84,8 +81,7 @@ class _HomeBody extends ConsumerWidget {
                         ),
                       )
                       .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                      .toList()
-                    ..removeLast(),
+                      .toList(),
                 ),
                 24.verticalSpace,
 

@@ -66,11 +66,13 @@ class RemoteInterceptor extends Interceptor {
     // ✅ تحقق من إذا كان Unauthorized
 
     final isUnauthorized =
-        (statusCode == 401 &&
-            (responseData['message']?.toString().toLowerCase().contains(
-                  "otp",
-                )) ==
-                false) ||
+        (statusCode == 401 
+        // &&
+        //     (responseData['message']?.toString().toLowerCase().contains(
+        //           "otp",
+        //         )) ==
+        //         false
+                ) ||
         (responseData['exc_type']?.toString().contains('PermissionError')) ==
             true;
 

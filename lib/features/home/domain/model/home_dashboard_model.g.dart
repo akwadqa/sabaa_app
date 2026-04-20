@@ -8,16 +8,26 @@ part of 'home_dashboard_model.dart';
 
 _HomeDashboardModel _$HomeDashboardModelFromJson(Map<String, dynamic> json) =>
     _HomeDashboardModel(
-      userName: json['userName'] as String? ?? '',
-      todayDate: json['todayDate'] as String? ?? '',
-      salesVolume: json['salesVolume'] as String? ?? '',
-      todaysVisits: (json['todaysVisits'] as num?)?.toInt() ?? 0,
+      date: DateModel.fromJson(json['date'] as Map<String, dynamic>),
+      dailyPerformance: DailyPerformanceModel.fromJson(
+          json['dailyPerformance'] as Map<String, dynamic>),
+      trip: HomeTripModel.fromJson(json['trip'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$HomeDashboardModelToJson(_HomeDashboardModel instance) =>
     <String, dynamic>{
-      'userName': instance.userName,
-      'todayDate': instance.todayDate,
-      'salesVolume': instance.salesVolume,
-      'todaysVisits': instance.todaysVisits,
+      'date': instance.date,
+      'dailyPerformance': instance.dailyPerformance,
+      'trip': instance.trip,
+    };
+
+_DateModel _$DateModelFromJson(Map<String, dynamic> json) => _DateModel(
+      today: json['today'] as String,
+      formattedDate: json['formattedDate'] as String,
+    );
+
+Map<String, dynamic> _$DateModelToJson(_DateModel instance) =>
+    <String, dynamic>{
+      'today': instance.today,
+      'formattedDate': instance.formattedDate,
     };

@@ -39,11 +39,11 @@ class PerformanceCard extends StatelessWidget {
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 45,
-              height: 45,
+              width: 55,
+              height: 55,
               decoration: BoxDecoration(
                 color: metric.iconColor,
                 borderRadius: BorderRadius.circular(8),

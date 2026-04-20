@@ -2,7 +2,7 @@ class ApiEndPoints {
   static const domain = "van_sales.van_sales.api";
 
   //? --- Home ---
-  static const String homeServices = 'sabaa.api.category.home_page';
+  static const String homeDashboard = '$domain.dashboard.get_dashboard';
 
 
 
