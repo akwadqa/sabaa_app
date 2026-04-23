@@ -77,9 +77,11 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
             4.verticalSpace,
-            Text(
-              value,
-              style: AppTextStyle.interBold20.copyWith(color: valueColor),
+            FittedBox(
+              child: Text(
+                value,
+                style: AppTextStyle.interBold20.copyWith(color: valueColor),
+              ),
             ),
           ],
         ),

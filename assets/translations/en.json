@@ -29,7 +29,7 @@
     "begin_trip": "Begin Trip",
     "new_order": "New Order",
     "nav_home": "Home",
-    "nav_route": "Route",
+    "nav_route": "Trips",
     "nav_customers": "Customers",
     "nav_stock": "Stock",
     "van_stock": "Van Stock",
@@ -54,7 +54,7 @@
     "total_sales": "Total Sales",
     "new_payment": "New Payment",
     "sales_return": "Sales Return",
-    "my_routes": "My Routes",
+    "my_trips": "My Trips",
     "search_customer": "Search customer..",
     "todays_stops": "Today's Stops",
     "stop_in_progress": "In Progress",
@@ -85,5 +85,8 @@
     "net_refund": "Net Refund",
     "finalize_invoice": "Finalize Invoice",
     "count": "Count",
-    "total": "Total"
+    "total": "Total",
+    "trip_started_successfully": "Trip started successfully",
+    "completed_visits": "Completed visits",
+    "trip_in_progress": "Trip in progress"
 }

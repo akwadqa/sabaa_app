@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 import '../../domain/model/route_stop_model.dart';
@@ -56,6 +57,24 @@ class RouteStopStatusBadge extends StatelessWidget {
           labelKey:   'stop_visited',
           background: Color(0xFFF0FDF4),
           textColor:  Color(0xFF15803D),
+        );
+      case RouteStopStatus.completed:
+        return const _BadgeConfig(
+          labelKey:   'completed',
+          background: Color(0xFFF0FDF4),
+          textColor:  Color(0xFF15803D),
+        );
+      case RouteStopStatus.failed:
+        return const _BadgeConfig(
+          labelKey:   'failed',
+          background: Color(0xFFF0FDF4),
+          textColor:  AppColors.red,
+        );
+      case RouteStopStatus.skipped:
+        return const _BadgeConfig(
+          labelKey:   'skipped',
+          background: Color(0xFFF0FDF4),
+          textColor:  AppColors.avatarOrangeText,
         );
     }
   }

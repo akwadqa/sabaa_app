@@ -29,4 +29,25 @@ class HomeDatasource {
       rethrow;
     }
   }
+    /// POST trip.start_trip?trip_id=TRIP-2026-04-00013
+  Future<ApiResponse<bool>> startTrip({required String tripId}) async {
+    try {
+      final response = await _networkService.post(
+        ApiEndPoints.startTrip,          
+        queryParameters: {'trip_id': tripId},
+      );
+ 
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to start trip');
+      }
+ 
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (_) => true,
+      );
+    } catch (e) {
+      Dev.logLine('HomeDatasource.startTrip error: $e');
+      rethrow;
+    }
+  }
 }

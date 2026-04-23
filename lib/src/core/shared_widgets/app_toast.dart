@@ -35,4 +35,5 @@ class AppToast {
       description: Text(message),
     );
   }
+
 }

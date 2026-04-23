@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:sabaa/features/customers/presentation/screens/customers_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
-import 'package:sabaa/features/my_route/presentation/screens/my_route_page.dart';
+import 'package:sabaa/features/my_trips/presentation/screens/my_route_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 

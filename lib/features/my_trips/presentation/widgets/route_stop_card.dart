@@ -170,6 +170,21 @@ class _StopFooter extends StatelessWidget {
           checkedOutAt:  stop.checkedOutAt ?? '',
           onViewSummary: onViewSummary,
         );
+      case RouteStopStatus.completed:
+        return _VisitedFooter(
+          checkedOutAt:  stop.checkedOutAt ?? '',
+          onViewSummary: onViewSummary,
+        );
+      case RouteStopStatus.failed:
+        return _VisitedFooter(
+          checkedOutAt:  stop.checkedOutAt ?? '',
+          onViewSummary: onViewSummary,
+        );
+      case RouteStopStatus.skipped:
+        return _VisitedFooter(
+          checkedOutAt:  stop.checkedOutAt ?? '',
+          onViewSummary: onViewSummary,
+        );
     }
   }
 }
@@ -245,13 +260,13 @@ class _PendingFooter extends StatelessWidget {
     return Row(
       children: [
         // Navigate
-        _TextIconAction(
-          icon:     Icons.navigation_outlined,
-          labelKey: 'navigate',
-          color:    AppColors.primary,
-          onTap:    onNavigate,
-        ),
-        16.horizontalSpace,
+        // _TextIconAction(
+        //   icon:     Icons.navigation_outlined,
+        //   labelKey: 'navigate',
+        //   color:    AppColors.primary,
+        //   onTap:    onNavigate,
+        // ),
+        // 16.horizontalSpace,
 
         // Contact
         _TextIconAction(
@@ -305,34 +320,36 @@ class _VisitedFooter extends StatelessWidget {
         // Checked out time
         Row(
           children: [
-            const Icon(Icons.check_circle_outline, size: 14, color: Color(0xFF15803D)),
+            const Icon(Icons.check_circle_outline, size: 14, color:  AppColors.stockHighText),
             6.horizontalSpace,
             Text(
               '${'checked_out_at'.tr()} $checkedOutAt',
               style: AppTextStyle.interMedium12.copyWith(
-                color: const Color(0xFF15803D),
+                color: AppColors.stockHighText,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
         // View summary
-        GestureDetector(
-          onTap: onViewSummary,
-          child: Row(
-            children: [
-              Text(
-                'view_summary'.tr(),
-                style: AppTextStyle.interMedium12.copyWith(
-                  color: AppColors.secondPrimary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              4.horizontalSpace,
-              const Icon(Icons.chevron_right, size: 14, color: AppColors.secondPrimary),
-            ],
-          ),
-        ),
+        // GestureDetector(
+        //   onTap: onViewSummary,
+        //   child: Row(
+        //     children: [
+        //       Text(
+        //         'view_summary'.tr(),
+        //         style: AppTextStyle.interMedium12.copyWith(
+        //           color: AppColors.secondPrimary,
+        //           fontWeight: FontWeight.w500,
+        //         ),
+        //       ),
+        //       4.horizontalSpace,
+        //       const Icon(Icons.chevron_right, size: 14, color: AppColors.secondPrimary),
+        //     ],
+        //   ),
+        // ),
+   
+
       ],
     );
   }

@@ -1,5 +1,5 @@
 
-enum StockLevel { high, medium, low }
+// enum StockLevel { high, medium, low }
 
 class StockItem {
   const StockItem({
@@ -14,7 +14,7 @@ class StockItem {
   final String     name;
   final String     sku;
   final String     stockLabel;   // e.g. "45 cases"
-  final StockLevel stockLevel;
+  final String stockLevel;
   final String     price;        // e.g. "$12.50"
   final String     imageUrl;
 }

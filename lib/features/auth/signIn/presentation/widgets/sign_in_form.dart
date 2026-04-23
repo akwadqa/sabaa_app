@@ -32,7 +32,7 @@ class _SignInFormState extends ConsumerState<SignInForm> {
         debugPrint("Success check");
         if (next.value!.signinResponseModel!.user.isEnabled) {
           context.push(
-            AppRoutes.homeScreen,
+            AppRoutes.mainScreen,
           );
         }
       } else if (next is AsyncError) {

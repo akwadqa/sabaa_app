@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_summary.dart';
+import 'package:sabaa/features/van_stock/presentation/controller/van_stock_controller.dart';
+import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
@@ -13,14 +16,15 @@ import '../widgets/stock_item_card.dart';
 import '../widgets/filter_search_bar.dart';
 import '../widgets/stock_summary_row.dart';
 
-class VanStockPage extends StatefulWidget {
+class VanStockPage extends ConsumerStatefulWidget {
   const VanStockPage({super.key});
 
   @override
-  State<VanStockPage> createState() => _VanStockPageState();
+  ConsumerState<VanStockPage> createState() => _VanStockPageState();
 }
 
-class _VanStockPageState extends State<VanStockPage> {
+class _VanStockPageState extends ConsumerState<VanStockPage> {
+  
   final TextEditingController _searchController = TextEditingController();
   int _selectedCategoryIndex = 0;
 
@@ -43,49 +47,7 @@ class _VanStockPageState extends State<VanStockPage> {
     StockCategory(labelKey: 'category_household'),
   ];
 
-  static const List<StockItem> _items = [
-    StockItem(
-      name: 'Coca-Cola 330ml Can',
-      sku: 'CC-330-CAN',
-      stockLabel: '45 cases',
-      stockLevel: StockLevel.high,
-      price: r'$12.50',
-      imageUrl: 'https://placehold.co/64x64',
-    ),
-    StockItem(
-      name: 'Lays Classic Salted 50g',
-      sku: 'LAYS-CS-50',
-      stockLabel: '22 boxes',
-      stockLevel: StockLevel.medium,
-      price: r'$24.00',
-      imageUrl: 'https://placehold.co/64x64',
-    ),
-    StockItem(
-      name: 'Fresh Orange Juice 1L',
-      sku: 'FOJ-1L-BOT',
-      stockLabel: '3 units',
-      stockLevel: StockLevel.low,
-      price: r'$4.50',
-      imageUrl: 'https://placehold.co/64x64',
-    ),
-    StockItem(
-      name: 'Dairy Milk Silk 60g',
-      sku: 'CAD-DM-60',
-      stockLabel: '120 units',
-      stockLevel: StockLevel.high,
-      price: r'$1.20',
-      imageUrl: 'https://placehold.co/64x64',
-    ),
-    StockItem(
-      name: 'Aquafina Water 500ml',
-      sku: 'AQU-500-PET',
-      stockLabel: '200 cases',
-      stockLevel: StockLevel.high,
-      price: r'$8.00',
-      imageUrl: 'https://placehold.co/64x64',
-    ),
-  ];
-
+  
   // ── Lifecycle ──────────────────────────────────────────────────────────────
 
   @override
@@ -98,48 +60,99 @@ class _VanStockPageState extends State<VanStockPage> {
 
   @override
   Widget build(BuildContext context) {
+    final stockAsync = ref.watch(vanStockControllerProvider);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          spacing: 18,
-          children: [
-            _buildAppBar(),
-            // 16.verticalSpace,
-            FilterSearchBar(
-              hint: 'search_items',
-              controller: _searchController,
-              onChanged: (_) => setState(() {}),
-            ),
-            // 16.verticalSpace,
-            StockSummaryRow(summary: _summary),
-            // 16.verticalSpace,
-            StockCategoryFilter(
-              categories: _categories,
-              selectedIndex: _selectedCategoryIndex,
-              onSelected: (i) => setState(() => _selectedCategoryIndex = i),
-            ),
-            // 16.verticalSpace,
-            Expanded(
-              child: ListView(
-                // padding: const EdgeInsets.symmetric(horizontal: 20),
-                children: [
-                  ..._items.map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: StockItemCard(item: item),
-                    ),
+        child:stockAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text(e.toString())),
+          data: (data) {
+            // ── Summary ─────────────────────────────
+            final summary = StockSummary(
+              totalSkuKey: 'total_sku',
+              totalSkuValue:
+                  data.statistics.totalStockItems.toString(),
+              lowStockKey: 'low_stock',
+              lowStockValue:
+                  data.statistics.lowStockItems.toString(),
+              valueKey: 'stock_value',
+              valueAmount:
+                  data.statistics.totalStockValue.toStringAsFixed(2),
+            );
+
+            // ── Items ───────────────────────────────
+            final items = data.products.map((p) {
+              return StockItem(
+                name: p.productName,
+                sku: p.itemCode,
+                stockLabel: '${p.availableStock}',
+                stockLevel: p.stockLevel,
+                price: p.price.toString(),
+                imageUrl:
+                    p.productImage ?? 'https://placehold.co/64x64',
+              );
+            }).toList();
+
+            // ── Search Filter ───────────────────────
+            final filteredItems = items.where((item) {
+              final query = _searchController.text.toLowerCase();
+              return item.name.toLowerCase().contains(query);
+            }).toList();
+
+            return Column(
+              spacing: 18,
+              children: [
+                _buildAppBar(),
+
+                FilterSearchBar(
+                  hint: 'search_items',
+                  controller: _searchController,
+                  onChanged: (_) => setState(() {}),
+                ),
+
+                StockSummaryRow(summary: summary),
+
+                StockCategoryFilter(
+                  categories: _categories,
+                  selectedIndex: _selectedCategoryIndex,
+                  onSelected: (i) =>
+                      setState(() => _selectedCategoryIndex = i),
+                ),
+
+              Expanded(
+                child: AppPaginationWidget(
+                  enablePullDown: true,
+                
+                  onRefresh: () => ref
+                      .read(vanStockControllerProvider.notifier)
+                      .refresh(),
+                
+                  onLoading: (page) => ref
+                      .read(vanStockControllerProvider.notifier)
+                      .loadNextPage(),
+                
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      ...filteredItems.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: StockItemCard(item: item),
+                        ),
+                      ),
+                      8.verticalSpace,
+                    ],
                   ),
-                  8.verticalSpace,
-                ],
+                ),
               ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
   }
-
   // ── App bar ────────────────────────────────────────────────────────────────
 
   Widget _buildAppBar() {

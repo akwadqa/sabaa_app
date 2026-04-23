@@ -25,4 +25,9 @@ class HomeRepository {
 
     throw AppException(message: response.message);
   }
+    Future<ApiResponse<bool>> startTrip({required String tripId}) async {
+    final response = await _datasource.startTrip(tripId: tripId);
+    if (response.hasSucceeded) return response;
+    throw AppException(message: response.message);
+  }
 }

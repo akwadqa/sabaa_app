@@ -57,7 +57,7 @@
     "total_sales": "إجمالي المبيعات",
     "new_payment": "دفعة جديدة",
     "sales_return": "مرتجع مبيعات",
-    "my_routes": "مساراتي",
+    "my_trips": "مساراتي",
     "search_customer": "البحث عن عميل..",
     "todays_stops": "محطات اليوم",
     "stop_in_progress": "جارٍ",
@@ -88,6 +88,9 @@
     "net_refund": "صافي الاسترداد",
     "finalize_invoice": "إتمام الفاتورة",
     "count": "العدد",
-    "total": "الإجمالي"
+    "total": "الإجمالي",
+    "trip_started_successfully": "تم بدء الرحلة بنجاح",
+    "completed_visits": "الزيارات المكتملة",
+    "trip_in_progress": "الرحلة قيد التنفيذ"
 
 }

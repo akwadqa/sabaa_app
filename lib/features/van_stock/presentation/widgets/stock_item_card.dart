@@ -13,8 +13,8 @@ class StockItemCard extends StatelessWidget {
   final StockItem item;
 
   Color get _stockValueColor =>
-      item.stockLevel == StockLevel.low ? AppColors.red : AppColors.textPrimary;
-  Color get _lowStockBorderColor => item.stockLevel == StockLevel.low
+      item.stockLevel == "Low" ? AppColors.red : AppColors.textPrimary;
+  Color get _lowStockBorderColor => item.stockLevel == "Low"
       ? AppColors.lightRed
       : AppColors.navBorder;
 
@@ -30,7 +30,7 @@ class StockItemCard extends StatelessWidget {
         border: Border(
           left: BorderSide(
               color: _lowStockBorderColor,
-              width: item.stockLevel == StockLevel.low ? 6 : 1),
+              width: item.stockLevel == "Low" ? 6 : 1),
         ),
         boxShadow: const [
           BoxShadow(
