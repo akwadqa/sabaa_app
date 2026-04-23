@@ -11,16 +11,15 @@ import 'features/app/myApp.dart';
 Future<void> main() async {
   await AppInitializer.init();
 
-
-
   final container = await initializeProviders();
-  await handleSplashScreen(container); 
+  await handleSplashScreen(container);
 
   runApp(
     DevicePreview(
-        enabled: !kReleaseMode,
+        // enabled: !kReleaseMode,
+        enabled: false,
         builder: (context) {
-          return UncontrolledProviderScope( 
+          return UncontrolledProviderScope(
             container: container,
             child: EasyLocalization(
               supportedLocales: const [Locale('en'), Locale('ar')],
@@ -28,7 +27,6 @@ Future<void> main() async {
               child: const MyApp(),
             ),
           );
-
         }),
   );
 }

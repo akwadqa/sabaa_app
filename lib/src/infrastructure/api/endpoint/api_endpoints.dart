@@ -4,6 +4,14 @@ class ApiEndPoints {
   //? --- Home ---
   static const String homeDashboard = '$domain.dashboard.get_dashboard';
 
+  //? --- Customers ---
+  static const String createCustomer = '$domain.customer.create_customer';
+  static const String getCustomers = '$domain.customer.get_customers';
+  static const String searchCustomers = '$domain.customer.search_customers';
+
+  //? --- Orders ---
+  static const String orderSummary = '$domain.orders.get_order_summary';
+
 
 
   //? --- AUTH ---

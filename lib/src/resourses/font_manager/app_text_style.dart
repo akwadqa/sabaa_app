@@ -199,4 +199,106 @@ class AppTextStyle {
     fontWeight: FontWeight.w700,
     fontSize: 18,
   );
+
+  //**************** Rubik ******* */
+
+  //? Rubik semi bold :
+  static TextStyle rubikSemiBold20 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w600,
+    fontSize: 20,
+  );
+  static TextStyle rubikSemiBold18 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w600,
+    fontSize: 18,
+  );
+  static TextStyle rubikSemiBold16 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+  );
+  static TextStyle rubikSemiBold14 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+  );
+  static TextStyle rubikSemiBold12 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+  );
+
+  //? Rubik medium :
+  static TextStyle rubikMedium20 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+  );
+  static TextStyle rubikMedium18 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w500,
+    fontSize: 18,
+  );
+  static TextStyle rubikMedium16 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  );
+  static TextStyle rubikMedium14 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+  );
+  static TextStyle rubikMedium12 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w500,
+    fontSize: 12,
+  );
+
+  //? Rubik regular :
+  static TextStyle rubikRegular20 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w400,
+    fontSize: 20,
+  );
+  static TextStyle rubikRegular18 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+  );
+  static TextStyle rubikRegular16 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+  );
+  static TextStyle rubikRegular14 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+  );
+  static TextStyle rubikRegular12 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+  );
+
+  //? Rubik Bold :
+  static TextStyle rubikBold10 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 10,
+  );
+  static TextStyle rubikBold12 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+  );
+  static TextStyle rubikBold14 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+  );
+  static TextStyle rubikBold16 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+  );
+  static TextStyle rubikBold18 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+  );
+  static TextStyle rubikBold20 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 20,
+  );
+  static TextStyle rubikBold22 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 22,
+  );
+  static TextStyle rubikBold25 = GoogleFonts.rubik(
+    fontWeight: FontWeight.w700,
+    fontSize: 25,
+  );
 }

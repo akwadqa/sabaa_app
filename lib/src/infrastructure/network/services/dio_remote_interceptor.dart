@@ -25,10 +25,10 @@ class RemoteInterceptor extends Interceptor {
     final token = await ref.read(localStorageServiceProvider).getToken();
     final language = ref.read(currentLanguageProvider);
 
-    // options.headers['Authorization'] = "token 13f237c84355ded:99a131094d2127e";
+    options.headers['Authorization'] = "token 1b4d27d272d2f51:396e23a1f4bf8b9";
 
     if (token != null) {
-      options.headers['Authorization'] = "token $token";
+      // options.headers['Authorization'] = "token $token";
     }
 
     options.headers['Accept-Language'] = language;
@@ -65,14 +65,13 @@ class RemoteInterceptor extends Interceptor {
 
     // ✅ تحقق من إذا كان Unauthorized
 
-    final isUnauthorized =
-        (statusCode == 401 
+    final isUnauthorized = (statusCode == 401
         // &&
         //     (responseData['message']?.toString().toLowerCase().contains(
         //           "otp",
         //         )) ==
         //         false
-                ) ||
+        ) ||
         (responseData['exc_type']?.toString().contains('PermissionError')) ==
             true;
 
@@ -164,8 +163,7 @@ class RemoteInterceptor extends Interceptor {
     if (data is Map && data['message'] != null) {
       message = data['message'].toString();
     } else {
-      message =
-          _getDefaultMessageForStatusCode(statusCode) ??
+      message = _getDefaultMessageForStatusCode(statusCode) ??
           err.message ??
           'Unexpected error occurred';
     }

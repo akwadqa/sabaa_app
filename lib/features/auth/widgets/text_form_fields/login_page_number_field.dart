@@ -18,7 +18,7 @@ class LoginPageNumberField extends ConsumerStatefulWidget {
     required this.onChange,
   });
 
-  final TextEditingController fullPhoneController;
+  final TextEditingController? fullPhoneController;
   final void Function(PhoneNumber?)? onChange;
 
   // final GlobalKey<FormState> formKey;
@@ -45,7 +45,7 @@ class _LoginPageNumberFieldState extends ConsumerState<LoginPageNumberField> {
   void _updateFullPhone(String countryCode) {
     final number = _nationalController.text;
     final full = '$countryCode$number';
-    widget.fullPhoneController.value = TextEditingValue(
+    widget.fullPhoneController?.value = TextEditingValue(
       text: full.replaceAll('+', ''),
       selection: TextSelection.collapsed(offset: full.length),
     );

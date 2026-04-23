@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 import 'fade_circle_loading_indicator.dart';
 
@@ -69,7 +70,9 @@ class _AppPaginationWidgetState extends State<AppPaginationWidget> {
               height: 55.0,
               child: Center(
                 child: mode == LoadStatus.loading
-                    ? const FadeCircleLoadingIndicator()
+                    ? const FadeCircleLoadingIndicator(
+                        color: AppColors.primary,
+                      )
                     : const SizedBox.shrink(),
               ),
             );

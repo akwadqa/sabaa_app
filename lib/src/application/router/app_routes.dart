@@ -10,5 +10,8 @@ abstract class AppRoutes {
   static const String mainScreen = '/main';
   static const String customerDetailsScreen = '/customer_details';
   static const String newOrderScreen = '/new_order';
+  static const String addCustomerScreen = '/add_customer';
+  static const String createCustomerSuccessScreen = '/create_customer_success';
+  static const String orderSummaryScreen = '/order_summary';
 
 }
