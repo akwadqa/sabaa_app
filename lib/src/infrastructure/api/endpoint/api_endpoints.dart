@@ -17,6 +17,8 @@ class ApiEndPoints {
   static const String startTrip = '$domain.trip.start_trip';
 
   //? --- Settings ---
+  static const String createInvoice = '$domain.orders.create_invoice';
+  //? --- Settings ---
   static const String deleteAccountApi = '$domain.profile.delete_user_profile';
   static const String logoutApi = '$domain.auth.logout';
   static const String appNotification = 'sabaa.api.api.get_notification_logs';

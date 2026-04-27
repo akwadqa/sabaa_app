@@ -67,14 +67,14 @@ class RouteStopStatusBadge extends StatelessWidget {
       case RouteStopStatus.failed:
         return const _BadgeConfig(
           labelKey:   'failed',
-          background: Color(0xFFF0FDF4),
+          background: AppColors.lightPeach,
           textColor:  AppColors.red,
         );
       case RouteStopStatus.skipped:
         return const _BadgeConfig(
           labelKey:   'skipped',
-          background: Color(0xFFF0FDF4),
-          textColor:  AppColors.avatarOrangeText,
+          background: AppColors.accent,
+          textColor:  AppColors.white,
         );
     }
   }

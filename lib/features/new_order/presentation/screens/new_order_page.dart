@@ -1,102 +1,47 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
-import 'package:sabaa/features/new_order/domain/model/order_item_quantity.dart';
 import 'package:sabaa/features/new_order/presentation/controller/order_mode_controller.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/new_order_section_header_widget.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_category_filter.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_item_card.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_search_bar.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/order_tab_switcher.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/return_summary_panel.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
+import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
+import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
+import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
-class NewOrderPage extends ConsumerStatefulWidget {
-  const NewOrderPage({super.key, required this.customerName});
+import '../controller/new_order_controller.dart';
+import '../controller/new_order_state.dart';
 
-  final String customerName;
+class NewOrderPage extends ConsumerStatefulWidget {
+  const NewOrderPage({super.key, required this.customer});
+
+  final Customer customer;
 
   @override
   ConsumerState<NewOrderPage> createState() => _NewOrderPageState();
 }
 
 class _NewOrderPageState extends ConsumerState<NewOrderPage> {
-  // ── Local UI state (not mode — that lives in Riverpod) ────────────────────
-  int _categoryIndex = 0;
+  Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
 
-  // ── Static data (replace with BLoC / provider) ────────────────────────────
-
-  static const List<String> _categoryKeys = [
-    'category_all',
-    'category_beverages',
-    'category_snacks',
-    'category_dairy',
-  ];
-
-  static const List<OrderItem> _saleItems = [
-    OrderItem(id: 'i1', name: 'Crunchy Biscuit Classic',    sku: 'BS-1033',  price: '48 QAR / Box',    isReturn: false),
-    OrderItem(id: 'i2', name: 'Mango Juice 200ml – Carton', sku: 'JC-3320',  price: '52 QAR / Carton', isReturn: false),
-    OrderItem(id: 'i3', name: 'Fresh Whole Milk 1L',        sku: 'MK-2100',  price: '65 QAR / Carton', isReturn: false),
-    OrderItem(id: 'i4', name: 'Crunchy Biscuit Classic',    sku: 'BS-1033',  price: '48 QAR / Box',    isReturn: false),
-    OrderItem(id: 'i5', name: 'Golden Crunch Biscuit',      sku: 'JC-3320',  price: '52 QAR / Carton', isReturn: false),
-  ];
-
-  static const List<OrderItem> _returnItems = [
-    OrderItem(id: 'r1', name: 'Chocolate Wafer',    sku: 'CW-7788', price: '-40 QAR / Box', isReturn: true),
-    OrderItem(id: 'r2', name: 'Almon Almond Lemon', sku: 'AL-8821', price: '-35 QAR / Bag', isReturn: true),
-  ];
-
-  // ── Quantity maps ──────────────────────────────────────────────────────────
-
-  final Map<String, OrderItemQuantity> _saleQty = {
-    for (final i in _saleItems) i.id: OrderItemQuantity(),
-  };
-
-  final Map<String, OrderItemQuantity> _returnQty = {
-    for (final i in _returnItems) i.id: OrderItemQuantity(),
-  };
-
-  // ── Helpers ────────────────────────────────────────────────────────────────
-
-  bool get _isReturn =>
-      ref.watch(orderModeControllerProvider) == OrderMode.returnItems;
-
-  List<OrderItem> get _activeItems => _isReturn ? _returnItems : _saleItems;
-
-  Map<String, OrderItemQuantity> get _activeQty =>
-      _isReturn ? _returnQty : _saleQty;
-
-  int _itemCount(String id) => _activeQty[id]?.quantity ?? 0;
-
-  void _increment(String id) =>
-      setState(() => _activeQty[id]!.quantity++);
-
-  void _decrement(String id) {
-    if ((_activeQty[id]?.quantity ?? 0) > 0) {
-      setState(() => _activeQty[id]!.quantity--);
-    }
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      ref.read(newOrderControllerProvider.notifier).search(query);
+    });
   }
-
-  void _delete(String id) =>
-      setState(() => _activeQty[id]!.quantity = 0);
-
-  String get _netRefund {
-    double total = 0;
-    for (final item in _returnItems) {
-      final qty = _returnQty[item.id]?.quantity ?? 0;
-      final raw = item.price.replaceAll('-', '').trim().split(' ').first;
-      total += (double.tryParse(raw) ?? 0) * qty;
-    }
-    return '${total.toStringAsFixed(0)} QAR';
-  }
-
-  int get _totalItemCount => _activeItems.fold(
-        0,
-        (sum, i) => sum + (_activeQty[i.id]?.quantity ?? 0),
-      );
 
   @override
   void dispose() {
@@ -111,89 +56,73 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
   @override
   Widget build(BuildContext context) {
     // Watch mode so AppBar + body react to tab changes
-    final isReturn = ref.watch(orderModeControllerProvider) == OrderMode.returnItems;
-
+    final isReturn =
+        ref.watch(orderModeControllerProvider) == OrderMode.returnItems;
+    final asyncProducts = ref.watch(newOrderControllerProvider);
+    final controller = ref.read(newOrderControllerProvider.notifier);
+    final hasItems = asyncProducts.maybeWhen(
+      data: (s) => s.hasSelection,
+      orElse: () => false,
+    );
     return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: _buildAppBar(isReturn),
-      body: Column(
-        children: [
-          // ── Scrollable content ────────────────────────────────────
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                16.verticalSpace,
-                const OrderTabSwitcher(),   // ← reads provider internally
-                16.verticalSpace,
-                OrderSearchBar(
-                  controller: _searchController,
-                  hintKey: isReturn ? 'search_items' : 'search_items_barcode',
-                  onChanged: (_) => setState(() {}),
-                ),
-                16.verticalSpace,
-
-                // Category filter — New Sale tab only
-                if (!isReturn) ...[
-                  OrderCategoryFilter(
-                    categories:    _categoryKeys,
-                    selectedIndex: _categoryIndex,
-                    onSelected:    (i) => setState(() => _categoryIndex = i),
-                  ),
-                  16.verticalSpace,
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(isReturn),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+            child: CustomButtonWidget(
+              text: "",
+              onTap: hasItems
+                  ? () {
+                      ref
+                          .read(newOrderControllerProvider.notifier)
+                          .addCustomer(widget.customer);
+                      context.push(AppRoutes.invoiceSummaryPage);
+                    }
+                  : null,
+              isFiled: true,
+              height: 48,
+              width: double.infinity,
+              backgroundColor: hasItems ? AppColors.primary : AppColors.gray,
+              radius: 8,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 10,
+                children: [
+                  Icon(Icons.check_circle_outline,
+                      color: AppColors.white, size: 25),
+                  // Text('add_to_order'.tr()),
+                  Text('add_to_order'.tr(),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: 16,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500))
                 ],
-
-                // Section header
-                _SectionHeader(
-                  titleKey: isReturn ? 'returns_list' : 'invoice_items',
-                  count:    _totalItemCount,
-                  isReturn: isReturn,
-                ),
-                14.verticalSpace,
-
-                // Item list
-                ..._activeItems.map(
-                  (item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: OrderItemCard(
-                      item:        item,
-                      quantity:    _itemCount(item.id),
-                      onDecrement: () => _decrement(item.id),
-                      onIncrement: () => _increment(item.id),
-                      onDelete:    () => _delete(item.id),
-                    ),
-                  ),
-                ),
-                16.verticalSpace,
-              ],
+              ),
             ),
           ),
-
-          // ── Bottom summary panel — Return tab only ────────────────
-          if (isReturn)
-            ReturnSummaryPanel(
-              items:      _returnItems,
-              quantities: _returnQty,
-              netRefund:  _netRefund,
-              onFinalize: () {
-                // TODO: submit return invoice
-              },
-            ),
-        ],
-      ),
-    );
+        ),
+        body: asyncProducts.when(
+            loading: () => const Center(child: AppLoader()),
+            error: (e, _) => AppErrorWidget(),
+            data: (state) => _OrderBody(
+                  state: state,
+                  searchController: _searchController,
+                  onSearchChanged: _onSearchChanged,
+                )));
   }
 
   // ── AppBar ─────────────────────────────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar(bool isReturn) {
     return AppBar(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.background,
       elevation: 0,
       centerTitle: true,
       leading: GestureDetector(
         onTap: () => Navigator.of(context).pop(),
-        child: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+        child: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary),
       ),
       title: Column(
         children: [
@@ -202,9 +131,9 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
             style: AppTextStyle.interBold20.copyWith(color: AppColors.dark),
           ),
           Text(
-            widget.customerName,
+            widget.customer.name,
             style: AppTextStyle.interRegular12.copyWith(
-              color: const Color(0xFF617589),
+              color: AppColors.blueGrey,
             ),
           ),
         ],
@@ -216,7 +145,7 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: isReturn ? AppColors.primary : const Color(0xFFF3F4F6),
+            color: isReturn ? AppColors.primary : AppColors.chevronBg,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -234,55 +163,101 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
   }
 }
 
-// ── Section header ────────────────────────────────────────────────────────────
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.titleKey,
-    required this.count,
-    required this.isReturn,
+class _OrderBody extends ConsumerWidget {
+  const _OrderBody({
+    required this.state,
+    required this.searchController,
+    required this.onSearchChanged,
   });
 
-  final String titleKey;
-  final int    count;
-  final bool   isReturn;
+  final NewOrderState state;
+  final TextEditingController searchController;
+  final ValueChanged<String> onSearchChanged;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          titleKey.tr(),
-          style: AppTextStyle.interBold18.copyWith(
-            color: AppColors.textHeading,
-            letterSpacing: -0.27,
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+      child: Column(
+        spacing: 18,
+        children: [
+          16.verticalSpace,
+          // const OrderTabSwitcher(),
+          OrderSearchBar(
+            controller: searchController,
+            hintKey: 'search_items_barcode',
+            onChanged: onSearchChanged,
           ),
-        ),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
-          child: Container(
-            key: ValueKey(isReturn),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: isReturn
-                  ? const Color(0xFFFEECDF)
-                  : AppColors.dateBadge,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$count ${'items_label'.tr()}',
-              style: AppTextStyle.interSemiBold14.copyWith(
-                fontSize: 12,
-                color: isReturn ? AppColors.accent : AppColors.primary,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.6,
+
+          OrderCategoryFilter(
+            categories: state.categories.isNotEmpty
+                ? state.categories.map((e) => e.name).toList()
+                : ['All'],
+            selectedIndex: state.selectedCategoryIndex,
+            onSelected: (i) =>
+                ref.read(newOrderControllerProvider.notifier).selectCategory(i),
+          ),
+          NewOrderSectionHeaderWidget(
+            titleKey: 'items',
+            count: state.allItems.length,
+            isReturn: false,
+          ),
+          Expanded(
+            child: AppPaginationWidget(
+              enablePullDown: true,
+              onRefresh: () =>
+                  ref.read(newOrderControllerProvider.notifier).refresh(),
+              onLoading: (_) =>
+                  ref.read(newOrderControllerProvider.notifier).loadNextPage(),
+              child: ListView(
+                children: [
+                  if (state.listState is AsyncLoading)
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: LinearProgressIndicator(
+                        color: AppColors.primary,
+                        backgroundColor: AppColors.white,
+                      ),
+                    ),
+                  ...state.filteredItems.map((item) {
+                    final isSelected =
+                        state.selectedItems.containsKey(item.itemCode);
+
+                    final selected = state.selectedItems[item.itemCode];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: GestureDetector(
+                        onTap: () => ref
+                            .read(newOrderControllerProvider.notifier)
+                            .toggleItem(item),
+                        child: OrderItemCard(
+                          item: item,
+                          quantity: selected?.quantity ?? 0,
+                          selectedUnit: selected?.unit ?? "Box",
+                          isSelected: isSelected,
+                          onIncrement: () => ref
+                              .read(newOrderControllerProvider.notifier)
+                              .increment(item),
+                          onDecrement: () => ref
+                              .read(newOrderControllerProvider.notifier)
+                              .decrement(item.itemCode),
+                          onDelete: () => ref
+                              .read(newOrderControllerProvider.notifier)
+                              .toggleItem(item),
+                          onUnitChanged: (unit) => ref
+                              .read(newOrderControllerProvider.notifier)
+                              .updateUnit(item.itemCode, unit),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

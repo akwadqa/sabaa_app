@@ -53,6 +53,7 @@ dependencies:
   queen_validators: ^1.0.1
   image_picker: ^1.2.1
   toastification: ^3.2.0
+  slider_button: ^3.1.0
 
 
 

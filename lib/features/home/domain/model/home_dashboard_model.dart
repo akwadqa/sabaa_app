@@ -10,7 +10,7 @@ abstract class HomeDashboardModel with _$HomeDashboardModel {
   const factory HomeDashboardModel({
     required DateModel date,
     required DailyPerformanceModel dailyPerformance,
-    required HomeTripModel trip,
+    required HomeTripModel? trip,
   }) = _HomeDashboardModel;
 
   factory HomeDashboardModel.fromJson(Map<String, dynamic> json) =>

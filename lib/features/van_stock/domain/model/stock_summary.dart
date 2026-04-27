@@ -7,6 +7,13 @@ class StockSummary {
     required this.valueKey,
     required this.valueAmount,
   });
+  const StockSummary.empty()
+      : totalSkuKey   = 'total_sku',
+        totalSkuValue = '0',
+        lowStockKey   = 'low_stock',
+        lowStockValue = '0',
+        valueKey      = 'stock_value',
+        valueAmount   = '0';
 
   final String totalSkuKey;    // translation key
   final String totalSkuValue;  // "145"

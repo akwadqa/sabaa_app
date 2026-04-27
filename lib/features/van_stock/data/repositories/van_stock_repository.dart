@@ -18,8 +18,8 @@ class VanStockRepository {
 
   VanStockRepository(this._datasource);
 
-  Future<ApiResponse<VanStockModel>> getVanStock({required int page}) async {
-    final response = await _datasource.getVanStock(page);
+  Future<ApiResponse<VanStockModel>> getVanStock({required int page,String? search,String?category}) async {
+    final response = await _datasource.getVanStock(page: page,search: search,category: category);
 
     if (response.hasSucceeded) return response;
 

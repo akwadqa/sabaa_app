@@ -14,9 +14,10 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$VanStockModel {
-  String get warehouse;
+  String? get warehouse;
   StockStatistics get statistics;
   List<ProductModel> get products;
+  List<StockCategoryModel> get categories;
 
   /// Create a copy of VanStockModel
   /// with the given fields replaced by the non-null parameter values.
@@ -38,17 +39,23 @@ mixin _$VanStockModel {
                 other.warehouse == warehouse) &&
             (identical(other.statistics, statistics) ||
                 other.statistics == statistics) &&
-            const DeepCollectionEquality().equals(other.products, products));
+            const DeepCollectionEquality().equals(other.products, products) &&
+            const DeepCollectionEquality()
+                .equals(other.categories, categories));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, warehouse, statistics,
-      const DeepCollectionEquality().hash(products));
+  int get hashCode => Object.hash(
+      runtimeType,
+      warehouse,
+      statistics,
+      const DeepCollectionEquality().hash(products),
+      const DeepCollectionEquality().hash(categories));
 
   @override
   String toString() {
-    return 'VanStockModel(warehouse: $warehouse, statistics: $statistics, products: $products)';
+    return 'VanStockModel(warehouse: $warehouse, statistics: $statistics, products: $products, categories: $categories)';
   }
 }
 
@@ -59,9 +66,10 @@ abstract mixin class $VanStockModelCopyWith<$Res> {
       _$VanStockModelCopyWithImpl;
   @useResult
   $Res call(
-      {String warehouse,
+      {String? warehouse,
       StockStatistics statistics,
-      List<ProductModel> products});
+      List<ProductModel> products,
+      List<StockCategoryModel> categories});
 
   $StockStatisticsCopyWith<$Res> get statistics;
 }
@@ -79,15 +87,16 @@ class _$VanStockModelCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? statistics = null,
     Object? products = null,
+    Object? categories = null,
   }) {
     return _then(_self.copyWith(
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       statistics: null == statistics
           ? _self.statistics
           : statistics // ignore: cast_nullable_to_non_nullable
@@ -96,6 +105,10 @@ class _$VanStockModelCopyWithImpl<$Res>
           ? _self.products
           : products // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>,
+      categories: null == categories
+          ? _self.categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<StockCategoryModel>,
     ));
   }
 
@@ -203,15 +216,16 @@ extension VanStockModelPatterns on VanStockModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String warehouse, StockStatistics statistics,
-            List<ProductModel> products)?
+    TResult Function(String? warehouse, StockStatistics statistics,
+            List<ProductModel> products, List<StockCategoryModel> categories)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _VanStockModel() when $default != null:
-        return $default(_that.warehouse, _that.statistics, _that.products);
+        return $default(_that.warehouse, _that.statistics, _that.products,
+            _that.categories);
       case _:
         return orElse();
     }
@@ -232,14 +246,15 @@ extension VanStockModelPatterns on VanStockModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String warehouse, StockStatistics statistics,
-            List<ProductModel> products)
+    TResult Function(String? warehouse, StockStatistics statistics,
+            List<ProductModel> products, List<StockCategoryModel> categories)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _VanStockModel():
-        return $default(_that.warehouse, _that.statistics, _that.products);
+        return $default(_that.warehouse, _that.statistics, _that.products,
+            _that.categories);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -259,14 +274,15 @@ extension VanStockModelPatterns on VanStockModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String warehouse, StockStatistics statistics,
-            List<ProductModel> products)?
+    TResult? Function(String? warehouse, StockStatistics statistics,
+            List<ProductModel> products, List<StockCategoryModel> categories)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _VanStockModel() when $default != null:
-        return $default(_that.warehouse, _that.statistics, _that.products);
+        return $default(_that.warehouse, _that.statistics, _that.products,
+            _that.categories);
       case _:
         return null;
     }
@@ -279,13 +295,15 @@ class _VanStockModel implements VanStockModel {
   const _VanStockModel(
       {required this.warehouse,
       required this.statistics,
-      required final List<ProductModel> products})
-      : _products = products;
+      required final List<ProductModel> products,
+      required final List<StockCategoryModel> categories})
+      : _products = products,
+        _categories = categories;
   factory _VanStockModel.fromJson(Map<String, dynamic> json) =>
       _$VanStockModelFromJson(json);
 
   @override
-  final String warehouse;
+  final String? warehouse;
   @override
   final StockStatistics statistics;
   final List<ProductModel> _products;
@@ -294,6 +312,14 @@ class _VanStockModel implements VanStockModel {
     if (_products is EqualUnmodifiableListView) return _products;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_products);
+  }
+
+  final List<StockCategoryModel> _categories;
+  @override
+  List<StockCategoryModel> get categories {
+    if (_categories is EqualUnmodifiableListView) return _categories;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_categories);
   }
 
   /// Create a copy of VanStockModel
@@ -320,17 +346,23 @@ class _VanStockModel implements VanStockModel {
                 other.warehouse == warehouse) &&
             (identical(other.statistics, statistics) ||
                 other.statistics == statistics) &&
-            const DeepCollectionEquality().equals(other._products, _products));
+            const DeepCollectionEquality().equals(other._products, _products) &&
+            const DeepCollectionEquality()
+                .equals(other._categories, _categories));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, warehouse, statistics,
-      const DeepCollectionEquality().hash(_products));
+  int get hashCode => Object.hash(
+      runtimeType,
+      warehouse,
+      statistics,
+      const DeepCollectionEquality().hash(_products),
+      const DeepCollectionEquality().hash(_categories));
 
   @override
   String toString() {
-    return 'VanStockModel(warehouse: $warehouse, statistics: $statistics, products: $products)';
+    return 'VanStockModel(warehouse: $warehouse, statistics: $statistics, products: $products, categories: $categories)';
   }
 }
 
@@ -343,9 +375,10 @@ abstract mixin class _$VanStockModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String warehouse,
+      {String? warehouse,
       StockStatistics statistics,
-      List<ProductModel> products});
+      List<ProductModel> products,
+      List<StockCategoryModel> categories});
 
   @override
   $StockStatisticsCopyWith<$Res> get statistics;
@@ -364,15 +397,16 @@ class __$VanStockModelCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? statistics = null,
     Object? products = null,
+    Object? categories = null,
   }) {
     return _then(_VanStockModel(
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       statistics: null == statistics
           ? _self.statistics
           : statistics // ignore: cast_nullable_to_non_nullable
@@ -381,6 +415,10 @@ class __$VanStockModelCopyWithImpl<$Res>
           ? _self._products
           : products // ignore: cast_nullable_to_non_nullable
               as List<ProductModel>,
+      categories: null == categories
+          ? _self._categories
+          : categories // ignore: cast_nullable_to_non_nullable
+              as List<StockCategoryModel>,
     ));
   }
 

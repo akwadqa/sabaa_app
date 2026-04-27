@@ -84,22 +84,22 @@
 //         // ),
 //       ],
 
-      // quickActions: [
-      //   QuickAction(
-      //     label: 'begin_trip',
-      //     color: AppColors.primary,
-      //     icon: Icons.local_shipping_outlined,
-      //     onTap: () =>
-      //         ref.read(bottomNavIndexProvider.notifier).state = 1,
-      //   ),
-      //   QuickAction(
-      //     label: 'new_order',
-      //     color: AppColors.accent,
-      //     icon: Icons.shopping_cart_outlined,
-      //     onTap: () =>
-      //         ref.read(bottomNavIndexProvider.notifier).state = 2,
-      //   ),
-      // ],
+// quickActions: [
+//   QuickAction(
+//     label: 'begin_trip',
+//     color: AppColors.primary,
+//     icon: Icons.local_shipping_outlined,
+//     onTap: () =>
+//         ref.read(bottomNavIndexProvider.notifier).state = 1,
+//   ),
+//   QuickAction(
+//     label: 'new_order',
+//     color: AppColors.accent,
+//     icon: Icons.shopping_cart_outlined,
+//     onTap: () =>
+//         ref.read(bottomNavIndexProvider.notifier).state = 2,
+//   ),
+// ],
 //     );
 
 //     state = AsyncData(stateData);
@@ -119,7 +119,6 @@
 //     return errorState;
 //   }
 // }
-
 
 //   // Future<void> loadDashboard() async {
 //   //   try {
@@ -235,7 +234,6 @@ part 'home_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class HomeController extends _$HomeController {
-
   // ──────────────────────────────────────────────────────────────────────────
   // Build
   // ──────────────────────────────────────────────────────────────────────────
@@ -251,51 +249,78 @@ class HomeController extends _$HomeController {
 
   Future<HomeState> loadDashboard() async {
     try {
-      final repo    = ref.read(homeRepositoryProvider);
+      final repo = ref.read(homeRepositoryProvider);
       final userInf = ref.read(localStorageServiceProvider).userInfo;
       final response = await repo.getDashboard();
 
       final data = response.data!;
 
       // Derive tripStarted from the API status field
-      final tripStarted = data.trip.status.toLowerCase() == 'in progress';
+      final tripStarted = data.trip?.status.toLowerCase() == 'in progress';
+      final trip = data.trip;
 
+      final completed = trip?.completedVisits??0;
+      final total = trip?.totalVisitsPlanned??0;
+      final remaining = trip?.remainingVisits;
+
+// 🔥 always safe calculation (in case backend changes)
+      final percent = total == 0 ? 0 : ((completed / total) * 100).round();
       final stateData = HomeState(
-        userName:  userInf.fullName,
+        userName: userInf.fullName,
         todayDate: data.date.formattedDate,
-        trip:      data.trip,
+        trip: data.trip,
         tripStarted: tripStarted,
         pageState: const AsyncData(null),
         metrics: [
           PerformanceMetric(
-            label:  'total_sales',
-            value:     data.dailyPerformance.totalSales.toString(),
-            iconColor: AppColors.metricPurple,
-            icon:      Icons.inventory_2_outlined,
+            label: 'total_sales',
+            value: data.dailyPerformance.totalSales.toString(),
+            iconColor: AppColors.metricGreenIcon,
+            icon: Icons.trending_up_rounded,
           ),
           PerformanceMetric(
-            label:  'todays_visits',
-            value:     data.dailyPerformance.totalVisitsCompleted.toString(),
-            iconColor: AppColors.metricPink,
-            icon:      Icons.trending_up_rounded,
+            label: 'skip_visit',
+            value: '3',
+            icon: Icons.block_flipped,
+            iconColor: AppColors.metricOrangeIcon,
+            subtitle: "today_skips",
+          ),
+          PerformanceMetric(
+            label: 'todays_visits',
+            value: '$completed / $total',
+            icon: Icons.route_outlined,
+            iconColor: AppColors.metricPinkIcon,
+
+            /// 🔥 subtitle
+            subtitle: '$percent% complete',
+
+            /// optional color (green if high progress)
+            subtitleColor: percent >= 50
+                ? AppColors.metricGreenIcon
+                : AppColors.textSecondary,
+          ),
+          PerformanceMetric(
+            label: 'sales_volume',
+            value: data.dailyPerformance.totalSales.toString(),
+            icon: Icons.inventory_2_outlined,
+            iconColor: AppColors.metricPurpleIcon,
+            subtitle: 'mtd_total',
           ),
         ],
-            quickActions: [
-        QuickAction(
-          label: 'begin_trip',
-          color: AppColors.primary,
-          icon: Icons.local_shipping_outlined,
-          onTap: () =>
-              ref.read(bottomNavIndexProvider.notifier).state = 1,
-        ),
-        QuickAction(
-          label: 'new_order',
-          color: AppColors.accent,
-          icon: Icons.shopping_cart_outlined,
-          onTap: () =>
-              ref.read(bottomNavIndexProvider.notifier).state = 2,
-        ),
-      ],
+        quickActions: [
+          QuickAction(
+            label: 'begin_trip',
+            color: AppColors.primary,
+            icon: Icons.local_shipping_outlined,
+            onTap: () => ref.read(bottomNavIndexProvider.notifier).state = 1,
+          ),
+          QuickAction(
+            label: 'new_order',
+            color: AppColors.accent,
+            icon: Icons.shopping_cart_outlined,
+            onTap: () => ref.read(bottomNavIndexProvider.notifier).state = 2,
+          ),
+        ],
       );
 
       state = AsyncData(stateData);
@@ -333,7 +358,7 @@ class HomeController extends _$HomeController {
     );
 
     try {
-      final repo     = ref.read(homeRepositoryProvider);
+      final repo = ref.read(homeRepositoryProvider);
       final response = await repo.startTrip(tripId: tripId);
 
       if (response.hasFailed) {
@@ -351,7 +376,7 @@ class HomeController extends _$HomeController {
       // ── 2. Flip tripStarted + clear action state ──────────────────────
       state = AsyncData(
         state.value!.copyWith(
-          tripStarted:     true,
+          tripStarted: true,
           tripActionState: const AsyncData(null),
         ),
       );

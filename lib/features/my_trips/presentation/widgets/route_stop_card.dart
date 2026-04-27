@@ -1,10 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 import '../../domain/model/route_stop_model.dart';
+import '../controller/my_trips_controller.dart';
 import 'route_stop_order_badge.dart';
 import 'route_stop_status_badge.dart';
 
@@ -19,7 +21,7 @@ class RouteStopCard extends StatelessWidget {
     this.onViewSummary,
   });
 
-  final RouteStop     stop;
+  final RouteStop stop;
   final VoidCallback? onCheckIn;
   final VoidCallback? onCheckOut;
   final VoidCallback? onNavigate;
@@ -40,8 +42,18 @@ class RouteStopCard extends StatelessWidget {
           width: stop.status == RouteStopStatus.inProgress ? 1.5 : 1,
         ),
         boxShadow: const [
-          BoxShadow(color: Color(0x19000000), blurRadius: 4, offset: Offset(0, 2), spreadRadius: -2),
-          BoxShadow(color: Color(0x19000000), blurRadius: 6, offset: Offset(0, 4), spreadRadius: -1),
+          BoxShadow(
+              color: AppColors.shadow,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+              spreadRadius: -2),
+          BoxShadow(
+              // color: Color(0x19000000),
+              color: AppColors.shadow,
+
+              blurRadius: 6,
+              offset: Offset(0, 4),
+              spreadRadius: -1),
         ],
       ),
       child: Column(
@@ -57,11 +69,11 @@ class RouteStopCard extends StatelessWidget {
 
           // ── Footer — varies by status ────────────────────────
           _StopFooter(
-            stop:          stop,
-            onCheckIn:     onCheckIn,
-            onCheckOut:    onCheckOut,
-            onNavigate:    onNavigate,
-            onContact:     onContact,
+            stop: stop,
+            onCheckIn: onCheckIn,
+            onCheckOut: onCheckOut,
+            onNavigate: onNavigate,
+            onContact: onContact,
             onViewSummary: onViewSummary,
           ),
         ],
@@ -115,7 +127,8 @@ class _AddressRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.location_on_outlined, size: 14, color: AppColors.textSecondary),
+        const Icon(Icons.location_on_outlined,
+            size: 14, color: AppColors.textSecondary),
         4.horizontalSpace,
         Expanded(
           child: Text(
@@ -134,7 +147,7 @@ class _AddressRow extends StatelessWidget {
 
 // ── Footer (status-aware) ─────────────────────────────────────────────────────
 
-class _StopFooter extends StatelessWidget {
+class _StopFooter extends ConsumerWidget {
   const _StopFooter({
     required this.stop,
     this.onCheckIn,
@@ -144,46 +157,54 @@ class _StopFooter extends StatelessWidget {
     this.onViewSummary,
   });
 
-  final RouteStop     stop;
+  final RouteStop stop;
   final VoidCallback? onCheckIn;
   final VoidCallback? onCheckOut;
   final VoidCallback? onNavigate;
   final VoidCallback? onContact;
   final VoidCallback? onViewSummary;
-
+  void _onSkipAction(WidgetRef ref, RouteStop stop) {
+    ref.read(myTripsControllerProvider.notifier).updateVisitStatus(
+          visitId: stop.id,
+          status: RouteStopStatus.skipped,
+        );
+  }
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     switch (stop.status) {
       case RouteStopStatus.inProgress:
         return _InProgressFooter(
           elapsedTime: stop.elapsedTime ?? '00:00:00',
-          onCheckOut:  onCheckOut,
+          onCheckOut: onCheckOut,
+          onSkipped:()=> _onSkipAction(ref,stop),
         );
       case RouteStopStatus.pending:
         return _PendingFooter(
           onNavigate: onNavigate,
-          onContact:  onContact,
-          onCheckIn:  onCheckIn,
+          onContact: onContact,
+          onCheckIn: onCheckIn,
         );
       case RouteStopStatus.visited:
         return _VisitedFooter(
-          checkedOutAt:  stop.checkedOutAt ?? '',
+          checkedOutAt: stop.checkedOutAt ?? '',
           onViewSummary: onViewSummary,
         );
       case RouteStopStatus.completed:
         return _VisitedFooter(
-          checkedOutAt:  stop.checkedOutAt ?? '',
+          checkedOutAt: stop.checkedOutAt ?? '',
           onViewSummary: onViewSummary,
         );
       case RouteStopStatus.failed:
-        return _VisitedFooter(
-          checkedOutAt:  stop.checkedOutAt ?? '',
-          onViewSummary: onViewSummary,
+        return  _SkippedFooter(
+          // checkedOutAt: stop.checkedOutAt ?? '',
+          // onViewSummary: onViewSummary,
         );
       case RouteStopStatus.skipped:
-        return _VisitedFooter(
-          checkedOutAt:  stop.checkedOutAt ?? '',
-          onViewSummary: onViewSummary,
+        return 
+        SizedBox();
+        _SkippedFooter(
+          // checkedOutAt: stop.checkedOutAt ?? '',
+          // onViewSummary: onViewSummary,
         );
     }
   }
@@ -195,20 +216,23 @@ class _InProgressFooter extends StatelessWidget {
   const _InProgressFooter({
     required this.elapsedTime,
     this.onCheckOut,
+    this.onSkipped,
   });
 
-  final String        elapsedTime;
+  final String elapsedTime;
   final VoidCallback? onCheckOut;
+  final VoidCallback? onSkipped;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Timer
         Row(
           children: [
-            const Icon(Icons.timer_outlined, size: 14, color: AppColors.primary),
+            const Icon(Icons.timer_outlined,
+                size: 14, color: AppColors.primary),
             6.horizontalSpace,
             Text(
               elapsedTime,
@@ -220,6 +244,18 @@ class _InProgressFooter extends StatelessWidget {
           ],
         ),
         // Check-out button
+        Spacer(),
+        TextButton(
+          onPressed: onSkipped,
+          child: Text(
+            'skip'.tr(),
+            style: AppTextStyle.interSemiBold14.copyWith(
+                color: AppColors.darkRed,
+                fontWeight: FontWeight.w700,
+                decoration: TextDecoration.underline),
+          ),
+        ),
+        // 4.horizontalSpace,
         GestureDetector(
           onTap: onCheckOut,
           child: Container(
@@ -270,10 +306,10 @@ class _PendingFooter extends StatelessWidget {
 
         // Contact
         _TextIconAction(
-          icon:     Icons.phone_outlined,
+          icon: Icons.phone_outlined,
           labelKey: 'contact',
-          color:    AppColors.textSecondary,
-          onTap:    onContact,
+          color: AppColors.textSecondary,
+          onTap: onContact,
         ),
 
         // Check-in (pushed to end)
@@ -309,7 +345,7 @@ class _VisitedFooter extends StatelessWidget {
     this.onViewSummary,
   });
 
-  final String        checkedOutAt;
+  final String checkedOutAt;
   final VoidCallback? onViewSummary;
 
   @override
@@ -320,7 +356,8 @@ class _VisitedFooter extends StatelessWidget {
         // Checked out time
         Row(
           children: [
-            const Icon(Icons.check_circle_outline, size: 14, color:  AppColors.stockHighText),
+            const Icon(Icons.check_circle_outline,
+                size: 14, color: AppColors.stockHighText),
             6.horizontalSpace,
             Text(
               '${'checked_out_at'.tr()} $checkedOutAt',
@@ -348,8 +385,54 @@ class _VisitedFooter extends StatelessWidget {
         //     ],
         //   ),
         // ),
-   
+      ],
+    );
+  }
+}
+// ── Skipped footer ────────────────────────────────────────────────────────────
 
+class _SkippedFooter extends StatelessWidget {
+  const _SkippedFooter();
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Checked out time
+        Row(
+          children: [
+            const Icon(Icons.close,
+                size: 14, color: AppColors.darkRed),
+            6.horizontalSpace,
+            Text(
+              'failed'.tr(),
+              style: AppTextStyle.interMedium12.copyWith(
+                color: AppColors.avatarOrangeText,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        // View summary
+        // GestureDetector(
+        //   onTap: onViewSummary,
+        //   child: Row(
+        //     children: [
+        //       Text(
+        //         'view_summary'.tr(),
+        //         style: AppTextStyle.interMedium12.copyWith(
+        //           color: AppColors.secondPrimary,
+        //           fontWeight: FontWeight.w500,
+        //         ),
+        //       ),
+        //       4.horizontalSpace,
+        //       const Icon(Icons.chevron_right, size: 14, color: AppColors.secondPrimary),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }
@@ -365,9 +448,9 @@ class _TextIconAction extends StatelessWidget {
     this.onTap,
   });
 
-  final IconData      icon;
-  final String        labelKey;
-  final Color         color;
+  final IconData icon;
+  final String labelKey;
+  final Color color;
   final VoidCallback? onTap;
 
   @override

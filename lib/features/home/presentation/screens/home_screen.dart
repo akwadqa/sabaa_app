@@ -42,14 +42,14 @@ class _HomeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-      // ── Listen to tripActionState for side-effects (toast) ────────────────
+    // ── Listen to tripActionState for side-effects (toast) ────────────────
     ref.listen(homeControllerProvider, (_, next) {
       final s = next.value;
       if (s == null) return;
- 
+
       final tripState = s.tripActionState;
       if (tripState == null) return;
- 
+
       tripState.whenOrNull(
         data: (_) {
           if (s.tripStarted) {
@@ -64,8 +64,7 @@ class _HomeBody extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator(
         color: AppColors.primary,
-        onRefresh: () =>
-            ref.read(homeControllerProvider.notifier).refresh(),
+        onRefresh: () => ref.read(homeControllerProvider.notifier).refresh(),
         child: SafeArea(
           bottom: false,
           child: SingleChildScrollView(
@@ -79,21 +78,6 @@ class _HomeBody extends ConsumerWidget {
                 // ── Banner ───────────────────────────────────────────
                 HeaderBanner(userName: state.userName),
                 24.verticalSpace,
-
-                // ── Today's Performance ──────────────────────────────
-                SectionHeader(
-                  title:    'todays_performance',
-                  trailing: DateBadge(label: state.todayDate),
-                ),
-                16.verticalSpace,
-                Row(
-                  children: state.metrics
-                      .map<Widget>((m) => PerformanceCard(metric: m))
-                      .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                      .toList(),
-                ),
-                24.verticalSpace,
-
                 // ── Quick Actions ────────────────────────────────────
                 const SectionHeader(title: 'quick_actions'),
                 16.verticalSpace,
@@ -102,14 +86,35 @@ class _HomeBody extends ConsumerWidget {
                       .map<Widget>(
                         (a) => QuickActionCardButton(
                           action: a,
-                          onTap:  a.onTap,
-                          trip:        state.trip,
+                          onTap: a.onTap,
+                          trip: state.trip,
                           tripStarted: state.tripStarted,
                           tripActionState: state.tripActionState,
                         ),
                       )
                       .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
                       .toList(),
+                ),
+                24.verticalSpace,
+
+                // ── Today's Performance ──────────────────────────────
+                SectionHeader(
+                  title: 'todays_performance',
+                  trailing: DateBadge(label: state.todayDate),
+                ),
+                16.verticalSpace,
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.metrics.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.05,
+                  ),
+                  itemBuilder: (_, i) =>
+                      PerformanceCard(metric: state.metrics[i]),
                 ),
                 24.verticalSpace,
 
@@ -121,7 +126,7 @@ class _HomeBody extends ConsumerWidget {
                       child: AppLoader(),
                     ),
                   ),
-                        if (state.trip != null) ...[
+                if (state.trip != null) ...[
                   _TripProgressCard(trip: state.trip!),
                   24.verticalSpace,
                 ],
@@ -136,13 +141,13 @@ class _HomeBody extends ConsumerWidget {
 
 class _TripProgressCard extends StatelessWidget {
   const _TripProgressCard({required this.trip});
- 
+
   final HomeTripModel trip;
- 
+
   @override
   Widget build(BuildContext context) {
     final progress = (trip.progressPercentage / 100).clamp(0.0, 1.0);
- 
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -150,9 +155,9 @@ class _TripProgressCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
-            color:     AppColors.cardShadow,
+            color: AppColors.cardShadow,
             blurRadius: 25,
-            offset:    Offset(2, 10),
+            offset: Offset(2, 10),
           ),
         ],
       ),
@@ -173,14 +178,14 @@ class _TripProgressCard extends StatelessWidget {
             ],
           ),
           12.verticalSpace,
- 
+
           // ── Progress bar ─────────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value:            progress,
-              minHeight:        6,
-              backgroundColor:  AppColors.navBorder,
+              value: progress,
+              minHeight: 6,
+              backgroundColor: AppColors.navBorder,
               valueColor: AlwaysStoppedAnimation<Color>(
                 trip.status.toLowerCase() == 'completed'
                     ? AppColors.green
@@ -189,7 +194,7 @@ class _TripProgressCard extends StatelessWidget {
             ),
           ),
           8.verticalSpace,
- 
+
           // ── Visit counts ─────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -204,7 +209,7 @@ class _TripProgressCard extends StatelessWidget {
                 '${trip.progressPercentage.toStringAsFixed(0)}%',
                 style: AppTextStyle.interSemiBold14.copyWith(
                   fontSize: 12,
-                  color:    AppColors.primary,
+                  color: AppColors.primary,
                 ),
               ),
             ],
@@ -214,45 +219,49 @@ class _TripProgressCard extends StatelessWidget {
     );
   }
 }
- 
 
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.status});
- 
+
   final String status;
- 
+
   Color get _bgColor {
     switch (status.toLowerCase()) {
-      case 'in progress': return AppColors.dateBadge;
-      case 'completed':   return const Color(0xFFDCFCE7);
-      default:            return AppColors.navBorder;
+      case 'in progress':
+        return AppColors.dateBadge;
+      case 'completed':
+        return const Color(0xFFDCFCE7);
+      default:
+        return AppColors.navBorder;
     }
   }
- 
+
   Color get _textColor {
     switch (status.toLowerCase()) {
-      case 'in progress': return AppColors.primary;
-      case 'completed':   return AppColors.green;
-      default:            return AppColors.textSecondary;
+      case 'in progress':
+        return AppColors.primary;
+      case 'completed':
+        return AppColors.green;
+      default:
+        return AppColors.textSecondary;
     }
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color:        _bgColor,
+        color: _bgColor,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         status,
         style: AppTextStyle.interMedium12.copyWith(
-          color:      _textColor,
+          color: _textColor,
           fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 }
- 

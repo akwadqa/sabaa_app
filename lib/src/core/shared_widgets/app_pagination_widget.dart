@@ -69,7 +69,7 @@ class _AppPaginationWidgetState extends State<AppPaginationWidget> {
             return SizedBox(
               height: 55.0,
               child: Center(
-                child: mode == LoadStatus.loading
+                child: (mode == LoadStatus.loading || mode == LoadStatus.canLoading|| mode == LoadStatus.idle)
                     ? const AppLoader()
                     : const SizedBox.shrink(),
               ),
@@ -81,8 +81,10 @@ class _AppPaginationWidgetState extends State<AppPaginationWidget> {
             return SizedBox(
               height: 55.0,
               child: Center(
-                child: mode == RefreshStatus.refreshing
-                    ? const CircularProgressIndicator.adaptive()
+                child: (mode == RefreshStatus.refreshing ||
+      mode == RefreshStatus.canRefresh ||
+      mode == RefreshStatus.idle)
+                    ? const AppLoader()
                     : const SizedBox.shrink(),
               ),
             );

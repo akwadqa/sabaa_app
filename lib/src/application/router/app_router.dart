@@ -8,6 +8,8 @@ import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/customers/presentation/screens/customer_details_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
+import 'package:sabaa/features/new_order/presentation/screens/invoice_review_page.dart';
+import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
@@ -151,7 +153,37 @@ class AppRouter {
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
-              child: NewOrderPage(customerName: state.extra as String,),
+              child: NewOrderPage(customer: state.extra as Customer,),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+            );
+          },
+        ),
+       GoRoute(
+          path: AppRoutes.invoiceSummaryPage,
+          name: AppRoutes.invoiceSummaryPage,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: InvoiceSummaryPage(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+            );
+          },
+        ),
+       GoRoute(
+          path: AppRoutes.invoiceReviewPage,
+          name: AppRoutes.invoiceReviewPage,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: InvoiceReviewPage(),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {

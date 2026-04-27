@@ -31,7 +31,7 @@ class MainScreen extends ConsumerWidget {
     ),
     NavDestination(
       label: 'nav_stock',
-      icon: Icons.inventory_outlined,
+      icon: Icons.inventory_2_outlined,
       page: VanStockPage(),
     ),
   ];

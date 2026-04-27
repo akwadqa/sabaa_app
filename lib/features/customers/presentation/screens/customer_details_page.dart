@@ -41,7 +41,7 @@ class CustomerDetailsPage extends StatelessWidget {
           icon:      Icons.shopping_cart_outlined,
           isPrimary: true,
           onTap: () {
-            context.push(AppRoutes.newOrderScreen,extra: customer.name);
+            context.push(AppRoutes.newOrderScreen,extra: customer);
           },
         ),
         CustomerAction(

@@ -14,13 +14,10 @@
     "please_enter_password": "يرجى إدخال كلمة المرور",
     "password_length_error": "يجب أن تكون كلمة المرور {0} أحرف على الأقل",
     "password_mismatch": "كلمتا المرور غير متطابقتين",
-  
     "please_enter_customer_name": "يرجى إدخال اسم العميل",
     "please_enter_user_name": "يرجى إدخال اسم المستخدم",
-  
     "please_enter_qatar_id": "يرجى إدخال الرقم الشخصي القطري",
     "invalid_qatar_id": "الرقم الشخصي القطري غير صالح",
-  
     "please_enter_phone_number": "يرجى إدخال رقم الهاتف",
     "invalid_phone_number": "رقم الهاتف غير صالح",
     "hello": "مرحباً",
@@ -91,6 +88,32 @@
     "total": "الإجمالي",
     "trip_started_successfully": "تم بدء الرحلة بنجاح",
     "completed_visits": "الزيارات المكتملة",
-    "trip_in_progress": "الرحلة قيد التنفيذ"
+    "trip_in_progress": "الرحلة قيد التنفيذ",
+    "skip_visit": "تخطي الزيارة",
+    "remaining_visits": "الزيارات المتبقية",
+    "visits_left": "زيارات متبقية",
+    "complete": "مكتمل",
+    "completed": "مكتملة",
+    "today_skips": "عدد مرات التخطي اليوم",
+    "mtd_total": "إجمالي الشهر حتى الآن",
+    "invoice": "الفاتورة",
+    "selected_items": "العناصر المحددة",
+    "amount_details": "تفاصيل المبلغ",
+    "net_amount": "صافي المبلغ",
+    "subtotal": "المجموع الفرعي",
+    "tax": "الضريبة",
+    "total_amount": "المجموع الكلي",
+    "no_search_results_desc": "لم نتمكن من العثور على أي عناصر تطابق بحثك.",
+    "no_results_found": "عذراً، لم يتم العثور على نتائج.",
+    "invoice_summary": "ملخص الفاتورة",
+    "invoice_review": "مراجعة الفاتورة",
+    "add_to_order": "إضافة إلى الطلب",
+    "confirm_invoice": "تأكيد الفاتوره"  ,
+    "swipe_to_confirm": "اسحب للتأكيد",
+    "transaction_successful": "تمت العملية بنجاح",
+    "invoice_success_message": "تم إنشاء الفاتورة ومعالجتها بنجاح",
+    "invoice_created_successfully": "تم إنشاء الفاتورة ومعالجتها بنجاح.",
 
+    "back_to_home": "العودة للرئيسية",
+    "confirm_order": "تأكيد الطلب"  
 }

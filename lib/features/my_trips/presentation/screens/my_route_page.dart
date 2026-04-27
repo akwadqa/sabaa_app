@@ -372,6 +372,13 @@ class _RouteBody extends ConsumerWidget {
         );
   }
 
+  // void _onSkipAction(WidgetRef ref, RouteStop stop) {
+  //   ref.read(myTripsControllerProvider.notifier).updateVisitStatus(
+  //         visitId: stop.id,
+  //         status: RouteStopStatus.skipped,
+  //       );
+  // }
+
   void _onNavigate(RouteStop stop) {/* TODO */}
   void _onContact(RouteStop stop) {openPhoneDialer(stop.customerPhone);}
   void _onViewSummary(RouteStop stop) {/* TODO */}

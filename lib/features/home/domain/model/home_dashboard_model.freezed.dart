@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$HomeDashboardModel {
   DateModel get date;
   DailyPerformanceModel get dailyPerformance;
-  HomeTripModel get trip;
+  HomeTripModel? get trip;
 
   /// Create a copy of HomeDashboardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -59,11 +59,11 @@ abstract mixin class $HomeDashboardModelCopyWith<$Res> {
   $Res call(
       {DateModel date,
       DailyPerformanceModel dailyPerformance,
-      HomeTripModel trip});
+      HomeTripModel? trip});
 
   $DateModelCopyWith<$Res> get date;
   $DailyPerformanceModelCopyWith<$Res> get dailyPerformance;
-  $HomeTripModelCopyWith<$Res> get trip;
+  $HomeTripModelCopyWith<$Res>? get trip;
 }
 
 /// @nodoc
@@ -81,7 +81,7 @@ class _$HomeDashboardModelCopyWithImpl<$Res>
   $Res call({
     Object? date = null,
     Object? dailyPerformance = null,
-    Object? trip = null,
+    Object? trip = freezed,
   }) {
     return _then(_self.copyWith(
       date: null == date
@@ -92,10 +92,10 @@ class _$HomeDashboardModelCopyWithImpl<$Res>
           ? _self.dailyPerformance
           : dailyPerformance // ignore: cast_nullable_to_non_nullable
               as DailyPerformanceModel,
-      trip: null == trip
+      trip: freezed == trip
           ? _self.trip
           : trip // ignore: cast_nullable_to_non_nullable
-              as HomeTripModel,
+              as HomeTripModel?,
     ));
   }
 
@@ -124,8 +124,12 @@ class _$HomeDashboardModelCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HomeTripModelCopyWith<$Res> get trip {
-    return $HomeTripModelCopyWith<$Res>(_self.trip, (value) {
+  $HomeTripModelCopyWith<$Res>? get trip {
+    if (_self.trip == null) {
+      return null;
+    }
+
+    return $HomeTripModelCopyWith<$Res>(_self.trip!, (value) {
       return _then(_self.copyWith(trip: value));
     });
   }
@@ -225,7 +229,7 @@ extension HomeDashboardModelPatterns on HomeDashboardModel {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(DateModel date, DailyPerformanceModel dailyPerformance,
-            HomeTripModel trip)?
+            HomeTripModel? trip)?
         $default, {
     required TResult orElse(),
   }) {
@@ -254,7 +258,7 @@ extension HomeDashboardModelPatterns on HomeDashboardModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(DateModel date, DailyPerformanceModel dailyPerformance,
-            HomeTripModel trip)
+            HomeTripModel? trip)
         $default,
   ) {
     final _that = this;
@@ -281,7 +285,7 @@ extension HomeDashboardModelPatterns on HomeDashboardModel {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(DateModel date, DailyPerformanceModel dailyPerformance,
-            HomeTripModel trip)?
+            HomeTripModel? trip)?
         $default,
   ) {
     final _that = this;
@@ -307,7 +311,7 @@ class _HomeDashboardModel implements HomeDashboardModel {
   @override
   final DailyPerformanceModel dailyPerformance;
   @override
-  final HomeTripModel trip;
+  final HomeTripModel? trip;
 
   /// Create a copy of HomeDashboardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -356,14 +360,14 @@ abstract mixin class _$HomeDashboardModelCopyWith<$Res>
   $Res call(
       {DateModel date,
       DailyPerformanceModel dailyPerformance,
-      HomeTripModel trip});
+      HomeTripModel? trip});
 
   @override
   $DateModelCopyWith<$Res> get date;
   @override
   $DailyPerformanceModelCopyWith<$Res> get dailyPerformance;
   @override
-  $HomeTripModelCopyWith<$Res> get trip;
+  $HomeTripModelCopyWith<$Res>? get trip;
 }
 
 /// @nodoc
@@ -381,7 +385,7 @@ class __$HomeDashboardModelCopyWithImpl<$Res>
   $Res call({
     Object? date = null,
     Object? dailyPerformance = null,
-    Object? trip = null,
+    Object? trip = freezed,
   }) {
     return _then(_HomeDashboardModel(
       date: null == date
@@ -392,10 +396,10 @@ class __$HomeDashboardModelCopyWithImpl<$Res>
           ? _self.dailyPerformance
           : dailyPerformance // ignore: cast_nullable_to_non_nullable
               as DailyPerformanceModel,
-      trip: null == trip
+      trip: freezed == trip
           ? _self.trip
           : trip // ignore: cast_nullable_to_non_nullable
-              as HomeTripModel,
+              as HomeTripModel?,
     ));
   }
 
@@ -424,8 +428,12 @@ class __$HomeDashboardModelCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HomeTripModelCopyWith<$Res> get trip {
-    return $HomeTripModelCopyWith<$Res>(_self.trip, (value) {
+  $HomeTripModelCopyWith<$Res>? get trip {
+    if (_self.trip == null) {
+      return null;
+    }
+
+    return $HomeTripModelCopyWith<$Res>(_self.trip!, (value) {
       return _then(_self.copyWith(trip: value));
     });
   }

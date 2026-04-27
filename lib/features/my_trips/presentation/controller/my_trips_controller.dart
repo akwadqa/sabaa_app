@@ -219,7 +219,11 @@ String _formatDuration(int seconds) {
       case RouteStopStatus.inProgress:
         return RouteStopStatus.inProgress;
       case RouteStopStatus.skipped:
+        return RouteStopStatus.skipped;
+
       case RouteStopStatus.failed:
+        return RouteStopStatus.failed;
+
       case RouteStopStatus.pending:
         return RouteStopStatus.pending;
       case RouteStopStatus.visited:
@@ -272,12 +276,12 @@ Future<void> updateVisitStatus({
     (s) => s.status == RouteStopStatus.inProgress,
   );
 
-  // if (status == RouteStopStatus.inProgress && hasActiveVisit) {
-  //   Dev.logError("Finish current visit first");
+  if (status == RouteStopStatus.inProgress && hasActiveVisit) {
+    Dev.logError("Finish current visit first");
 
-  //   AppToast.errorToast('Finish current visit first');
-  //   return;
-  // }
+    AppToast.errorToast('Finish current visit first');
+    return;
+  }
 
   try {
     /// 🔥 optimistic update

@@ -10,12 +10,14 @@ class VanStockDatasource {
 
   VanStockDatasource(this._networkService);
 
-  Future<ApiResponse<VanStockModel>> getVanStock(int page) async {
+  Future<ApiResponse<VanStockModel>> getVanStock({required int page,  String? search, String? category}) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.getVanStock,
          queryParameters: {
           'page': page,
+        if(search!=null)  "search":search,
+        if(category!=null)  "category":category,
 
         },
       );

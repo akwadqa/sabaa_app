@@ -28,6 +28,19 @@ abstract class AppColors {
   static const dateBadge      = Color(0xFFE8F3FE);
   static const navBorder      = Color(0xFFE2E8F0);
   static const cardShadow     = Color(0x19005AAB);
+
+
+static const Color metricGreen = Color(0xFFD1FAE5);
+static const Color metricGreenIcon = Color(0xFF15803D);
+
+static const Color metricOrange = Color(0xFFFFEDD5);
+static const Color metricOrangeIcon = Color(0xFFEA580C);
+
+// static const Color metricPink = Color(0xFFFCE7F3);
+static const Color metricPinkIcon = Color(0xFFDB2777);
+
+// static const Color metricPurple = Color(0xFFEDE9FE);
+static const Color metricPurpleIcon = Color(0xFF7C3AED);
   // static const Color background = Color(0xffFAFAF9);
 
   
@@ -36,6 +49,7 @@ abstract class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color cardWhite = Color(0xFFF5F5F5);
   static const Color shadow = Color(0x0C000000);
+  static const Color darkShadow = Color(0x19000000);
   static const Color dark = Color(0xFF201C11);
   static const Color borderGrey = Color(0xFFe8e8e8);
 
@@ -65,8 +79,29 @@ abstract class AppColors {
  
   // ── Shared UI ─────────────────────────────────────────────────
   static const Color chevronBg         = Color(0xFFF1F5F9);
+  static const Color secondCard         = Color(0xFFF0F2F4);
   static const Color blueGrey         = Color(0xFF617589);
+  // ── Slider / Glass Button ───────────────
+  static const Color sliderBackground = Color(0xFFE6EEF8);
+  static const Color sliderBase = Color(0xFFDCE7F5);
+  static const Color sliderHighlight = Color(0xFF0056B3);
 
+  // ── Glass Border ────────────────────────
+  static const Color glassBorder = Color(0xFFB6C7E3);
+
+  // ── Gradient (Thumb / Active) ───────────
+  static const List<Color> primaryGradient = [
+    primary,
+    secondPrimary,
+    white,
+    
+  ];
+        // AppColors.avatarPurpleBg,
+        //                     AppColors.secondPrimary,
+        //                     AppColors.avatarPurpleBg,
+
+  // ── Optional: Soft Shadow Color ─────────
+  static const Color primaryShadow = Color(0x330056B3);
 
 
 

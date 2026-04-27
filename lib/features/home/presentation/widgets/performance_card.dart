@@ -7,14 +7,18 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 class PerformanceMetric {
   const PerformanceMetric({
     required this.label,
+     this.subtitle,
     required this.value,
     required this.iconColor,
+     this.subtitleColor,
     required this.icon,
   });
 
   final String label;
+  final String? subtitle;
   final String value;
   final Color iconColor;
+  final Color? subtitleColor;
   final IconData icon;
 }
 class PerformanceCard extends StatelessWidget {
@@ -24,49 +28,58 @@ class PerformanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.cardShadow,
-              blurRadius: 25,
-              offset: Offset(2, 10),
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.cardShadow,
+            blurRadius: 25,
+            offset: Offset(2, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              color: metric.iconColor.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(8),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                color: metric.iconColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(metric.icon, size: 22),
+            child: Icon(metric.icon,
+                          color: metric.iconColor,
+     size: 22),
+          ),
+          16.verticalSpace,
+          Text(
+            metric.label.tr(),
+       style: AppTextStyle.interMedium14.copyWith(
+              color: AppColors.textSecondary,
             ),
-            16.verticalSpace,
-            Text(
-              metric.label.tr(),
-         style: AppTextStyle.interMedium14.copyWith(
-                color: AppColors.textSecondary,
-              ),
-
+    
+          ),
+            4.verticalSpace,
+          Text(
+            metric.value,
+            style: AppTextStyle.interBold22.copyWith(
+              color: AppColors.textPrimary,
             ),
-              4.verticalSpace,
-            Text(
-              metric.value,
-              style: AppTextStyle.interBold22.copyWith(
-                color: AppColors.textPrimary,
-              ),
+          ),
+           if (metric.subtitle != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            metric.subtitle!.tr(),
+            style: AppTextStyle.interRegular12.copyWith(
+              color: metric.subtitleColor ?? AppColors.textSecondary,
             ),
-          ],
-        ),
+          ),
+        ],
+        ],
       ),
     );
   }

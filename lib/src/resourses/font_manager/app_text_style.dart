@@ -100,6 +100,10 @@ class AppTextStyle {
   );
 
   //? Bold :
+  static TextStyle interBold12 = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 12,
+  );
   static TextStyle interBold18 = GoogleFonts.inter(
     fontWeight: FontWeight.w700,
     fontSize: 18,

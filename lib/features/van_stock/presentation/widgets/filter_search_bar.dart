@@ -10,13 +10,13 @@ class FilterSearchBar extends StatelessWidget {
     super.key,
     required this.controller,
     this.onChanged,
-    this.onFilterTap,
+    this.onBarcodeTap,
     required this.hint,
   });
   final String hint;
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
-  final VoidCallback? onFilterTap;
+  final VoidCallback?         onBarcodeTap;
   OutlineInputBorder _border() {
     return OutlineInputBorder(
       borderSide: BorderSide(color: AppColors.borderGrey),
@@ -26,20 +26,20 @@ class FilterSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        // ── Search field ─────────────────────────────────────────
+        Flexible(
+          flex: 4,
+          child: TextFormField(
       controller: controller,
       onChanged: onChanged,
       cursorColor: AppColors.black,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(4),
         prefixIcon: Icon(Icons.search, color: AppColors.grayHint),
-        suffixIcon: IconButton(
-            icon: const Icon(
-              Icons.tune_rounded,
-              color: AppColors.textSecondary,
-              size: 22,
-            ),
-            onPressed: onFilterTap),
+    
         hintText: hint.tr(),
         hintStyle: AppTextStyle.interRegular16.copyWith(
           color: AppColors.textSecondary,
@@ -53,6 +53,31 @@ class FilterSearchBar extends StatelessWidget {
         disabledBorder: _border(),
         focusedErrorBorder: _border(),
       ),
-    ).symmetricPadding(horizontal: 16);
-  }
+    )
+  
+        ),
+        // const SizedBox(width: 8),
+    
+        // ── Barcode button ───────────────────────────────────────
+        Flexible(
+          child: GestureDetector(
+            onTap: onBarcodeTap,
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child:  Icon(
+                Icons.qr_code_scanner_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+ }
 }

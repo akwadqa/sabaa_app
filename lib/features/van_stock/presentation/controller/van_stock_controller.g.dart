@@ -13,7 +13,7 @@ part of 'van_stock_controller.dart';
 final vanStockControllerProvider = VanStockControllerProvider._();
 
 final class VanStockControllerProvider
-    extends $AsyncNotifierProvider<VanStockController, VanStockModel> {
+    extends $AsyncNotifierProvider<VanStockController, VanStockState> {
   VanStockControllerProvider._()
       : super(
           from: null,
@@ -34,17 +34,17 @@ final class VanStockControllerProvider
 }
 
 String _$vanStockControllerHash() =>
-    r'9a8b5a001bb68bafdbf285d1ed37fdad46a5d58d';
+    r'8b3dd0ebcab3444eb6bff5592fd2e0396099b05f';
 
-abstract class _$VanStockController extends $AsyncNotifier<VanStockModel> {
-  FutureOr<VanStockModel> build();
+abstract class _$VanStockController extends $AsyncNotifier<VanStockState> {
+  FutureOr<VanStockState> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<VanStockModel>, VanStockModel>;
+    final ref = this.ref as $Ref<AsyncValue<VanStockState>, VanStockState>;
     final element = ref.element as $ClassProviderElement<
-        AnyNotifier<AsyncValue<VanStockModel>, VanStockModel>,
-        AsyncValue<VanStockModel>,
+        AnyNotifier<AsyncValue<VanStockState>, VanStockState>,
+        AsyncValue<VanStockState>,
         Object?,
         Object?>;
     element.handleCreate(ref, build);

@@ -49,6 +49,10 @@ class $AssetsIconsGen {
   SvgGenImage get qatarCountry =>
       const SvgGenImage('assets/icons/qatar_country.svg');
 
+  /// File path: assets/icons/success_check_icon.svg
+  SvgGenImage get successCheckIcon =>
+      const SvgGenImage('assets/icons/success_check_icon.svg');
+
   /// File path: assets/icons/truck_ic.svg
   SvgGenImage get truckIc => const SvgGenImage('assets/icons/truck_ic.svg');
 
@@ -63,6 +67,7 @@ class $AssetsIconsGen {
         lockIc,
         personIc,
         qatarCountry,
+        successCheckIcon,
         truckIc
       ];
 }
@@ -73,6 +78,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/auth_background.png
   AssetGenImage get authBackground =>
       const AssetGenImage('assets/images/auth_background.png');
+
+  /// File path: assets/images/empty_data.svg
+  SvgGenImage get emptyData =>
+      const SvgGenImage('assets/images/empty_data.svg');
 
   /// File path: assets/images/im_empty_screen.png
   AssetGenImage get imEmptyScreen =>
@@ -91,8 +100,9 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/splash_back_im.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
+  List<dynamic> get values => [
         authBackground,
+        emptyData,
         imEmptyScreen,
         imEmptySearchResult,
         imErrorScreen,

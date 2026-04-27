@@ -15,6 +15,6 @@ class StockItem {
   final String     sku;
   final String     stockLabel;   // e.g. "45 cases"
   final String stockLevel;
-  final String     price;        // e.g. "$12.50"
+  final double     price;        // e.g. "$12.50"
   final String     imageUrl;
 }
