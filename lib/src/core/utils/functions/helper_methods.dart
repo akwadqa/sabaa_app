@@ -37,7 +37,13 @@ bool isRTL(String text) {
 //   await Future.delayed(const Duration(milliseconds: 100));
 //   if (context.mounted) context.maybePop();
 // }
-
+String formatPrice(double value) {
+  if (value % 1 == 0) {
+    return '${value.toInt()} QAR';
+  } else {
+    return '${value.toStringAsFixed(2)} QAR';
+  }
+}
 String translate(String ar, String en, BuildContext context) {
   final local = context.locale.languageCode;
   return local == 'ar' ? ar : en;

@@ -302,7 +302,7 @@ Future<void> updateVisitStatus({
     /// ⏱ TIMER
     if (status == RouteStopStatus.inProgress) {
       _startTimer(visitId);
-    } else if (status == RouteStopStatus.visited) {
+    } else {
       _stopTimer();
     }
 

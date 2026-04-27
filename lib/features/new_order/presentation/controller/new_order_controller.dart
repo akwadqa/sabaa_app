@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/new_order/data/repositories/new_order_repository.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
@@ -29,7 +30,7 @@ class NewOrderController extends _$NewOrderController {
     return state.value!;
   }
 
-  void addCustomer(Customer customer) {
+  void addCustomer(CustomerModel customer) {
     final current = state.value!;
 
     state = AsyncData(current.copyWith(customer: customer));
@@ -263,12 +264,15 @@ class NewOrderController extends _$NewOrderController {
     state = AsyncData(current.copyWith(selectedItems: map));
   }
 
+
   Future<bool> createInvoice() async {
     final current = state.value!;
-    final repo = ref.read(newOrderRepositoryProvider);
     state = AsyncData(current.copyWith(isSubmitting: true));
 
     try {
+      final customerId = current.customer?.customerId;
+      final repo = ref.read(newOrderRepositoryProvider);
+
       final items = current.selectedItems.values.map((e) {
         return {
           "itemCode": e.product.itemCode,
@@ -276,23 +280,41 @@ class NewOrderController extends _$NewOrderController {
           "uom": e.unit,
         };
       }).toList();
-      if (current.customer?.id == null) {
-        AppToast.errorToast('customer?.id==null');
+
+      if (customerId == null) {
+        Dev.logError('customer?.id==null');
 
         return false;
       }
       await repo.createInvoice(
-        customerId: "1017",
+        customerId: customerId,
         items: items,
       );
+    final latest = state.value!;
 
-      state = AsyncData(current.copyWith(isSubmitting: false));
+      state =
+          AsyncData(latest.copyWith(selectedItems: {}, isSubmitting: false));
 
       return true;
     } catch (e) {
-      state = AsyncData(current.copyWith(isSubmitting: false));
+    final latest = state.value!;
+
+      state = AsyncData(latest.copyWith(isSubmitting: false));
       AppToast.errorToast('Failed to create invoice');
       return false;
     }
+  }
+
+  void clearOrder() {
+    final current = state.value!;
+
+    state = AsyncData(
+      current.copyWith(
+        selectedItems: {},
+        searchQuery: '',
+        selectedCategory: null,
+        selectedCategoryIndex: 0,
+      ),
+    );
   }
 }

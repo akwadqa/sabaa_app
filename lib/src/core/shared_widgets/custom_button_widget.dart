@@ -17,6 +17,8 @@ class CustomButtonWidget extends StatelessWidget {
   final double? topPading;
   final double? fontSize;
   final Widget? child;
+  final double? elevation;
+  final Color? shadowColor;
   const CustomButtonWidget({
     super.key,
     required this.text,
@@ -31,14 +33,17 @@ class CustomButtonWidget extends StatelessWidget {
     this.fontSize,
     this.topPading,
     this.child,
+    this.elevation,
+    this.shadowColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        elevation: 1,
+          elevation: elevation ?? 1,
           padding: EdgeInsets.zero,
+          shadowColor: shadowColor,
           backgroundColor: backgroundColor ?? Colors.transparent,
           foregroundColor: AppColors.black900,
           fixedSize: Size(
@@ -49,19 +54,21 @@ class CustomButtonWidget extends StatelessWidget {
               side: BorderSide(
                   color: color ?? backgroundColor ?? Colors.transparent),
               borderRadius: BorderRadius.circular(radius ?? 25))),
-      onPressed: onTap!=null?() {
-        onTap!();
-      }:null,
-      child:
-      
-      child?? Text(context.tr(text),
-      textAlign: TextAlign.center,
-              style: style ??
-                  Theme.of(context).textTheme.displaySmall!.copyWith(
-                      fontSize: fontSize ?? 16,
-                      color:color?? (isFiled ? Colors.white :color?? Colors.black),
-                      fontWeight: FontWeight.w500))
-          .centered(),
+      onPressed: onTap != null
+          ? () {
+              onTap!();
+            }
+          : null,
+      child: child ??
+          Text(context.tr(text),
+                  textAlign: TextAlign.center,
+                  style: style ??
+                      Theme.of(context).textTheme.displaySmall!.copyWith(
+                          fontSize: fontSize ?? 16,
+                          color: color ??
+                              (isFiled ? Colors.white : color ?? Colors.black),
+                          fontWeight: FontWeight.w500))
+              .centered(),
     ).onlyPadding(top: topPading ?? 0);
   }
 }

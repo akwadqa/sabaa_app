@@ -2,94 +2,40 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/features/home/domain/model/home_trip_model.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
-import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
-import 'package:sabaa/src/core/utils/functions/app_spacing.dart';
+import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:sabaa/features/home/domain/model/home_dashboard_model.dart';
 // import 'package:sabaa/features/home/domain/model/quick_action_model.dart';
 import 'package:sabaa/features/home/presentation/controller/home_controller.dart';
-import 'package:sabaa/features/home/presentation/controller/home_state.dart';
-import 'package:sabaa/features/home/presentation/widgets/date_badge_widget.dart';
-import 'package:sabaa/features/home/presentation/widgets/home_banner.dart';
-import 'package:sabaa/features/home/presentation/widgets/performance_card.dart';
-import 'package:sabaa/features/home/presentation/widgets/section_header.dart';
-import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
-import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
-import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
-import 'package:sabaa/src/core/utils/functions/app_spacing.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
-import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 class QuickAction {
   const QuickAction({
     required this.label,
     required this.color,
     required this.icon,
     required this.onTap,
+        this.isBeginTrip = false,
+
   });
 
   final String label;
   final Color color;
   final IconData icon;
   final VoidCallback onTap;
+  final bool isBeginTrip;
+
 }
-// class QuickActionCardButton extends StatelessWidget {
-//   const QuickActionCardButton({
-//     super.key,
-//     required this.action,
-//     required this.onTap,
-//   });
-
-//   final QuickAction action;
-//   final VoidCallback     onTap;
-
-//   @override
-//   Widget build(BuildContext context) {
-    
-//     return Expanded(
-//       child: GestureDetector(
-//         onTap: onTap,
-//         child: Container(
-//           padding: const EdgeInsets.symmetric(vertical: 16),
-//           decoration: BoxDecoration(
-//             color: action.color,
-//             borderRadius: BorderRadius.circular(12),
-//           ),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Icon(action.icon, color: Colors.white, size: 26),
-//               const SizedBox(height: 8),
-//               Text(
-//                 action.label.tr(),
-//                 style: AppTextStyle.interSemiBold16.copyWith(
-//                   color: Colors.white,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
 // ── Quick action button with Begin Trip special behaviour ─────────────────────
 
 class QuickActionCardButton extends ConsumerWidget {
-  const QuickActionCardButton({
+  const QuickActionCardButton({super.key, 
     required this.action,
     required this.trip,
     required this.tripStarted,
     required this.tripActionState,
     required this.onTap,
+
   });
 
   final QuickAction   action;
@@ -97,8 +43,8 @@ class QuickActionCardButton extends ConsumerWidget {
   final bool               tripStarted;
   final AsyncValue<void>?  tripActionState;
 final VoidCallback     onTap;
-  bool get _isBeginTrip => 
-      action.label == 'begin_trip';
+
+bool get _isBeginTrip => action.isBeginTrip;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -111,15 +57,22 @@ final VoidCallback     onTap;
           : action.color;
 
       return Expanded(
-        child: GestureDetector(
+        child:
+        
+         GestureDetector(
+            behavior: HitTestBehavior.opaque,
+
           onTap: isLoading
               ? null
               : () async {
                   if (tripStarted) {
                     // Already started — navigate to Route tab
                     // context.push(action.routePath);
+                    Dev.logLine("bottomNavIndexProvider");
+
                      ref.read(bottomNavIndexProvider.notifier).state = 1;
                   } else {
+                    Dev.logLine("startTrip");
                     await ref
                         .read(homeControllerProvider.notifier)
                         .startTrip();

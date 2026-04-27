@@ -61,7 +61,7 @@ class AuthScreen extends StatelessWidget {
             // Card with content
             Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: height * 0.65,minHeight: height *0.5),
+                constraints: BoxConstraints(maxHeight: height * 0.6,minHeight: height *0.5),
                 child: Container(
                     width: width * 0.9,
                     padding: const EdgeInsets.symmetric(horizontal: 24),

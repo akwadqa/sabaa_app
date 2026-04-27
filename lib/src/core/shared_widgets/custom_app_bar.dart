@@ -33,42 +33,18 @@ class CustomDeafultAppbar extends StatelessWidget
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             (withBackButton ?? false)
-                ? GestureDetector(
-                    onTap: () {
-                      context.pop();
-                      // if (context.canPop()) {
-                      //   context.pop();
-                      // } else {
-                      //   context.go(AppRoutes.main);
-                      // }
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.cardWhite,
-                      ),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //       color: AppColors.black.withValues(alpha: .25),
-                      //       blurRadius: 4)
-                      // ]),
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                    // child: Assets.icons.verificationArrowBackIc.svg(
-                    //   width: 30,
-                    // ),
-                  )
+                ? IconButton(
+                    onPressed: () => context.pop(),
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: AppColors.textHeading,
+                    ))
                 : 22.horizontalSpace,
             Center(
               child: Text(
                 title,
-                style: AppTextStyle.interSemiBold20.copyWith(
-                  color: AppColors.primary,
+                style: AppTextStyle.rubikBold20.copyWith(
+                  color: AppColors.textHeading,
                 ),
               ),
             ),

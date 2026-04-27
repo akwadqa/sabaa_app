@@ -39,8 +39,27 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_waiting.svg
   SvgGenImage get icWaiting => const SvgGenImage('assets/icons/ic_waiting.svg');
 
+  /// File path: assets/icons/invoice_card_paymeny_ic.svg
+  SvgGenImage get invoiceCardPaymenyIc =>
+      const SvgGenImage('assets/icons/invoice_card_paymeny_ic.svg');
+
+  /// File path: assets/icons/invoice_ic.svg
+  SvgGenImage get invoiceIc => const SvgGenImage('assets/icons/invoice_ic.svg');
+
+  /// File path: assets/icons/invoice_pay_ic.svg
+  SvgGenImage get invoicePayIc =>
+      const SvgGenImage('assets/icons/invoice_pay_ic.svg');
+
+  /// File path: assets/icons/invoice_return_ic.svg
+  SvgGenImage get invoiceReturnIc =>
+      const SvgGenImage('assets/icons/invoice_return_ic.svg');
+
   /// File path: assets/icons/lock_ic.svg
   SvgGenImage get lockIc => const SvgGenImage('assets/icons/lock_ic.svg');
+
+  /// File path: assets/icons/out_balance_ic.svg
+  SvgGenImage get outBalanceIc =>
+      const SvgGenImage('assets/icons/out_balance_ic.svg');
 
   /// File path: assets/icons/person_ic.svg
   SvgGenImage get personIc => const SvgGenImage('assets/icons/person_ic.svg');
@@ -49,9 +68,25 @@ class $AssetsIconsGen {
   SvgGenImage get qatarCountry =>
       const SvgGenImage('assets/icons/qatar_country.svg');
 
+  /// File path: assets/icons/sales_amount_ic.svg
+  SvgGenImage get salesAmountIc =>
+      const SvgGenImage('assets/icons/sales_amount_ic.svg');
+
+  /// File path: assets/icons/save_customer_ic.svg
+  SvgGenImage get saveCustomerIc =>
+      const SvgGenImage('assets/icons/save_customer_ic.svg');
+
   /// File path: assets/icons/success_check_icon.svg
   SvgGenImage get successCheckIcon =>
       const SvgGenImage('assets/icons/success_check_icon.svg');
+
+  /// File path: assets/icons/success_create_customer_ic.svg
+  SvgGenImage get successCreateCustomerIc =>
+      const SvgGenImage('assets/icons/success_create_customer_ic.svg');
+
+  /// File path: assets/icons/total_sales_ic.svg
+  SvgGenImage get totalSalesIc =>
+      const SvgGenImage('assets/icons/total_sales_ic.svg');
 
   /// File path: assets/icons/truck_ic.svg
   SvgGenImage get truckIc => const SvgGenImage('assets/icons/truck_ic.svg');
@@ -64,10 +99,19 @@ class $AssetsIconsGen {
         icSettingsMyAccount,
         icSettingsThemeMode,
         icWaiting,
+        invoiceCardPaymenyIc,
+        invoiceIc,
+        invoicePayIc,
+        invoiceReturnIc,
         lockIc,
+        outBalanceIc,
         personIc,
         qatarCountry,
+        salesAmountIc,
+        saveCustomerIc,
         successCheckIcon,
+        successCreateCustomerIc,
+        totalSalesIc,
         truckIc
       ];
 }

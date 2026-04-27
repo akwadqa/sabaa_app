@@ -34,6 +34,13 @@ class InvoiceReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.sizeOf(context).height / 3.3;
     return AnimatedContainer(
+      // height:MediaQuery.sizeOf(context).height /1.5 ,
+        constraints: BoxConstraints(
+    maxHeight: MediaQuery.sizeOf(context).height * 0.65, // 🔥 max only
+    minHeight: MediaQuery.sizeOf(context).height * 0.4, // 🔥 max only
+
+  ),
+
       // padding: const EdgeInsets.all(14),
       duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
@@ -50,6 +57,7 @@ class InvoiceReviewCard extends StatelessWidget {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// ── HEADER ─────────────────────────
@@ -65,23 +73,38 @@ class InvoiceReviewCard extends StatelessWidget {
            16.verticalSpace,
             
           /// ── ITEMS ───────────────────────────
-          SizedBox(
-            height: items.length < 5
-                ? null
-                : maxHeight, // 🔥 control scroll area
-            child: ListView.builder(
-              itemCount: items.length,
-              shrinkWrap: items.length <= 5,
-              physics: items.length <= 5
-                  ? const NeverScrollableScrollPhysics()
-                  : const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                final item = items[index];
-            
-                return _ItemRow(item: item);
-              },
-            ),
+      Flexible(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.35,
           ),
+          child: ListView.builder(
+            itemCount: items.length,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _ItemRow(item: items[index]);
+            },
+          ),
+        ),
+      ),
+          // SizedBox(
+          //   height: items.length < 5
+          //       ? null
+          //       : maxHeight, // 🔥 control scroll area
+          //   child: ListView.builder(
+          //     itemCount: items.length,
+          //     shrinkWrap: items.length <= 5,
+          //     physics: items.length <= 5
+          //         ? const NeverScrollableScrollPhysics()
+          //         : const BouncingScrollPhysics(),
+          //     itemBuilder: (context, index) {
+          //       final item = items[index];
+            
+          //       return _ItemRow(item: item);
+          //     },
+          //   ),
+          // ),
            16.verticalSpace,
             
           /// ── DASHED DIVIDER ─────────────────

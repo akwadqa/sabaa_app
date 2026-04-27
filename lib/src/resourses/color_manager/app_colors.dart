@@ -7,16 +7,16 @@ abstract class AppColors {
   static const Color secondPrimary = Color(0xFF135BEC);
   static const Color thirdPrimary = Color(0xFFF6EAE5);
   static const Color primaryOpacity = Color(0xFFFFECDC);
-  static const Color primaryBg =  Color(0xFFBED3FF);
+  static const Color primaryBg = Color(0xFFBED3FF);
   static const Color background = Color(0xFFF6F6F8);
-  
+
   static const Color chipBorder = Color(0xFFC0BAB9);
 
   static const Color primaryBorder = Color(0xFFE4D7D3);
-  
+
   // static const Color thirdPrimary = Color(0xFFA981BB);
   static const Color purbleOpacity = Color(0xFFA0A3E3);
-  
+
   static const Color grey97 = Color(0xFF979797);
   static const accent     = Color(0xFFF37B24);
   static const surface    = Colors.white;
@@ -41,9 +41,23 @@ static const Color metricPinkIcon = Color(0xFFDB2777);
 
 // static const Color metricPurple = Color(0xFFEDE9FE);
 static const Color metricPurpleIcon = Color(0xFF7C3AED);
+
+
+  static const Color successGreen = Color(0xFF00721D);
+  static const Color errorRed = Color(0xFFBB0101);
+  static const Color warnYellow = Color(0xFF7A5800);
+  static const Color filterBg = Color(0xFFF2F4F7);
+  static const Color paidBg = Color(0xFFCCEACC);
+  static const Color paidText = Color(0xFF4E7B4E);
+  static const Color unpaidBg = Color(0xFFFFDAD6);
+  static const Color unpaidText = Color(0xFF93000A);
+  static const Color partlyPaidBg = Color(0xFFD1E5F7);
+  static const Color partlyPaidText = Color(0xFF005B93);
+  static const Color returnBg = Color(0xFFFFDCC3);
+  static const Color returnText = Color(0xFFCB671E);
+
   // static const Color background = Color(0xffFAFAF9);
 
-  
   static const Color fieldBackground = Color(0xFFEFF0F6);
   static const Color dividerColor = Color(0xFFe9e9e9);
   static const Color white = Color(0xFFFFFFFF);
@@ -53,30 +67,29 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
   static const Color dark = Color(0xFF201C11);
   static const Color borderGrey = Color(0xFFe8e8e8);
 
+  static const Color stockImageBg = Color(0xFFF3F4F6);
 
-  static const Color stockImageBg      = Color(0xFFF3F4F6);
+  static const Color stockHighBg = Color(0xFFDCFCE7);
+  static const Color stockHighText = Color(0xFF15803D);
+  static const Color stockMedBg = Color(0xFFFEF9C3);
+  static const Color stockMedText = Color(0xFFA16207);
+  static const Color stockLowBg = Color(0xFFFEE2E2);
+  static const Color stockLowText = Color(0xFFB91C1C);
 
-  static const Color stockHighBg       = Color(0xFFDCFCE7);
-  static const Color stockHighText     = Color(0xFF15803D);
-  static const Color stockMedBg        = Color(0xFFFEF9C3);
-  static const Color stockMedText      = Color(0xFFA16207);
-  static const Color stockLowBg        = Color(0xFFFEE2E2);
-  static const Color stockLowText      = Color(0xFFB91C1C);
- 
   // ── Customers feature — visit status badges ───────────────────
 
-  static const Color statusOpenText    = Color(0xFF9333EA);
-  static const Color statusPendingBg   = Color(0xFFFFEDD5);
+  static const Color statusOpenText = Color(0xFF9333EA);
+  static const Color statusPendingBg = Color(0xFFFFEDD5);
   static const Color statusPendingText = Color(0xFFC2410C);
   static const Color statusVisitedAmount = Color(0xFF94A3B8);
- 
+
   // ── Customers feature — avatar palettes ───────────────────────
-  static const Color avatarOrangeText  = Color(0xFFEA580C);
-  static const Color avatarBlueBg      = Color(0xFFDBEAFE);
-  static const Color avatarBlueText    = Color(0xFF2563EB);
-  static const Color avatarPurpleBg    = Color(0xFFF3E8FF);
-  static const Color imageBorderBlue   = Color(0x33137FEC);
- 
+  static const Color avatarOrangeText = Color(0xFFEA580C);
+  static const Color avatarBlueBg = Color(0xFFDBEAFE);
+  static const Color avatarBlueText = Color(0xFF2563EB);
+  static const Color avatarPurpleBg = Color(0xFFF3E8FF);
+  static const Color imageBorderBlue = Color(0x33137FEC);
+
   // ── Shared UI ─────────────────────────────────────────────────
   static const Color chevronBg         = Color(0xFFF1F5F9);
   static const Color secondCard         = Color(0xFFF0F2F4);
@@ -94,7 +107,7 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
     primary,
     secondPrimary,
     white,
-    
+
   ];
         // AppColors.avatarPurpleBg,
         //                     AppColors.secondPrimary,
@@ -131,7 +144,11 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
   static const Color black900 = Color(0xFF484848);
   static const Color lightGray = Color(0xFFE5E5E5);
   static const Color grey600 = Color(0xFF757575);
-  static const Color grey = Color(0xFFEdeded);
+  static const Color grey = Color(0xFF6B7280);
+  static const Color textGrey = Color(0xFF9CA3AF);
+
+  static const Color gray03 = Color(0xFFEdeded);
+  static const Color gray04 = Color(0xFF424752);
   static const Color green = Color(0xFF69A94B);
   static const Color mediumGray = Color(0xFFD7D7D7);
   static const Color grayBorder = Color(0xFFCCCCCC);
@@ -147,7 +164,12 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
   static const Color lightPeach = Color(0xFFFFF5F1);
   static const Color dimGray = Color(0xFF555555);
   static const Color grayishCharcoal = Color(0xFF595959);
-
+  static const Color sheetBarrier = Color(0xFFF7F9FC);
+  static const Color lightBlueBackground = Color(
+      0xFFF2E1E3); // Matches the info message overlay in Figma if not defined
+  static const Color infoIconBg = Color(0xFFF2E1E3);
+  static const Color infoText = Color(0xFF727784);
+  static const Color methodSelectorBorder = Color(0xFFDBE0E6);
 }
 
 class AvatarColors {

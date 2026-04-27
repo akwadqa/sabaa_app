@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
@@ -51,12 +52,13 @@ Future<ApiResponse<void>> createInvoice({
     );
 
     if ( response.statusCode != 201) {
+      Dev.logError("Create invoice failed in data source");
       throw Exception('Create invoice failed');
     }
 
-    return ApiResponse.fromJson(response.data, (_) => Null);
+    return ApiResponse.fromJson(response.data, (_) {});
   } catch (e) {
-    Dev.logLine('Error in createInvoice: $e');
+    Dev.logError('Error in createInvoice: $e');
     rethrow;
   }
 }

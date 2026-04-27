@@ -43,7 +43,7 @@ final String selectedUnit;
 class _OrderItemCardState extends ConsumerState<OrderItemCard> {
   late TextEditingController _quantityController;
   // Unit options for dropdown
-  static const List<String> _units = ['Box', 'Ctn', 'Pcs', 'Dz'];
+  static const List<String> _units = ['Box', 'Ctn', 'Pcs', ];
 
   @override
   void initState() {

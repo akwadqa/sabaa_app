@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
 import 'package:sabaa/features/new_order/presentation/controller/order_mode_controller.dart';
@@ -26,7 +27,7 @@ import '../controller/new_order_state.dart';
 class NewOrderPage extends ConsumerStatefulWidget {
   const NewOrderPage({super.key, required this.customer});
 
-  final Customer customer;
+  final CustomerModel customer;
 
   @override
   ConsumerState<NewOrderPage> createState() => _NewOrderPageState();
@@ -47,7 +48,7 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
   void dispose() {
     _searchController.dispose();
     // Reset mode when leaving the page
-    ref.read(orderModeControllerProvider.notifier).setMode(OrderMode.newSale);
+    // ref.read(orderModeControllerProvider.notifier).setMode(OrderMode.newSale);
     super.dispose();
   }
 
@@ -131,7 +132,7 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
             style: AppTextStyle.interBold20.copyWith(color: AppColors.dark),
           ),
           Text(
-            widget.customer.name,
+            widget.customer.name??"",
             style: AppTextStyle.interRegular12.copyWith(
               color: AppColors.blueGrey,
             ),

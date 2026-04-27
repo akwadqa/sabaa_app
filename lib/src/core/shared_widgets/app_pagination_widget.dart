@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
+import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 import 'fade_circle_loading_indicator.dart';
 

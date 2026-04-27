@@ -22,7 +22,7 @@ class ApiResponse<T> {
     try {
       final statusCode = json['status_code'] ?? json['status'];
       final hasError =
-          json['error'] == 1 || (statusCode != null && statusCode != 200);
+          json['error'] == 1 || (statusCode != null && statusCode > 201);
 
       if (hasError) {
         return ApiResponse<T>.error(
@@ -68,6 +68,6 @@ class ApiResponse<T> {
     'error': error,
   };
 
-  bool get hasSucceeded => status == 200;
+bool get hasSucceeded => status == 200 || status == 201;
   bool get hasFailed => error != null && error == 1;
 }

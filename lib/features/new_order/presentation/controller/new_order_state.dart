@@ -3,6 +3,8 @@ import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
 import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
+
+import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
 class NewOrderState {
   const NewOrderState({
     this.allItems = const [],
@@ -25,7 +27,7 @@ class NewOrderState {
   final String searchQuery;
   final String? selectedCategory;
   final int selectedCategoryIndex;
-  final Customer? customer;
+  final CustomerModel? customer;
 final bool isSubmitting;
   /// 🔥 key = itemCode
   final Map<String, SelectedItem> selectedItems;
@@ -40,7 +42,7 @@ final bool isSubmitting;
     List<StockCategoryModel>? categories,
     String? searchQuery,
     String? selectedCategory,
-    Customer? customer,
+    CustomerModel? customer,
     int? selectedCategoryIndex,
     Map<String, SelectedItem>? selectedItems,
     AsyncValue<void>? listState,

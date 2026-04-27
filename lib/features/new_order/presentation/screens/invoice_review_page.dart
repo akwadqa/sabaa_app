@@ -1,10 +1,17 @@
+import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/invoice_widgets/invoice_review_card.dart';
+import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
+import 'package:sabaa/src/core/utils/functions/helper_methods.dart';
+import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:slider_button/slider_button.dart';
@@ -30,7 +37,7 @@ class InvoiceReviewPage extends ConsumerWidget {
       return InvoiceItemUI(
         name: e.product.productName,
         count: selected?.quantity ?? 0,
-        total: '${total.toStringAsFixed(0)} QAR',
+        total: formatPrice(total),
       );
     }).toList();
 
@@ -53,72 +60,83 @@ class InvoiceReviewPage extends ConsumerWidget {
         builder: (context, ref, _) {
           final state = ref.watch(newOrderControllerProvider).value!;
 
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: state.isSubmitting
-                ? _LoadingButton()
-                : SliderButton(
-                  useGlassEffect: true,
-                    action: () async {
-                      final success = await ref
-                          .read(newOrderControllerProvider.notifier)
-                          .createInvoice();
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.symmetric(
+                  vertical: 16, horizontal: 40),
+              child: state.isSubmitting
+                  ? _LoadingButton()
+                  : SliderButton(
+                      useGlassEffect: true,
+                      alignLabel: Alignment.center,
+                      action: () async {
+                        // 🔥 let slider finish animation FIRST
+                        await Future.delayed(const Duration(milliseconds: 200));
 
-                      if (success) {
-                        _showSuccessDialog(context);
-                      }
-                      // return success;
-                    },
-                    label: Text(
-                      "swipe_to_confirm".tr(),
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    icon: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                                  colors: AppColors.primaryGradient,
+                        final controller =
+                            ref.read(newOrderControllerProvider.notifier);
 
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                        final success = await controller.createInvoice();
+
+                        if (!context.mounted) return false;
+
+                        if (success) {
+                          await Future.delayed(
+                              const Duration(milliseconds: 300));
+                          _showSuccessDialog(context, ref);
+                        }
+
+                        return success;
+                      },
+                      label: Text(
+                        "swipe_to_confirm".tr(),
+                        style: AppTextStyle.interSemiBold14.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryShadow,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
+                      ),
+                      icon: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: AppColors.primaryGradient,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryShadow,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.white,
-                        size: 18,
-                      ),
+                      width: double.infinity,
+                      height: 64,
+                      radius: 18,
+                      backgroundColor: AppColors.sliderBackground,
+                      baseColor: AppColors.sliderBase,
+                      highlightedColor: AppColors.sliderHighlight,
+                      buttonColor: Colors.transparent,
                     ),
-                    width: double.infinity,
-                    height: 64,
-                    radius: 18,
-        
-  backgroundColor: AppColors.sliderBackground,
-  baseColor: AppColors.sliderBase,
-  highlightedColor: AppColors.sliderHighlight,
-  buttonColor: Colors.transparent,
-                  ).symmetricPadding(horizontal: 25),
+            ),
           );
         },
       ),
       body: InvoiceReviewCard(
         items: items,
-        subtotal: '${subtotalValue.toStringAsFixed(0)} QAR',
+        subtotal:formatPrice(subtotalValue) ,
         tax: '15%',
-        total: '${totalValue.toStringAsFixed(0)} QAR',
+        total: formatPrice(totalValue) ,
       ).symmetricPadding(horizontal: 12, vertical: 16),
     );
   }
@@ -144,58 +162,70 @@ class InvoiceReviewPage extends ConsumerWidget {
     );
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _showSuccessDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "transaction_successful".tr(),
-                  style: AppTextStyle.interBold22.copyWith(
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                /// ICON
-                Icon(Icons.check_circle, color: AppColors.primary, size: 100),
-
-                const SizedBox(height: 20),
-
-                Text(
-                  "invoice_created_successfully".tr(),
-                  textAlign: TextAlign.center,
-                  style: AppTextStyle.interRegular14.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-CustomButtonWidget(
-              text: "back_to_home",
-              onTap: () {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-              } ,
-              isFiled: true,
-              height: 48,
-              width: double.infinity,
-              backgroundColor:  AppColors.primary ,
-              radius: 8,
-            
+        return Stack(
+          children: [
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(color: Colors.transparent),
             ),
+
+            Center(
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "transaction_successful".tr(),
+                        style: AppTextStyle.interBold22.copyWith(
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
               
-              ],
+                      /// ICON
+                      SvgPicture.asset(
+                        Assets.icons.successCheckIcon.keyName,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(height: 20),
+              
+                      Text(
+                        "invoice_created_successfully".tr(),
+                        textAlign: TextAlign.center,
+                        style: AppTextStyle.interRegular14.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+              
+                      const SizedBox(height: 24),
+                      CustomButtonWidget(
+                        text: "back_to_home",
+                        onTap: () {
+                          ref.read(bottomNavIndexProvider.notifier).state = 0;
+                          Navigator.popUntil(context, (route) => route.isFirst);
+                        },
+                        isFiled: true,
+                        height: 48,
+                        width: double.infinity,
+                        backgroundColor: AppColors.primary,
+                        radius: 8,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );

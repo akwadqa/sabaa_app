@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-
 import 'package:sabaa/features/auth/signIn/presentation/screens/sign_in_screen.dart';
+import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
+import 'package:sabaa/features/customers/presentation/screens/create_customer_page.dart';
+import 'package:sabaa/features/customers/presentation/screens/create_customer_success_page.dart';
 import 'package:sabaa/features/customers/presentation/screens/customer_details_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/screens/invoice_review_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
+import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
 import 'app_routes.dart';
@@ -27,11 +30,10 @@ class AppRouter {
   static GoRouter _createRouter(Ref ref) {
     String initialRoute = AppRoutes.splashScreen;
     return GoRouter(
-      navigatorKey: rootKey,
-      initialLocation: initialRoute,
-
-      observers: [CustomNavigationObserver()],
-      errorBuilder: (context, state) => const FallbackScreen(),
+        navigatorKey: rootKey,
+        initialLocation: initialRoute,
+        observers: [CustomNavigationObserver()],
+        errorBuilder: (context, state) => const FallbackScreen(),
 
       //   redirect: (context, state) async {
       //     // Consumer(
@@ -153,7 +155,7 @@ class AppRouter {
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
-              child: NewOrderPage(customer: state.extra as Customer,),
+              child: NewOrderPage(customer: state.extra as CustomerModel,),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -192,7 +194,53 @@ class AppRouter {
             );
           },
         ),
-    
+        GoRoute(
+          path: AppRoutes.addCustomerScreen,
+          name: AppRoutes.addCustomerScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: CreateCustomerPage(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.createCustomerSuccessScreen,
+          name: AppRoutes.createCustomerSuccessScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: CreateCustomerSuccessPage(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.orderSummaryScreen,
+          name: AppRoutes.orderSummaryScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: OrderSummaryPage(
+                customer: state.extra as CustomerModel,
+              ),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
       ],
     );
   }

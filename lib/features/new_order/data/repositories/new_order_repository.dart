@@ -3,6 +3,7 @@ import 'package:sabaa/features/van_stock/domain/model/van_stock_model.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/dio_client.dart';
 import 'package:sabaa/src/logger/failure/exceptions/app_exception.dart';
+import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 
 import '../datasources/new_order_datasource.dart';
 
@@ -41,8 +42,11 @@ class NewOrderRepository {
      customerId:customerId, items: items,
     );
 
-    if (response.error == 0) return response;
-
+  if (response.hasSucceeded ) {
+      return response;
+    }
+      Dev.logError("Create invoice failed in repo");
+    
     throw AppException(message: response.message);
   }
 
