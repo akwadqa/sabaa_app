@@ -40,6 +40,7 @@ class NewOrderDatasource {
 
 Future<ApiResponse<void>> createInvoice({
   required String customerId,
+  required String deliveryFee,
   required List<Map<String, dynamic>> items,
 }) async {
   try {
@@ -48,6 +49,7 @@ Future<ApiResponse<void>> createInvoice({
       data: {
         "customer_id": customerId,
         "items": items,
+        "deliveryFee": deliveryFee,
       },
     );
 

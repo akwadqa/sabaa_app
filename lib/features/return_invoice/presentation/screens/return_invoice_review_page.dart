@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/presentation/widgets/add_customer_page/custom_labeled_text_filed.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/invoice_widgets/invoice_review_card.dart';
+import 'package:sabaa/features/return_invoice/presentation/controller/return_order_controller.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
@@ -21,27 +22,26 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:slider_button/slider_button.dart';
 
 import '../../../../src/core/shared_widgets/custom_button_widget.dart';
-import '../controller/new_order_controller.dart';
 
-class InvoiceReviewPage extends ConsumerWidget {
-  const InvoiceReviewPage({super.key});
+class ReturnInvoiceReviewPage extends ConsumerWidget {
+  const ReturnInvoiceReviewPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(newOrderControllerProvider).value!;
-    final controller = ref.read(newOrderControllerProvider.notifier);
+    final state = ref.watch(returnOrderControllerProvider).value!;
+    final controller = ref.read(returnOrderControllerProvider.notifier);
 
     final selectedProducts = state.selectedItems.values.toList();
 
     // 🔥 Map to UI model
     final items = selectedProducts.map((e) {
       final selected = state.selectedItems[e.product.itemCode];
-      final total = e.product.price * (selected?.quantity ?? 0);
+      final total = e.product.amount * (selected?.quantity ?? 0);
 
       return InvoiceItemUI(
-        name: e.product.productName,
+        name: e.product.itemName,
         count: selected?.quantity ?? 0,
-        total: formatPrice(total),
+        total: formatPrice(total.toDouble()),
       );
     }).toList();
 
@@ -50,7 +50,7 @@ class InvoiceReviewPage extends ConsumerWidget {
       0,
       (sum, e) =>
           sum +
-          (e.product.price *
+          (e.product.amount *
               (state.selectedItems[e.product.itemCode]?.quantity ?? 0)),
     );
 
@@ -62,84 +62,79 @@ class InvoiceReviewPage extends ConsumerWidget {
       appBar: _buildAppBar(context),
       bottomNavigationBar: Consumer(
         builder: (context, ref, _) {
-          final state = ref.watch(newOrderControllerProvider).value!;
-          final isValid = state.deliveryFee != null &&
-              (state.deliveryFee?.isNotEmpty ?? false);
+          final state = ref.watch(returnOrderControllerProvider).value!;
+          // final isValid = state.deliveryFee != null &&
+          //     (state.deliveryFee?.isNotEmpty ?? false);
           return SafeArea(
             child: Padding(
               padding: const EdgeInsetsDirectional.symmetric(
                   vertical: 16, horizontal: 40),
               child: state.isSubmitting
                   ? _LoadingButton()
-                  : AbsorbPointer(
-                      absorbing: !isValid,
-                      child: SliderButton(
-                        useGlassEffect: true,
-                        alignLabel: Alignment.center,
-                        action: () async {
-                          if (!isValid) return false;
-                          final controller =
-                              ref.read(newOrderControllerProvider.notifier);
-
-                          final success = await controller.createInvoice();
-
-                          // if (!context.mounted) return false;
-
-                          if (success) {
-                            // await Future.delayed(
-                            //     const Duration(milliseconds: 300));
-
-                            await _showSuccessDialog(context, ref);
-                            return true;
-                          }
-
-                          // return success;
-                        },
-                        label: Text(
-                          "swipe_to_confirm".tr(),
-                          style: AppTextStyle.interSemiBold14.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.2,
-                          ),
-                        ),
-                        icon: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient:  LinearGradient(
-                              colors:isValid? AppColors.primaryGradient:[AppColors.blueGrey,AppColors.gray],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primaryShadow,
-                                blurRadius: 10,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                        width: double.infinity,
-                        height: 64,
-                        radius: 18,
-                        backgroundColor: AppColors.sliderBackground,
-                        shimmer: isValid,
-                        baseColor: isValid
-                            ? AppColors.sliderBase
-                            : Colors.grey.shade300,
-                        highlightedColor:
-                            isValid ? AppColors.sliderHighlight : Colors.grey,
-                        buttonColor: Colors.transparent,
+                  : SliderButton(
+                    useGlassEffect: true,
+                    alignLabel: Alignment.center,
+                    action: () async {
+                      // if (!isValid) return false;
+                      final controller =
+                          ref.read(returnOrderControllerProvider.notifier);
+                  
+                      final success = await controller.createReturnOrder();
+                  
+                      // if (!context.mounted) return false;
+                  
+                      if (success) {
+                        // await Future.delayed(
+                        //     const Duration(milliseconds: 300));
+                  
+                        await _showSuccessDialog(context, ref);
+                        return true;
+                      }
+                  
+                      // return success;
+                    },
+                    label: Text(
+                      "swipe_to_confirm".tr(),
+                      style: AppTextStyle.interSemiBold14.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
                       ),
                     ),
+                    icon: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient:  LinearGradient(
+                          colors: AppColors.primaryGradient,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryShadow,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                    ),
+                    width: double.infinity,
+                    height: 64,
+                    radius: 18,
+                    backgroundColor: AppColors.sliderBackground,
+                    baseColor:  AppColors.sliderBase
+                        ,
+                    highlightedColor:
+                        AppColors.sliderHighlight ,
+                    buttonColor: Colors.transparent,
+                  ),
             ),
           );
         },
@@ -147,13 +142,13 @@ class InvoiceReviewPage extends ConsumerWidget {
       body: Column(
         spacing: 12,
         children: [
-          20.verticalSpace,
-          CustomLabeledTextField(
-            label: 'delivery_fee',
-            hint: 'enter_delivery_fee',
-            // controller: _nameController,
-            onChanged: (value) => controller.editDeliveryFee(value),
-          ).symmetricPadding(horizontal: 12),
+          // 20.verticalSpace,
+          // CustomLabeledTextField(
+          //   label: 'delivery_fee',
+          //   hint: 'enter_delivery_fee',
+          //   // controller: _nameController,
+          //   onChanged: (value) => controller.editDeliveryFee(value),
+          // ).symmetricPadding(horizontal: 12),
           InvoiceReviewCard(
             items: items,
             subtotal: formatPrice(subtotalValue),
@@ -232,15 +227,11 @@ class InvoiceReviewPage extends ConsumerWidget {
 
                       const SizedBox(height: 24),
                       CustomButtonWidget(
-                        text: "pay_now",
+                        text: "back_to_home",
                         onTap: () {
-                          int count = 0;
-                          Navigator.popUntil(context, (route) {
-                            return count++ == 4;
-                          });
-                          // ref.read(bottomNavIndexProvider.notifier).state = 0;
-                          // Navigator.popUntil(context,
-                          //     (route) => route == AppRoutes.orderSummaryScreen);
+                           ref.read(bottomNavIndexProvider.notifier).state = 0;
+
+                          context.goNamed(AppRoutes.mainScreen); // ✅ best
                         },
                         isFiled: true,
                         height: 48,
@@ -248,20 +239,20 @@ class InvoiceReviewPage extends ConsumerWidget {
                         backgroundColor: AppColors.primary,
                         radius: 8,
                       ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          ref.read(bottomNavIndexProvider.notifier).state = 0;
+                      // const SizedBox(height: 8),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     ref.read(bottomNavIndexProvider.notifier).state = 0;
 
-                          context.goNamed(AppRoutes.mainScreen); // ✅ best
-                        },
-                        child: Text(
-                          "back_to_home".tr(),
-                          style: AppTextStyle.interSemiBold14.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      )
+                      //     context.goNamed(AppRoutes.mainScreen); // ✅ best
+                      //   },
+                      //   child: Text(
+                      //     "back_to_home".tr(),
+                      //     style: AppTextStyle.interSemiBold14.copyWith(
+                      //       color: AppColors.primary,
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                 ),

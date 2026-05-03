@@ -36,10 +36,11 @@ class NewOrderRepository {
   }
   Future<ApiResponse<void>> createInvoice({
   required String customerId,
+  required String deliveryFee,
   required List<Map<String, dynamic>> items,
 }) async {
     final response = await _datasource.createInvoice(
-     customerId:customerId, items: items,
+     customerId:customerId, items: items,deliveryFee:deliveryFee
     );
 
   if (response.hasSucceeded ) {

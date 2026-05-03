@@ -19,7 +19,7 @@ class EmailFormField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.tr("email"),
+          context.tr("delivery_fee"),
           style:
               AppTextStyle.interSemiBold16,
         ).onlyPadding(start: 8),

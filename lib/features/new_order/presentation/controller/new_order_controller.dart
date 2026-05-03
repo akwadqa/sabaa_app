@@ -177,7 +177,7 @@ class NewOrderController extends _$NewOrderController {
       showLoading: false,
     );
   }
-// email=test@akwad.qa&password=test@saba2026
+// email=saba@akwad.qa&password=Akwad@2025
   // ── Selection ──────────────────────────
 
   void toggleItem(ProductModel item) {
@@ -271,6 +271,7 @@ class NewOrderController extends _$NewOrderController {
 
     try {
       final customerId = current.customer?.customerId;
+      final deliveryFee = current.deliveryFee;
       final repo = ref.read(newOrderRepositoryProvider);
 
       final items = current.selectedItems.values.map((e) {
@@ -289,6 +290,7 @@ class NewOrderController extends _$NewOrderController {
       await repo.createInvoice(
         customerId: customerId,
         items: items,
+        deliveryFee: deliveryFee!,
       );
     final latest = state.value!;
 
@@ -314,6 +316,16 @@ class NewOrderController extends _$NewOrderController {
         searchQuery: '',
         selectedCategory: null,
         selectedCategoryIndex: 0,
+      ),
+    );
+  }
+
+  void editDeliveryFee(String value) {
+    final current = state.value!;
+
+    state = AsyncData(
+      current.copyWith(
+        deliveryFee:value,
       ),
     );
   }

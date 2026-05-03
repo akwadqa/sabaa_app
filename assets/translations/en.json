@@ -161,6 +161,9 @@
     "back_to_home": "Back to Home",
     "invoice_created_successfully": "The invoice has been created and processed successfully.",
     "proceed_to_create_order": "Proceed to create order",
-
+    "remove_item_title": "Remove Item?",
+    "remove_item_message": "Are you sure you want to remove this item?",
+    "yes_remove": "Yes, remove",
+    "cancel": "Cancel",
     "confirm_order": "Confirm order"
 }

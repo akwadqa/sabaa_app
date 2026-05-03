@@ -18,6 +18,8 @@ import 'package:sabaa/features/order/presentation/pages/success_payment_screen.d
 import 'package:sabaa/features/splash/splash_screen.dart';
 
 import '../../../features/barcode_scanner/presentation/screen/barcode_scanner_page.dart';
+import '../../../features/return_invoice/presentation/screens/return_invoice_review_page.dart';
+import '../../../features/return_invoice/presentation/screens/return_items_page.dart';
 import 'app_routes.dart';
 import 'custom_navigation_observer.dart';
 import 'fallback_screen.dart';
@@ -32,10 +34,10 @@ class AppRouter {
   static GoRouter _createRouter(Ref ref) {
     String initialRoute = AppRoutes.splashScreen;
     return GoRouter(
-        navigatorKey: rootKey,
-        initialLocation: initialRoute,
-        observers: [CustomNavigationObserver()],
-        errorBuilder: (context, state) => const FallbackScreen(),
+      navigatorKey: rootKey,
+      initialLocation: initialRoute,
+      observers: [CustomNavigationObserver()],
+      errorBuilder: (context, state) => const FallbackScreen(),
 
       //   redirect: (context, state) async {
       //     // Consumer(
@@ -82,12 +84,11 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-       
         GoRoute(
           path: AppRoutes.signInScreen,
           name: AppRoutes.signInScreen,
@@ -98,13 +99,12 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-      
-       GoRoute(
+        GoRoute(
           path: AppRoutes.mainScreen,
           name: AppRoutes.mainScreen,
           parentNavigatorKey: rootKey,
@@ -114,13 +114,12 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-    
-       GoRoute(
+        GoRoute(
           path: AppRoutes.homeScreen,
           name: AppRoutes.homeScreen,
           parentNavigatorKey: rootKey,
@@ -130,43 +129,83 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-    
-       GoRoute(
+        GoRoute(
           path: AppRoutes.customerDetailsScreen,
           name: AppRoutes.customerDetailsScreen,
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
-              child: CustomerDetailsPage(customer:  state.extra as Customer,),
+              child: CustomerDetailsPage(
+                customer: state.extra as Customer,
+              ),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-       GoRoute(
+        GoRoute(
           path: AppRoutes.newOrderScreen,
           name: AppRoutes.newOrderScreen,
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
-              child: NewOrderPage(customer: state.extra as CustomerModel,),
+              child: NewOrderPage(
+                customer: state.extra as CustomerModel,
+              ),
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-       GoRoute(
+        GoRoute(
+          path: AppRoutes.returnInvoiceScreen,
+          name: AppRoutes.returnInvoiceScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>;
+
+            return CustomTransitionPage(
+              child: ReturnItemsPage(
+                customer: extra['customer'] as CustomerModel,
+                invoiceId: extra['invoiceId'] as String,
+              ),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.returnInvoiceReviewScreen,
+          name: AppRoutes.returnInvoiceReviewScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+
+            return CustomTransitionPage(
+              child: ReturnInvoiceReviewPage(
+              ),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
           path: AppRoutes.invoiceSummaryPage,
           name: AppRoutes.invoiceSummaryPage,
           parentNavigatorKey: rootKey,
@@ -176,12 +215,12 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
-       GoRoute(
+        GoRoute(
           path: AppRoutes.invoiceReviewPage,
           name: AppRoutes.invoiceReviewPage,
           parentNavigatorKey: rootKey,
@@ -191,8 +230,8 @@ class AppRouter {
               key: state.pageKey,
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                return FadeTransition(opacity: animation, child: child);
+              },
             );
           },
         ),
@@ -258,7 +297,6 @@ class AppRouter {
             );
           },
         ),
-      
         GoRoute(
           path: AppRoutes.barcodeScreen,
           name: AppRoutes.barcodeScreen,
@@ -267,7 +305,6 @@ class AppRouter {
             return CustomTransitionPage(
               child: BarcodeScannerPage(
                 fromNewOrder: state.extra as bool,
-
               ),
               key: state.pageKey,
               transitionsBuilder:
@@ -277,8 +314,6 @@ class AppRouter {
             );
           },
         ),
-      
-      
       ],
     );
   }

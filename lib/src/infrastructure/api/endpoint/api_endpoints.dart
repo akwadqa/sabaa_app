@@ -11,6 +11,7 @@ class ApiEndPoints {
 
   //? --- Orders ---
   static const String orderSummary = '$domain.orders.get_order_summary';
+  static const String getInvoiceDetails = '$domain.orders.get_invoice_details';
 
 
 
@@ -27,6 +28,7 @@ class ApiEndPoints {
   //? --- CREATION INVOICE ---
   static const String createInvoice = '$domain.orders.create_invoice';
   static const String createPaymentApi = '$domain.payments.create_payment';
+  static const String createReturnOrder = '$domain.returns.create_return_order';
   //? --- Settings ---
   static const String deleteAccountApi = '$domain.profile.delete_user_profile';
   static const String logoutApi = '$domain.auth.logout';

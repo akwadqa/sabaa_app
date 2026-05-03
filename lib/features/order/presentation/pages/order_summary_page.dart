@@ -141,6 +141,7 @@ class _OrderSummaryPageContentState
               children: [
                 OrderSummaryInvoiceCard(
                   invoice:invoice,
+                  customer: customer,
                   // date: invoice.postingDate,
                   // id: invoice.invoiceId,
                   outstandingBalance: orderSummary.outstandingBalance,

@@ -70,7 +70,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
           //     ),
           //   ),
           // ),
-    
+
           SizedBox(
             width: 50,
             height: 45,
@@ -80,7 +80,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
               myFocusNode: myFocusNode,
               onChanged: (value) {
                 final parsed = int.tryParse(value) ?? 0;
-    
+
                 if (parsed > widget.maxStock) {
                   AppToast.errorToast(
                       "The limit of stock is ${widget.maxStock}");
@@ -92,7 +92,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
               },
             ),
           ),
-    
+
           _StepButton(
             icon: Icons.add,
             onTap: widget.onIncrement,
@@ -153,40 +153,39 @@ class _QuantityInputField extends StatelessWidget {
   final int maxStock;
   final FocusNode myFocusNode;
 
-
   @override
   Widget build(BuildContext context) {
-    return  KeyboardActions(   // 👈 wrap WHOLE card
-                // tapOutsideToDismiss: true,
+    return KeyboardActions(
+      // 👈 wrap WHOLE card
+      // tapOutsideToDismiss: true,
 
-                config: KeyboardActionsConfig(
-                  keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
-                  actions: [
-                    KeyboardActionsItem(
-                      // displayActionBar: false,
-                      focusNode: myFocusNode,
- toolbarButtons: [
-          (node) {
-            return GestureDetector(
-              onTap: () => node.unfocus(),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  "Done",
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-          }
-        ],
-                         displayDoneButton: true,
-                       
+      config: KeyboardActionsConfig(
+        keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+        actions: [
+          KeyboardActionsItem(
+            // displayActionBar: false,
+            focusNode: myFocusNode,
+            toolbarButtons: [
+              (node) {
+                return GestureDetector(
+                  onTap: () => node.unfocus(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      "Done",
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                );
+              }
+            ],
+            displayDoneButton: true,
+          ),
+        ],
+      ),
       child: TextField(
         controller: controller,
         keyboardType: TextInputType.number,
