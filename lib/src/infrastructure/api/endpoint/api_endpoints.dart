@@ -11,6 +11,7 @@ class ApiEndPoints {
 
   //? --- Orders ---
   static const String orderSummary = '$domain.orders.get_order_summary';
+  static const String createPayment = '$domain.payments.create_payment';
 
 
 

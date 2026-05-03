@@ -143,46 +143,7 @@ class _OrderSummaryPageContentState
             );
           }).toList()),
 
-          // Invoices List
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'paid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\99821\\2024',
-          //   amount: '400 QAR',
-          //   status: 'return',
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'partly_paid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'paid',
-          //   actions: ['return'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'unpaid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'return',
-          // ),
+          
         ],
       ),
     );

@@ -1,12 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 
 class OrderState {
   final String ordersTypeFilter;
+  final String paymentMethod;
   final AsyncValue<OrderSummaryModel>? orderSummary;
+  final AsyncValue<CreatePaymentResponse>? createPaymentResponse;
 
   OrderState({
     required this.ordersTypeFilter,
+    required this.paymentMethod,
+    required this.createPaymentResponse,
     required this.orderSummary,
   });
 
@@ -14,15 +19,21 @@ class OrderState {
     return OrderState(
       ordersTypeFilter: 'all',
       orderSummary: AsyncLoading(),
+      paymentMethod: 'cash',
+      createPaymentResponse: null,
     );
   }
   OrderState copyWith({
     String? ordersTypeFilter,
+    String? paymentMethod,
     AsyncValue<OrderSummaryModel>? orderSummary,
+    AsyncValue<CreatePaymentResponse>? createPaymentResponse,
   }) {
     return OrderState(
       ordersTypeFilter: ordersTypeFilter ?? this.ordersTypeFilter,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
       orderSummary: orderSummary ?? this.orderSummary,
+      createPaymentResponse: createPaymentResponse ?? this.createPaymentResponse,
     );
   }
 }
