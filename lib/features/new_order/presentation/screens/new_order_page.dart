@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
@@ -13,6 +14,7 @@ import 'package:sabaa/features/new_order/presentation/widgets/order_category_fil
 import 'package:sabaa/features/new_order/presentation/widgets/order_item_card.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_search_bar.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
@@ -104,7 +106,7 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
             ),
           ),
         ),
-        body: asyncProducts.when(
+        body:  asyncProducts.when(
             loading: () => const Center(child: AppLoader()),
             error: (e, _) => AppErrorWidget(),
             data: (state) => _OrderBody(
@@ -188,6 +190,9 @@ class _OrderBody extends ConsumerWidget {
             controller: searchController,
             hintKey: 'search_items_barcode',
             onChanged: onSearchChanged,
+            onBarcodeTap: () {
+            context.push(AppRoutes.barcodeScreen,extra: true);
+          },
           ),
 
           OrderCategoryFilter(
@@ -220,6 +225,8 @@ class _OrderBody extends ConsumerWidget {
                         backgroundColor: AppColors.white,
                       ),
                     ),
+                if (state.filteredItems.isEmpty) AppEmptyDataWidget(),
+
                   ...state.filteredItems.map((item) {
                     final isSelected =
                         state.selectedItems.containsKey(item.itemCode);

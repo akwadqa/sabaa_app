@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/auth/signIn/presentation/controller/sign_in_controller.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/email_text_form_field.dart';
 import 'package:sabaa/features/auth/widgets/text_form_fields/password_form_field.dart';
+import 'package:sabaa/features/home/presentation/controller/home_controller.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
@@ -18,7 +19,7 @@ class SignInForm extends ConsumerStatefulWidget {
   @override
   ConsumerState<SignInForm> createState() => _SignInFormState();
 }
-
+ 
 class _SignInFormState extends ConsumerState<SignInForm> {
   // String? _phoneNumber;
   final _formKey = GlobalKey<FormState>();
@@ -31,7 +32,8 @@ class _SignInFormState extends ConsumerState<SignInForm> {
         // context.maybePop().then((_) {
         debugPrint("Success check");
         if (next.value!.signinResponseModel!.user.isEnabled) {
-          context.push(
+          ref.invalidate(homeControllerProvider);
+          context.goNamed(
             AppRoutes.mainScreen,
           );
         }

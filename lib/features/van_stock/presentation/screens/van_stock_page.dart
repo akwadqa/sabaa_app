@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_summary.dart';
 import 'package:sabaa/features/van_stock/presentation/controller/van_stock_controller.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
@@ -13,6 +15,7 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 import '../../../../src/core/utils/extenssions/int_extenssion.dart';
 import '../../../../src/resourses/font_manager/app_text_style.dart';
+import '../../../barcode_scanner/presentation/screen/barcode_scanner_page.dart';
 import '../../domain/model/stock_category.dart';
 import '../../domain/model/stock_item.dart';
 import '../controller/van_stock_state.dart';
@@ -180,6 +183,9 @@ class _StockBody extends ConsumerWidget {
           hint: 'search_items',
           controller: searchController,
           onChanged: onSearchChanged,
+          onBarcodeTap: () {
+            context.push(AppRoutes.barcodeScreen,extra: false);
+          },
         ),
 
         // ── Summary cards ──────────────────────────────────────────

@@ -216,7 +216,7 @@ class AppTextStyle {
     fontSize: 18,
   );
   static TextStyle rubikSemiBold16 = GoogleFonts.rubik(
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w600,
     fontSize: 16,
   );
   static TextStyle rubikSemiBold14 = GoogleFonts.rubik(

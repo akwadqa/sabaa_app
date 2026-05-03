@@ -20,7 +20,7 @@ class MainScreen extends ConsumerWidget {
       page: HomeScreen(),
     ),
     NavDestination(
-      label: 'nav_route',
+      label: 'trips',
       icon: Icons.map_outlined,
       page: MyRoutePage(),
     ),

@@ -31,7 +31,7 @@ class StockSummaryRow extends StatelessWidget {
         // const SizedBox(width: 12),
         _SummaryCard(
           labelKey: summary.valueKey,
-          value: "${summary.valueAmount} QAR",
+          value: "${summary.valueAmount.toCurrency()} QAR",
           valueColor: AppColors.textPrimary,
         ),
       ],
@@ -80,7 +80,7 @@ class _SummaryCard extends StatelessWidget {
             FittedBox(
               child: Text(
                 value,
-                style: AppTextStyle.interBold20.copyWith(color: valueColor),
+                style: AppTextStyle.interBold18.copyWith(color: valueColor),
               ),
             ),
           ],

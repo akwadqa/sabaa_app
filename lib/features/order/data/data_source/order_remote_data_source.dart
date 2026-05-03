@@ -4,6 +4,8 @@ import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
 
+import '../../domain/order_summary/payment_response_model.dart';
+
 class OrderRemoteDataSource {
   final NetworkService _networkService;
 
@@ -15,8 +17,8 @@ class OrderRemoteDataSource {
       final response = await _networkService.get(
         ApiEndPoints.orderSummary,
         queryParameters: {
-          // 'customer_id': customerId,
-          'customer_id': 1017,
+          'customer_id': customerId,
+          // 'customer_id': 1017,
           // 'status': status,
         },
       );
@@ -31,6 +33,35 @@ class OrderRemoteDataSource {
       );
     } catch (e) {
       debugPrint('Error in getOrderSummary: $e');
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse<PaymentResponseModel>> createPayment({
+    required String invoiceId,
+    required double amount,
+    required String paymentMethod,
+  }) async {
+    try {
+      final response = await _networkService.post(
+        ApiEndPoints.createPaymentApi,
+        data: {
+          "invoice_id": invoiceId,
+          "paid_amount": amount,
+          "mode_of_payment": paymentMethod,
+        },
+      );
+
+      if (response.statusCode != 201) {
+        throw Exception('Create payment failed');
+      }
+
+      return ApiResponse.fromJson(
+        response.data,
+        (json) => PaymentResponseModel.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      debugPrint('Error in createPayment: $e');
       rethrow;
     }
   }

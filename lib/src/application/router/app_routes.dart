@@ -14,6 +14,8 @@ abstract class AppRoutes {
   static const String invoiceReviewPage = '/invoice_review';
   static const String addCustomerScreen = '/add_customer';
   static const String createCustomerSuccessScreen = '/create_customer_success';
+  static const String paymentSuccessPage = '/payment_success';
   static const String orderSummaryScreen = '/order_summary';
+  static const String barcodeScreen = '/barcode';
 
 }

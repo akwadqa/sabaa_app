@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
 class QuantityStepper extends StatefulWidget {
   const QuantityStepper({
@@ -25,6 +26,7 @@ class QuantityStepper extends StatefulWidget {
 
 class _QuantityStepperState extends State<QuantityStepper> {
   late TextEditingController controller;
+  FocusNode myFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -51,7 +53,11 @@ class _QuantityStepperState extends State<QuantityStepper> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _StepButton(icon: Icons.remove, onTap: widget.onDecrement, plus: false,),
+          _StepButton(
+            icon: Icons.remove,
+            onTap: widget.onDecrement,
+            plus: false,
+          ),
           // SizedBox(
           //   width: 48,
           //   child: Center(
@@ -64,18 +70,20 @@ class _QuantityStepperState extends State<QuantityStepper> {
           //     ),
           //   ),
           // ),
-
+    
           SizedBox(
             width: 50,
             height: 45,
             child: _QuantityInputField(
               controller: controller,
               maxStock: widget.maxStock,
+              myFocusNode: myFocusNode,
               onChanged: (value) {
                 final parsed = int.tryParse(value) ?? 0;
-
+    
                 if (parsed > widget.maxStock) {
-                  AppToast.errorToast("The limit of stock is ${widget.maxStock}");
+                  AppToast.errorToast(
+                      "The limit of stock is ${widget.maxStock}");
                   controller.text = widget.maxStock.toString();
                   widget.onManualChange(widget.maxStock);
                 } else {
@@ -84,8 +92,12 @@ class _QuantityStepperState extends State<QuantityStepper> {
               },
             ),
           ),
-
-          _StepButton(icon: Icons.add, onTap: widget.onIncrement, plus: true,),
+    
+          _StepButton(
+            icon: Icons.add,
+            onTap: widget.onIncrement,
+            plus: true,
+          ),
         ],
       ),
     );
@@ -93,7 +105,8 @@ class _QuantityStepperState extends State<QuantityStepper> {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton({required this.icon, required this.onTap, required this.plus});
+  const _StepButton(
+      {required this.icon, required this.onTap, required this.plus});
 
   final IconData icon;
   final VoidCallback onTap;
@@ -109,7 +122,7 @@ class _StepButton extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color:plus?AppColors.primary: AppColors.white,
+            color: plus ? AppColors.primary : AppColors.white,
             borderRadius: BorderRadius.circular(4),
             boxShadow: const [
               BoxShadow(
@@ -119,7 +132,8 @@ class _StepButton extends StatelessWidget {
               ),
             ],
           ),
-          child: Icon(icon, size: 16, color:plus?AppColors.white: AppColors.primary),
+          child: Icon(icon,
+              size: 16, color: plus ? AppColors.white : AppColors.primary),
         ),
       ),
     );
@@ -131,34 +145,72 @@ class _QuantityInputField extends StatelessWidget {
     required this.controller,
     required this.onChanged,
     required this.maxStock,
+    required this.myFocusNode,
   });
 
   final TextEditingController controller;
   final Function(String) onChanged;
   final int maxStock;
+  final FocusNode myFocusNode;
+
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      textAlign: TextAlign.center,
-      maxLength: 4,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        counterText: '',
-        hintText: "",
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        // contentPadding: const EdgeInsets.symmetric(vertical: 0),
-        hintStyle: AppTextStyle.interRegular12.copyWith(
-          color: AppColors.grey97,
+    return  KeyboardActions(   // 👈 wrap WHOLE card
+                // tapOutsideToDismiss: true,
+
+                config: KeyboardActionsConfig(
+                  keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+                  actions: [
+                    KeyboardActionsItem(
+                      // displayActionBar: false,
+                      focusNode: myFocusNode,
+ toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Text(
+                  "Done",
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }
+        ],
+                         displayDoneButton: true,
+                       
+                    ),
+                  ],
+                ),
+      child: TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        focusNode: myFocusNode,
+        maxLength: 4,
+        onChanged: onChanged,
+        textInputAction: TextInputAction.done, // ✅ IMPORTANT
+        onSubmitted: (_) => FocusScope.of(context).unfocus(),
+        decoration: InputDecoration(
+          counterText: '',
+          hintText: "",
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          // contentPadding: const EdgeInsets.symmetric(vertical: 0),
+          hintStyle: AppTextStyle.interRegular12.copyWith(
+            color: AppColors.grey97,
+          ),
         ),
-      ),
-      style: AppTextStyle.interSemiBold14.copyWith(
-        color: AppColors.textHeading,
-        fontWeight: FontWeight.w700,
+        style: AppTextStyle.interSemiBold14.copyWith(
+          color: AppColors.textHeading,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

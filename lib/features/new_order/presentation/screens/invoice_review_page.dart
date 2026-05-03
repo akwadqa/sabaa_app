@@ -4,9 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/invoice_widgets/invoice_review_card.dart';
 import 'package:sabaa/gen/assets.gen.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
@@ -70,23 +72,22 @@ class InvoiceReviewPage extends ConsumerWidget {
                       useGlassEffect: true,
                       alignLabel: Alignment.center,
                       action: () async {
-                        // 🔥 let slider finish animation FIRST
-                        await Future.delayed(const Duration(milliseconds: 200));
-
                         final controller =
                             ref.read(newOrderControllerProvider.notifier);
 
                         final success = await controller.createInvoice();
 
-                        if (!context.mounted) return false;
+                        // if (!context.mounted) return false;
 
                         if (success) {
-                          await Future.delayed(
-                              const Duration(milliseconds: 300));
-                          _showSuccessDialog(context, ref);
+                          // await Future.delayed(
+                          //     const Duration(milliseconds: 300));
+
+                         await _showSuccessDialog(context, ref);
+                         return true;
                         }
 
-                        return success;
+                        // return success;
                       },
                       label: Text(
                         "swipe_to_confirm".tr(),
@@ -134,9 +135,9 @@ class InvoiceReviewPage extends ConsumerWidget {
       ),
       body: InvoiceReviewCard(
         items: items,
-        subtotal:formatPrice(subtotalValue) ,
+        subtotal: formatPrice(subtotalValue),
         tax: '15%',
-        total: formatPrice(totalValue) ,
+        total: formatPrice(totalValue),
       ).symmetricPadding(horizontal: 12, vertical: 16),
     );
   }
@@ -162,8 +163,8 @@ class InvoiceReviewPage extends ConsumerWidget {
     );
   }
 
-  void _showSuccessDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+  Future<void> _showSuccessDialog(BuildContext context, WidgetRef ref) async{
+  return await showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) {
@@ -173,7 +174,6 @@ class InvoiceReviewPage extends ConsumerWidget {
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(color: Colors.transparent),
             ),
-
             Center(
               child: Dialog(
                 shape: RoundedRectangleBorder(
@@ -191,14 +191,14 @@ class InvoiceReviewPage extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-              
+
                       /// ICON
                       SvgPicture.asset(
                         Assets.icons.successCheckIcon.keyName,
                         fit: BoxFit.cover,
                       ),
                       const SizedBox(height: 20),
-              
+
                       Text(
                         "invoice_created_successfully".tr(),
                         textAlign: TextAlign.center,
@@ -206,13 +206,18 @@ class InvoiceReviewPage extends ConsumerWidget {
                           color: AppColors.textSecondary,
                         ),
                       ),
-              
+
                       const SizedBox(height: 24),
                       CustomButtonWidget(
-                        text: "back_to_home",
+                        text: "pay_now",
                         onTap: () {
-                          ref.read(bottomNavIndexProvider.notifier).state = 0;
-                          Navigator.popUntil(context, (route) => route.isFirst);
+                          int count = 0;
+                          Navigator.popUntil(context, (route) {
+                            return count++ == 4;
+                          });
+                          // ref.read(bottomNavIndexProvider.notifier).state = 0;
+                          // Navigator.popUntil(context,
+                          //     (route) => route == AppRoutes.orderSummaryScreen);
                         },
                         isFiled: true,
                         height: 48,
@@ -220,6 +225,20 @@ class InvoiceReviewPage extends ConsumerWidget {
                         backgroundColor: AppColors.primary,
                         radius: 8,
                       ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () {
+                          ref.read(bottomNavIndexProvider.notifier).state = 0;
+
+                          context.goNamed(AppRoutes.mainScreen); // ✅ best
+                        },
+                        child: Text(
+                          "back_to_home".tr(),
+                          style: AppTextStyle.interSemiBold14.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

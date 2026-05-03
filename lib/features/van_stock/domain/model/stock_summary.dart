@@ -13,12 +13,12 @@ class StockSummary {
         lowStockKey   = 'low_stock',
         lowStockValue = '0',
         valueKey      = 'stock_value',
-        valueAmount   = '0';
+        valueAmount   = 0;
 
   final String totalSkuKey;    // translation key
   final String totalSkuValue;  // "145"
   final String lowStockKey;    // translation key
   final String lowStockValue;  // "3"
   final String valueKey;       // translation key
-  final String valueAmount;    // "$2.4k"
+  final double valueAmount;    // "$2.4k"
 }

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
@@ -59,15 +60,12 @@ class OrderSearchBar extends StatelessWidget {
           child: Container(
             width: 44,
             height: 44,
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child:  Icon(
-              Icons.qr_code_scanner_outlined,
-              color: AppColors.primary,
-              size: 22,
-            ),
+            child:  Assets.icons.barcodeIcon.svg()
           ),
         ),
       ],

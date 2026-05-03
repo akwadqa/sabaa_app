@@ -17,6 +17,10 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/barcode_icon.svg
+  SvgGenImage get barcodeIcon =>
+      const SvgGenImage('assets/icons/barcode_icon.svg');
+
   /// File path: assets/icons/home.svg
   SvgGenImage get home => const SvgGenImage('assets/icons/home.svg');
 
@@ -93,6 +97,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+        barcodeIcon,
         home,
         icSettingsLocale,
         icSettingsLogout,

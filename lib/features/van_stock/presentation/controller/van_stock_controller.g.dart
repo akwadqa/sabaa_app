@@ -34,7 +34,7 @@ final class VanStockControllerProvider
 }
 
 String _$vanStockControllerHash() =>
-    r'8b3dd0ebcab3444eb6bff5592fd2e0396099b05f';
+    r'1873e15b53ccb8ec7b9794e6ab0b40421bf76fb3';
 
 abstract class _$VanStockController extends $AsyncNotifier<VanStockState> {
   FutureOr<VanStockState> build();

@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/repository/order_repository.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/controller/order_state.dart';
+import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 
 part 'order_controller.g.dart';
 
@@ -33,4 +34,36 @@ class OrderController extends _$OrderController {
       return null;
     }
   }
+
+Future<bool> createPayment({
+  required String invoiceId,
+  required double amount,
+  required String paymentMethod,
+}) async {
+  final current = state.value!;
+
+  state = AsyncData(current.copyWith(isPaying: true));
+
+  try {
+    final response = await ref.read(orderRepositoryProvider).createPayment(
+          invoiceId: invoiceId,
+          amount: amount,
+          paymentMethod: paymentMethod,
+        );
+
+    state = AsyncData(
+      current.copyWith(
+        isPaying: false,
+        paymentData: response.data,
+      ),
+    );
+
+    return true;
+  } catch (e) {
+    state = AsyncData(current.copyWith(isPaying: false));
+    AppToast.errorToast(e.toString());
+    
+    return false;
+  }
+}
 }

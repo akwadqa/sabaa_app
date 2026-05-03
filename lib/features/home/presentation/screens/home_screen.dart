@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/home/domain/model/home_trip_model.dart';
 import 'package:sabaa/features/home/presentation/controller/home_controller.dart';
 import 'package:sabaa/features/home/presentation/controller/home_state.dart';
@@ -9,11 +10,13 @@ import 'package:sabaa/features/home/presentation/widgets/home_banner.dart';
 import 'package:sabaa/features/home/presentation/widgets/performance_card.dart';
 import 'package:sabaa/features/home/presentation/widgets/quick_action_card_button.dart';
 import 'package:sabaa/features/home/presentation/widgets/section_header.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/functions/app_spacing.dart';
+import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 
 import '../../../../src/resourses/color_manager/app_colors.dart';
 import '../../../../src/resourses/font_manager/app_text_style.dart';
@@ -73,6 +76,15 @@ class _HomeBody extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Align(
+                  alignment: AlignmentGeometry.centerRight,
+                  child: GestureDetector(
+                      onTap: () {
+                        ref.read(localStorageServiceProvider).logout();
+                        context.goNamed(AppRoutes.signInScreen);
+                      },
+                      child: Icon(Icons.logout,color: Colors.red,)),
+                ),
                 20.verticalSpace,
 
                 // ── Banner ───────────────────────────────────────────
@@ -111,7 +123,7 @@ class _HomeBody extends ConsumerWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 1.05,
+                    childAspectRatio: 0.95,
                   ),
                   itemBuilder: (_, i) =>
                       PerformanceCard(metric: state.metrics[i]),

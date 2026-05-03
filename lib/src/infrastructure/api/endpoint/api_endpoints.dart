@@ -24,8 +24,9 @@ class ApiEndPoints {
   static const String updateVisitStatus = '$domain.visit.update_visit_status';
   static const String startTrip = '$domain.trip.start_trip';
 
-  //? --- Settings ---
+  //? --- CREATION INVOICE ---
   static const String createInvoice = '$domain.orders.create_invoice';
+  static const String createPaymentApi = '$domain.payments.create_payment';
   //? --- Settings ---
   static const String deleteAccountApi = '$domain.profile.delete_user_profile';
   static const String logoutApi = '$domain.auth.logout';

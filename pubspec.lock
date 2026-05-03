@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.67"
+  ai_barcode_scanner:
+    dependency: "direct main"
+    description:
+      name: ai_barcode_scanner
+      sha256: "63c2bcc295296cb2ce03a2b7bfd22bfa315eabcbabadcb11a4ace1ffd0270b32"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.1.0"
   analysis_server_plugin:
     dependency: transitive
     description:
@@ -1005,6 +1013,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.11.4"
+  keyboard_actions:
+    dependency: "direct main"
+    description:
+      name: keyboard_actions
+      sha256: "5155a158c0d22c3a2f4a2192040445fe84977620cf0eeb29f6148a1dcb5835fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.1"
   leak_tracker:
     dependency: transitive
     description:
@@ -1085,6 +1101,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  mobile_scanner:
+    dependency: transitive
+    description:
+      name: mobile_scanner
+      sha256: c92c26bf2231695b6d3477c8dcf435f51e28f87b1745966b1fe4c47a286171ce
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.2.0"
   mockito:
     dependency: transitive
     description:
@@ -1626,6 +1650,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  syncfusion_flutter_barcodes:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_barcodes
+      sha256: "256181da989684e161de357af3bb62740b39175a62103add2cd4cdead2a602eb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "33.2.4"
+  syncfusion_flutter_core:
+    dependency: transitive
+    description:
+      name: syncfusion_flutter_core
+      sha256: b377be3df580e9fdc4e5cc5e47fc09a513c8b08dc4ed05eb45c43f5fd34add2d
+      url: "https://pub.dev"
+    source: hosted
+    version: "33.2.4"
   synchronized:
     dependency: transitive
     description:
@@ -1706,6 +1746,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.1"
+  universal_platform:
+    dependency: transitive
+    description:
+      name: universal_platform
+      sha256: "64e16458a0ea9b99260ceb5467a214c1f298d647c659af1bff6d3bf82536b1ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   url_launcher:
     dependency: "direct main"
     description:

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/features/home/domain/model/home_trip_model.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
+import 'package:sabaa/features/my_trips/presentation/controller/my_trips_controller.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
@@ -9,14 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:sabaa/features/home/domain/model/quick_action_model.dart';
 import 'package:sabaa/features/home/presentation/controller/home_controller.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
+
 class QuickAction {
   const QuickAction({
     required this.label,
     required this.color,
     required this.icon,
     required this.onTap,
-        this.isBeginTrip = false,
-
+    this.isBeginTrip = false,
   });
 
   final String label;
@@ -24,44 +25,38 @@ class QuickAction {
   final IconData icon;
   final VoidCallback onTap;
   final bool isBeginTrip;
-
 }
 // ── Quick action button with Begin Trip special behaviour ─────────────────────
 
 class QuickActionCardButton extends ConsumerWidget {
-  const QuickActionCardButton({super.key, 
+  const QuickActionCardButton({
+    super.key,
     required this.action,
     required this.trip,
     required this.tripStarted,
     required this.tripActionState,
     required this.onTap,
-
   });
 
-  final QuickAction   action;
-  final HomeTripModel?     trip;
-  final bool               tripStarted;
-  final AsyncValue<void>?  tripActionState;
-final VoidCallback     onTap;
+  final QuickAction action;
+  final HomeTripModel? trip;
+  final bool tripStarted;
+  final AsyncValue<void>? tripActionState;
+  final VoidCallback onTap;
 
-bool get _isBeginTrip => action.isBeginTrip;
+  bool get _isBeginTrip => action.isBeginTrip;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // ── Begin Trip button adapts based on trip state ──────────────────────
     if (_isBeginTrip) {
       final isLoading = tripActionState is AsyncLoading;
-      final label     = tripStarted ? 'trip_in_progress' : 'begin_trip';
-      final color     = tripStarted
-          ? AppColors.green
-          : action.color;
+      final label = tripStarted ? 'trip_in_progress' : 'begin_trip';
+      final color = tripStarted ? AppColors.green : action.color;
 
       return Expanded(
-        child:
-        
-         GestureDetector(
-            behavior: HitTestBehavior.opaque,
-
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: isLoading
               ? null
               : () async {
@@ -70,17 +65,21 @@ bool get _isBeginTrip => action.isBeginTrip;
                     // context.push(action.routePath);
                     Dev.logLine("bottomNavIndexProvider");
 
-                     ref.read(bottomNavIndexProvider.notifier).state = 1;
+                    ref.read(bottomNavIndexProvider.notifier).state = 1;
                   } else {
                     Dev.logLine("startTrip");
-                    await ref
-                        .read(homeControllerProvider.notifier)
-                        .startTrip();
+
+                    await ref.read(homeControllerProvider.notifier).startTrip();
+                    if (_isBeginTrip) {
+                      await Future.delayed(Duration(seconds: 3));
+                      ref.read(bottomNavIndexProvider.notifier).state = 1;
+                      ref.read(myTripsControllerProvider.notifier).refresh();
+                    }
                   }
                 },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
               color: color,
               borderRadius: BorderRadius.circular(12),
@@ -121,9 +120,9 @@ bool get _isBeginTrip => action.isBeginTrip;
     // ── All other actions — standard button ───────────────────────────────
     return Expanded(
       child: GestureDetector(
-       onTap: onTap,
+        onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           decoration: BoxDecoration(
             color: action.color,
             borderRadius: BorderRadius.circular(12),
@@ -165,9 +164,9 @@ class _TripProgressCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
-            color:     AppColors.cardShadow,
+            color: AppColors.cardShadow,
             blurRadius: 25,
-            offset:    Offset(2, 10),
+            offset: Offset(2, 10),
           ),
         ],
       ),
@@ -193,9 +192,9 @@ class _TripProgressCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
-              value:            progress,
-              minHeight:        6,
-              backgroundColor:  AppColors.navBorder,
+              value: progress,
+              minHeight: 6,
+              backgroundColor: AppColors.navBorder,
               valueColor: AlwaysStoppedAnimation<Color>(
                 trip.status.toLowerCase() == 'completed'
                     ? AppColors.green
@@ -219,7 +218,7 @@ class _TripProgressCard extends StatelessWidget {
                 '${trip.progressPercentage.toStringAsFixed(0)}%',
                 style: AppTextStyle.interSemiBold14.copyWith(
                   fontSize: 12,
-                  color:    AppColors.primary,
+                  color: AppColors.primary,
                 ),
               ),
             ],
@@ -239,17 +238,23 @@ class _StatusBadge extends StatelessWidget {
 
   Color get _bgColor {
     switch (status.toLowerCase()) {
-      case 'in progress': return AppColors.dateBadge;
-      case 'completed':   return const Color(0xFFDCFCE7);
-      default:            return AppColors.navBorder;
+      case 'in progress':
+        return AppColors.dateBadge;
+      case 'completed':
+        return const Color(0xFFDCFCE7);
+      default:
+        return AppColors.navBorder;
     }
   }
 
   Color get _textColor {
     switch (status.toLowerCase()) {
-      case 'in progress': return AppColors.primary;
-      case 'completed':   return AppColors.green;
-      default:            return AppColors.textSecondary;
+      case 'in progress':
+        return AppColors.primary;
+      case 'completed':
+        return AppColors.green;
+      default:
+        return AppColors.textSecondary;
     }
   }
 
@@ -258,13 +263,13 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color:        _bgColor,
+        color: _bgColor,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         status,
         style: AppTextStyle.interMedium12.copyWith(
-          color:      _textColor,
+          color: _textColor,
           fontWeight: FontWeight.w600,
         ),
       ),

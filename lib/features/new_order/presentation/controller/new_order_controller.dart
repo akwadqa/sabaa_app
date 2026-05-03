@@ -49,7 +49,7 @@ class NewOrderController extends _$NewOrderController {
       final repo = ref.read(newOrderRepositoryProvider);
 
       final response = await repo.getProducts(
-          page: page, search: current.searchQuery, category: category
+          page: page, search:search?? current.searchQuery, category: category
           // current.selectedCategory == null ? null : current.selectedCategory,
           );
 

@@ -14,8 +14,10 @@ import 'package:sabaa/features/new_order/presentation/screens/invoice_review_pag
 import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
 import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
+import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
+import '../../../features/barcode_scanner/presentation/screen/barcode_scanner_page.dart';
 import 'app_routes.dart';
 import 'custom_navigation_observer.dart';
 import 'fallback_screen.dart';
@@ -225,6 +227,21 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: AppRoutes.paymentSuccessPage,
+          name: AppRoutes.paymentSuccessPage,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: PaymentSuccessPage(),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
           path: AppRoutes.orderSummaryScreen,
           name: AppRoutes.orderSummaryScreen,
           parentNavigatorKey: rootKey,
@@ -241,6 +258,27 @@ class AppRouter {
             );
           },
         ),
+      
+        GoRoute(
+          path: AppRoutes.barcodeScreen,
+          name: AppRoutes.barcodeScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: BarcodeScannerPage(
+                fromNewOrder: state.extra as bool,
+
+              ),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+      
+      
       ],
     );
   }

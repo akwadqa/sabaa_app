@@ -166,7 +166,7 @@ class VanStockController extends _$VanStockController {
       lowStockKey:   'low_stock',
       lowStockValue: data.statistics.lowStockItems.toString(),
       valueKey:      'stock_value',
-      valueAmount:   data.statistics.totalStockValue.toStringAsFixed(2),
+      valueAmount:   data.statistics.totalStockValue,
     );
   }
  
@@ -175,7 +175,7 @@ class VanStockController extends _$VanStockController {
       return StockItem(
         name:       p.productName,
         sku:        p.itemCode,
-        stockLabel: '${p.availableStock}',
+        stockLabel: '${p.availableStock.toStringAsFixed(0)}',
         stockLevel: p.stockLevel,
         price:      p.price,
         imageUrl:   p.productImage ?? 'https://placehold.co/64x64',

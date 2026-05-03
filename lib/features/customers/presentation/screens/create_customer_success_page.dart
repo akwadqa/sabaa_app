@@ -28,7 +28,7 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
           children: [
             const SizedBox(height: 45),
             // Success Icon Section
-            const _SuccessIcon(),
+            const SuccessIcon(),
             const SizedBox(height: 24),
             // Success Message Section
             Padding(
@@ -69,13 +69,35 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(customersControllerProvider.notifier)
-                    .getCustomers(page: 1,showLoading: true);
+                    .getCustomers(page: 1, showLoading: true);
                 context.go(AppRoutes.mainScreen);
               },
               isFiled: false,
               height: 48,
               width: 300,
               style: AppTextStyle.rubikBold18.copyWith(color: AppColors.white),
+            ),
+            30.verticalSpace,
+            CustomButtonWidget(
+              text: 'proceed_to_create_order'.tr(),
+              elevation: 5,
+              // shadowColor: AppColors.primary.withOpacity(0.3),
+              backgroundColor: AppColors.white,
+              radius: 12,
+              onTap: () {
+                context.go(AppRoutes.mainScreen);
+
+                context.push(AppRoutes.newOrderScreen, extra: customer);
+
+                ref
+                    .read(customersControllerProvider.notifier)
+                    .getCustomers(page: 1, showLoading: true);
+              },
+              isFiled: false,
+              height: 48,
+              width: 300,
+              style:
+                  AppTextStyle.rubikBold18.copyWith(color: AppColors.primary),
             ),
           ],
         ),
@@ -84,14 +106,14 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
   }
 }
 
-class _SuccessIcon extends StatefulWidget {
-  const _SuccessIcon();
+class SuccessIcon extends StatefulWidget {
+  const SuccessIcon({super.key});
 
   @override
-  State<_SuccessIcon> createState() => _SuccessIconState();
+  State<SuccessIcon> createState() => SuccessIconState();
 }
 
-class _SuccessIconState extends State<_SuccessIcon>
+class SuccessIconState extends State<SuccessIcon>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
