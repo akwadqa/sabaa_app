@@ -1,7 +1,24 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.9.1")
+    }
+}
+
 allprojects {
     repositories {
         google()
         mavenCentral()
+    }
+    buildscript {
+        configurations.all {
+            resolutionStrategy {
+                force("com.android.tools.build:gradle:8.9.1")
+            }
+        }
     }
 }
 
