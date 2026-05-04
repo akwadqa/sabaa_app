@@ -21,7 +21,7 @@ class DateBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-       style: AppTextStyle.interSemiBold12.copyWith(
+       style: AppTextStyle.interSemiBold14.copyWith(
           color: AppColors.primary,
         ),
       ),

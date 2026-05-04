@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
+import 'package:sabaa/src/infrastructure/api/endpoint/services_urls.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
@@ -13,8 +14,8 @@ class StockItemCard extends StatelessWidget {
   final StockItem item;
 
   Color get _stockValueColor =>
-      item.stockLevel == StockLevel.low ? AppColors.red : AppColors.textPrimary;
-  Color get _lowStockBorderColor => item.stockLevel == StockLevel.low
+      item.stockLevel == "Low" ? AppColors.red : AppColors.textPrimary;
+  Color get _lowStockBorderColor => item.stockLevel == "Low"
       ? AppColors.lightRed
       : AppColors.navBorder;
 
@@ -30,7 +31,7 @@ class StockItemCard extends StatelessWidget {
         border: Border(
           left: BorderSide(
               color: _lowStockBorderColor,
-              width: item.stockLevel == StockLevel.low ? 6 : 1),
+              width: item.stockLevel == "Low" ? 6 : 1),
         ),
         boxShadow: const [
           BoxShadow(
@@ -44,7 +45,7 @@ class StockItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // ── Product image ────────────────────────────
-          _ProductImage(imageUrl: item.imageUrl),
+          _ProductImage(imageUrl:ServicesUrls.imageUrl+ item.imageUrl),
           12.horizontalSpace,
 
           // ── Product details ──────────────────────────
@@ -67,7 +68,7 @@ class StockItemCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    StockLevelBadge(level: item.stockLevel),
+                    // StockLevelBadge(level: item.stockLevel),
                   ],
                 ),
                 4.verticalSpace,
@@ -105,7 +106,7 @@ class StockItemCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      item.price,
+                      item.price.toStringAsFixed(2),
                       style: AppTextStyle.interSemiBold14.copyWith(
                         fontSize: 12,
                         color: AppColors.secondPrimary,

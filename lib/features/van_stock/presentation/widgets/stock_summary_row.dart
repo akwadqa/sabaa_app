@@ -23,15 +23,15 @@ class StockSummaryRow extends StatelessWidget {
           valueColor: AppColors.textPrimary,
         ),
         // const SizedBox(width: 12),
-        _SummaryCard(
-          labelKey: summary.lowStockKey,
-          value: summary.lowStockValue,
-          valueColor:AppColors.red,
-        ),
+        // _SummaryCard(
+        //   labelKey: summary.lowStockKey,
+        //   value: summary.lowStockValue,
+        //   valueColor:AppColors.red,
+        // ),
         // const SizedBox(width: 12),
         _SummaryCard(
           labelKey: summary.valueKey,
-          value: summary.valueAmount,
+          value: "${summary.valueAmount.toCurrency()} QAR",
           valueColor: AppColors.textPrimary,
         ),
       ],
@@ -54,7 +54,7 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 12,vertical: 20),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(12),
@@ -77,9 +77,11 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
             4.verticalSpace,
-            Text(
-              value,
-              style: AppTextStyle.interBold20.copyWith(color: valueColor),
+            FittedBox(
+              child: Text(
+                value,
+                style: AppTextStyle.interBold18.copyWith(color: valueColor),
+              ),
             ),
           ],
         ),

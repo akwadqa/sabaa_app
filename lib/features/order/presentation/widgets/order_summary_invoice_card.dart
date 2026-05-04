@@ -1,28 +1,33 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/return_invoice/presentation/controller/return_order_controller.dart';
 import 'package:sabaa/gen/assets.gen.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
+import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
+import '../../domain/order_summary/order_summary_model.dart';
 import 'invoice_payment_bottom_sheet.dart';
 
-class OrderSummaryInvoiceCard extends StatelessWidget {
-  final String id;
-  final String amount;
-  final String date;
-  final String status;
+class OrderSummaryInvoiceCard extends ConsumerWidget {
+  final InvoiceModel invoice;
+  final double outstandingBalance;
   final List<String>? actions;
+  final CustomerModel customer;
 
   const OrderSummaryInvoiceCard({
     super.key,
-    required this.id,
-    required this.amount,
-    required this.date,
-    required this.status,
+    required this.invoice,
+    required this.outstandingBalance,
     this.actions,
+    required this.customer,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
@@ -60,23 +65,30 @@ class OrderSummaryInvoiceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(id,
+                          Expanded(
+                            child: Text(
+                              invoice.invoiceId,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: AppTextStyle.rubikBold14
-                                  .copyWith(color: AppColors.textHeading)),
-                          Text(amount,
+                                  .copyWith(color: AppColors.textHeading),
+                            ),
+                          ),
+                          10.horizontalSpace,
+                          Text(invoice.grandTotal.toCurrency(),
                               style: AppTextStyle.rubikBold18
                                   .copyWith(color: AppColors.black900)),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      8.verticalSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            date,
-                            style: AppTextStyle.rubikBold10
+                            invoice.postingDate,
+                            style: AppTextStyle.rubikSemiBold12
                                 .copyWith(color: AppColors.textGrey),
                           ),
                           _buildStatusBadge(),
@@ -88,17 +100,17 @@ class OrderSummaryInvoiceCard extends StatelessWidget {
               ],
             ),
           ),
-          if (actions != null && actions!.isNotEmpty) ...[
-            const Divider(height: 1, color: AppColors.dividerColor),
+          if (actions != null && actions!.isNotEmpty && !invoice.isReturn) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
               child: Row(
+                spacing: 20,
                 children: actions!.map((action) {
                   final isLast = action == actions!.last;
                   return Expanded(
                     child: Padding(
                       padding: EdgeInsetsDirectional.only(end: isLast ? 0 : 22),
-                      child: _buildActionButton(context, action),
+                      child: _buildActionButton(context, action, ref),
                     ),
                   );
                 }).toList(),
@@ -115,7 +127,7 @@ class OrderSummaryInvoiceCard extends StatelessWidget {
     Color text;
     String labelKey;
 
-    switch (status) {
+    switch (invoice.status) {
       case 'Paid':
         bg = AppColors.paidBg;
         text = AppColors.paidText;
@@ -139,23 +151,23 @@ class OrderSummaryInvoiceCard extends StatelessWidget {
       default:
         bg = Colors.grey;
         text = Colors.white;
-        labelKey = status;
+        labelKey = invoice.status;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(9999),
       ),
       child: Text(
         labelKey.tr().toUpperCase(),
-        style: AppTextStyle.rubikBold12.copyWith(color: text, fontSize: 10),
+        style: AppTextStyle.rubikBold12.copyWith(color: text),
       ),
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String type) {
+  Widget _buildActionButton(BuildContext context, String type, WidgetRef ref) {
     final isPay = type == 'pay';
     return GestureDetector(
       onTap: isPay
@@ -165,16 +177,22 @@ class OrderSummaryInvoiceCard extends StatelessWidget {
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
                 builder: (context) => InvoicePaymentBottomSheet(
-                  invoiceId: id,
-                  amount: amount,
-                  outstandingBalance:
-                      '45,000 QAR', // TODO: Make this dynamic from props
+                  invoice: invoice,
+                  outstandingBalance: outstandingBalance,
                 ),
               );
             }
-          : null,
+          : () {
+              context.push(
+                AppRoutes.returnInvoiceScreen,
+                extra: {
+                  'customer': customer,
+                  'invoiceId': invoice.invoiceId,
+                },
+              );
+            },
       child: Container(
-        height: 48,
+        height: 50,
         decoration: BoxDecoration(
           color: isPay ? AppColors.primary : AppColors.white,
           border:

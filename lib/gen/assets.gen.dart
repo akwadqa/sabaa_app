@@ -17,6 +17,10 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/barcode_icon.svg
+  SvgGenImage get barcodeIcon =>
+      const SvgGenImage('assets/icons/barcode_icon.svg');
+
   /// File path: assets/icons/home.svg
   SvgGenImage get home => const SvgGenImage('assets/icons/home.svg');
 
@@ -76,6 +80,10 @@ class $AssetsIconsGen {
   SvgGenImage get saveCustomerIc =>
       const SvgGenImage('assets/icons/save_customer_ic.svg');
 
+  /// File path: assets/icons/success_check_icon.svg
+  SvgGenImage get successCheckIcon =>
+      const SvgGenImage('assets/icons/success_check_icon.svg');
+
   /// File path: assets/icons/success_create_customer_ic.svg
   SvgGenImage get successCreateCustomerIc =>
       const SvgGenImage('assets/icons/success_create_customer_ic.svg');
@@ -89,6 +97,7 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<SvgGenImage> get values => [
+        barcodeIcon,
         home,
         icSettingsLocale,
         icSettingsLogout,
@@ -105,6 +114,7 @@ class $AssetsIconsGen {
         qatarCountry,
         salesAmountIc,
         saveCustomerIc,
+        successCheckIcon,
         successCreateCustomerIc,
         totalSalesIc,
         truckIc
@@ -117,6 +127,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/auth_background.png
   AssetGenImage get authBackground =>
       const AssetGenImage('assets/images/auth_background.png');
+
+  /// File path: assets/images/empty_data.svg
+  SvgGenImage get emptyData =>
+      const SvgGenImage('assets/images/empty_data.svg');
 
   /// File path: assets/images/im_empty_screen.png
   AssetGenImage get imEmptyScreen =>
@@ -135,8 +149,9 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/splash_back_im.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
+  List<dynamic> get values => [
         authBackground,
+        emptyData,
         imEmptyScreen,
         imEmptySearchResult,
         imErrorScreen,

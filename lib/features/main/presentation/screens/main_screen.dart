@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:sabaa/features/customers/presentation/screens/customers_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
-import 'package:sabaa/features/my_route/presentation/screens/my_route_page.dart';
+import 'package:sabaa/features/my_trips/presentation/screens/my_route_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
@@ -20,7 +20,7 @@ class MainScreen extends ConsumerWidget {
       page: HomeScreen(),
     ),
     NavDestination(
-      label: 'nav_route',
+      label: 'trips',
       icon: Icons.map_outlined,
       page: MyRoutePage(),
     ),
@@ -31,7 +31,7 @@ class MainScreen extends ConsumerWidget {
     ),
     NavDestination(
       label: 'nav_stock',
-      icon: Icons.inventory_outlined,
+      icon: Icons.inventory_2_outlined,
       page: VanStockPage(),
     ),
   ];

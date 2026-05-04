@@ -26,8 +26,8 @@ abstract class AppTheme {
 
   static ThemeData lightTheme() {
     return ThemeData(
-      colorScheme:
-          ColorScheme.fromSwatch(primarySwatch: AppColors.primarySwatch),
+      // colorScheme:
+      //     ColorScheme.fromSwatch(primarySwatch: AppColors.primarySwatch),
       // fontFamily: FontFamily.tajawal,
       textTheme: GoogleFonts.rubikTextTheme(textTheme),
 
@@ -49,6 +49,7 @@ abstract class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         enabledBorder: _outlineBorder(AppColors.lightGray02),
+        focusedBorder: _outlineBorder(AppColors.primary),
         border: _outlineBorder(AppColors.lightGray02),
         labelStyle: _baseTextStyle.copyWith(
           color: AppColors.black900,

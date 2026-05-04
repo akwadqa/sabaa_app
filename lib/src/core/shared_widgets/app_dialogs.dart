@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -285,10 +286,10 @@ Future<void> showAutoClosingDialog(BuildContext context, String message) async {
       title: Text(
         message,
         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-          fontSize: 16,
-          // fontWeight: FontWeight.w700,
-          // color: Colors.grey,
-        ),
+              fontSize: 16,
+              // fontWeight: FontWeight.w700,
+              // color: Colors.grey,
+            ),
       ).centered(),
       icon: Icon(Icons.error, color: AppColors.darkRed, size: 50),
       actions: [
@@ -300,10 +301,10 @@ Future<void> showAutoClosingDialog(BuildContext context, String message) async {
           child: Text(
             "OK".tr(),
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-              fontSize: 16,
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
           ).centered(),
         ),
       ],
@@ -335,19 +336,19 @@ Dialog showYesNowChoicesDialog(
         Text(
           title.tr(),
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            // color: Colors.grey,
-          ),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                // color: Colors.grey,
+              ),
         ).centered(),
         40.verticalSpace,
         Text(
           dsc.tr(),
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            fontSize: 14,
-            color: AppColors.darkGray,
-            fontWeight: FontWeight.w500,
-          ),
+                fontSize: 14,
+                color: AppColors.darkGray,
+                fontWeight: FontWeight.w500,
+              ),
         ).centered(),
         40.verticalSpace,
         Row(
@@ -368,8 +369,7 @@ Dialog showYesNowChoicesDialog(
             Flexible(
               child: CustomButtonWidget(
                 text: context.tr("no"),
-                onTap:
-                    noButton ??
+                onTap: noButton ??
                     () {
                       Navigator.pop(context);
                     },
@@ -427,19 +427,17 @@ Future<void> showConfirmationDialog({
                     title.tr(),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
                   ),
 
                   12.verticalSpace,
 
                   // Description
-                  Text(
-                    description.tr(),
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.interRegular16
-                  ),
+                  Text(description.tr(),
+                      textAlign: TextAlign.center,
+                      style: AppTextStyle.interRegular16),
 
                   30.verticalSpace,
 
@@ -539,4 +537,173 @@ Future<void> showErrorDialog(BuildContext context, String message) {
     title: Text(message),
     icon: Icon(Icons.error, color: AppColors.darkRed, size: 50),
   );
+}
+
+Future<bool> showRemoveConfirmDialog(BuildContext context) async {
+  final result = await showDialog<bool>(
+    context: context,
+    barrierDismissible: true,
+    builder: (_) {
+      return Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(color: Colors.transparent),
+          ),
+          Center(
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipOval(
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        color: AppColors.red.withValues(alpha: 0.2),
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: AppColors.darkRed,
+                        ),
+                      ),
+                    ),
+                    20.verticalSpace,
+                    Text(
+                      "remove_item_title".tr(),
+                      style: AppTextStyle.interBold22.copyWith(
+                        color: AppColors.dark,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    /// ICON
+                    Text(
+                      "remove_item_message".tr(), // 🔥 add to localization
+                      textAlign: TextAlign.center,
+                      style: AppTextStyle.interRegular14.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    Text(
+                      "invoice_created_successfully".tr(),
+                      textAlign: TextAlign.center,
+                      style: AppTextStyle.interRegular14.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    30.verticalSpace,
+                    CustomButtonWidget(
+                      text: "yes_remove".tr(),
+                      onTap: () => Navigator.pop(context, true),
+                      isFiled: true,
+                      height: 44,
+                      radius: 10,
+                      backgroundColor: AppColors.red,
+                      style: AppTextStyle.interSemiBold14.copyWith(
+                        color: Colors.white,
+                      ),
+                      width: double.infinity,
+                    ),
+                    const SizedBox(height: 12),
+                    CustomButtonWidget(
+                      text: "cancel".tr(),
+                      onTap: () => Navigator.pop(context, false),
+                      isFiled: false,
+                      height: 44,
+                      radius: 10,
+                      backgroundColor: AppColors.white,
+                      width: double.infinity,
+                      style: AppTextStyle.interSemiBold14.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+
+    // builder: (_) {
+    //   return Dialog(
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(16),
+    //     ),
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(20),
+    //       child: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           /// TITLE
+    //           Text(
+    //             "remove_item_title".tr(), // 🔥 add to localization
+    //             style: AppTextStyle.interBold18,
+    //           ),
+
+    //           const SizedBox(height: 12),
+
+    //           /// DESCRIPTION
+    //           Text(
+    //             "remove_item_message".tr(), // 🔥 add to localization
+    //             textAlign: TextAlign.center,
+    //             style: AppTextStyle.interRegular14.copyWith(
+    //               color: AppColors.textSecondary,
+    //             ),
+    //           ),
+
+    //           const SizedBox(height: 20),
+
+    //           /// ACTIONS
+    //           Row(
+    //             children: [
+    //               /// CANCEL
+    //               Expanded(
+    //                 child: CustomButtonWidget(
+    //                   text: "cancel".tr(),
+    //                   onTap: () => Navigator.pop(context, false),
+    //                   isFiled: false,
+    //                   height: 44,
+    //                   radius: 10,
+    //                   backgroundColor: AppColors.white,
+    //                   width: double.infinity,
+    //                   style: AppTextStyle.interSemiBold14.copyWith(
+    //                     color: AppColors.textPrimary,
+
+    //                   ),
+    //                 ),
+    //               ),
+
+    //               const SizedBox(width: 10),
+
+    //               /// CONFIRM
+    //               Expanded(
+    //                 child: CustomButtonWidget(
+    //                   text: "yes_remove".tr(),
+    //                   onTap: () => Navigator.pop(context, true),
+    //                   isFiled: true,
+    //                   height: 44,
+    //                   radius: 10,
+    //                   backgroundColor: AppColors.red,
+    //                   style: AppTextStyle.interSemiBold14.copyWith(
+    //                     color: Colors.white,
+    //                   ), width: double.infinity,
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // },
+  );
+
+  return result ?? false;
 }

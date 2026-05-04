@@ -18,16 +18,30 @@ abstract class AppColors {
   static const Color purbleOpacity = Color(0xFFA0A3E3);
 
   static const Color grey97 = Color(0xFF979797);
-  static const accent = Color(0xFFF37B24);
-  static const surface = Colors.white;
-  static const textPrimary = Color(0xFF0F172A);
-  static const textSecondary = Color(0xFF64748B);
-  static const textHeading = Color(0xFF111418);
-  static const metricPurple = Color(0xFFCBC8FF);
-  static const metricPink = Color(0xFFFFC8CD);
-  static const dateBadge = Color(0xFFE8F3FE);
-  static const navBorder = Color(0xFFE2E8F0);
-  static const cardShadow = Color(0x19005AAB);
+  static const accent     = Color(0xFFF37B24);
+  static const surface    = Colors.white;
+  static const textPrimary    = Color(0xFF0F172A);
+  static const textSecondary  = Color(0xFF64748B);
+  static const textHeading    = Color(0xFF111418);
+  static const metricPurple   = Color(0xFFCBC8FF);
+  static const metricPink     = Color(0xFFFFC8CD);
+  static const dateBadge      = Color(0xFFE8F3FE);
+  static const navBorder      = Color(0xFFE2E8F0);
+  static const cardShadow     = Color(0x19005AAB);
+
+
+static const Color metricGreen = Color(0xFFD1FAE5);
+static const Color metricGreenIcon = Color(0xFF15803D);
+
+static const Color metricOrange = Color(0xFFFFEDD5);
+static const Color metricOrangeIcon = Color(0xFFEA580C);
+
+// static const Color metricPink = Color(0xFFFCE7F3);
+static const Color metricPinkIcon = Color(0xFFDB2777);
+
+// static const Color metricPurple = Color(0xFFEDE9FE);
+static const Color metricPurpleIcon = Color(0xFF7C3AED);
+
 
   static const Color successGreen = Color(0xFF00721D);
   static const Color errorRed = Color(0xFFBB0101);
@@ -49,7 +63,9 @@ abstract class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color cardWhite = Color(0xFFF5F5F5);
   static const Color shadow = Color(0x0C000000);
+  static const Color darkShadow = Color(0x19000000);
   static const Color dark = Color(0xFF201C11);
+  static const Color darkMedGrey = Color(0x1AA0A0A0);
   static const Color borderGrey = Color(0xFFe8e8e8);
 
   static const Color stockImageBg = Color(0xFFF3F4F6);
@@ -76,8 +92,32 @@ abstract class AppColors {
   static const Color imageBorderBlue = Color(0x33137FEC);
 
   // ── Shared UI ─────────────────────────────────────────────────
-  static const Color chevronBg = Color(0xFFF1F5F9);
-  static const Color blueGrey = Color(0xFF617589);
+  static const Color chevronBg         = Color(0xFFF1F5F9);
+  static const Color secondCard         = Color(0xFFF0F2F4);
+  static const Color blueGrey         = Color(0xFF617589);
+  // ── Slider / Glass Button ───────────────
+  static const Color sliderBackground = Color(0xFFE6EEF8);
+  static const Color sliderBase = Color(0xFFDCE7F5);
+  static const Color sliderHighlight = Color(0xFF0056B3);
+
+  // ── Glass Border ────────────────────────
+  static const Color glassBorder = Color(0xFFB6C7E3);
+
+  // ── Gradient (Thumb / Active) ───────────
+  static const List<Color> primaryGradient = [
+    primary,
+    secondPrimary,
+    white,
+
+  ];
+        // AppColors.avatarPurpleBg,
+        //                     AppColors.secondPrimary,
+        //                     AppColors.avatarPurpleBg,
+
+  // ── Optional: Soft Shadow Color ─────────
+  static const Color primaryShadow = Color(0x330056B3);
+
+
 
   static const MaterialColor primarySwatch = MaterialColor(
     0xFFFD4057, // Base color

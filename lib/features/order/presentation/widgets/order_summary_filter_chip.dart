@@ -20,8 +20,8 @@ class OrderSummaryFilterChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsetsDirectional.only(end: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        margin: const EdgeInsetsDirectional.only(end: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         height: 36,
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : AppColors.filterBg,

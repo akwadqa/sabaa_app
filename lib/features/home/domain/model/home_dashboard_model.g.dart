@@ -11,7 +11,9 @@ _HomeDashboardModel _$HomeDashboardModelFromJson(Map<String, dynamic> json) =>
       date: DateModel.fromJson(json['date'] as Map<String, dynamic>),
       dailyPerformance: DailyPerformanceModel.fromJson(
           json['dailyPerformance'] as Map<String, dynamic>),
-      trip: HomeTripModel.fromJson(json['trip'] as Map<String, dynamic>),
+      trip: json['trip'] == null
+          ? null
+          : HomeTripModel.fromJson(json['trip'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$HomeDashboardModelToJson(_HomeDashboardModel instance) =>

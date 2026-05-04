@@ -17,8 +17,13 @@ mixin _$HomeState {
   List<PerformanceMetric> get metrics;
   List<QuickAction> get quickActions;
   String get userName;
-  String get todayDate;
-  AsyncValue<void>? get pageState;
+  String
+      get todayDate; // ── Trip ──────────────────────────────────────────────────────────────
+  HomeTripModel? get trip; // null → no trip assigned today
+  bool get tripStarted; // true after startTrip succeeds
+// ── Async states ──────────────────────────────────────────────────────
+  AsyncValue<void>? get pageState; // main load / refresh
+  AsyncValue<void>? get tripActionState;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -39,8 +44,13 @@ mixin _$HomeState {
                 other.userName == userName) &&
             (identical(other.todayDate, todayDate) ||
                 other.todayDate == todayDate) &&
+            (identical(other.trip, trip) || other.trip == trip) &&
+            (identical(other.tripStarted, tripStarted) ||
+                other.tripStarted == tripStarted) &&
             (identical(other.pageState, pageState) ||
-                other.pageState == pageState));
+                other.pageState == pageState) &&
+            (identical(other.tripActionState, tripActionState) ||
+                other.tripActionState == tripActionState));
   }
 
   @override
@@ -50,11 +60,14 @@ mixin _$HomeState {
       const DeepCollectionEquality().hash(quickActions),
       userName,
       todayDate,
-      pageState);
+      trip,
+      tripStarted,
+      pageState,
+      tripActionState);
 
   @override
   String toString() {
-    return 'HomeState(metrics: $metrics, quickActions: $quickActions, userName: $userName, todayDate: $todayDate, pageState: $pageState)';
+    return 'HomeState(metrics: $metrics, quickActions: $quickActions, userName: $userName, todayDate: $todayDate, trip: $trip, tripStarted: $tripStarted, pageState: $pageState, tripActionState: $tripActionState)';
   }
 }
 
@@ -68,7 +81,12 @@ abstract mixin class $HomeStateCopyWith<$Res> {
       List<QuickAction> quickActions,
       String userName,
       String todayDate,
-      AsyncValue<void>? pageState});
+      HomeTripModel? trip,
+      bool tripStarted,
+      AsyncValue<void>? pageState,
+      AsyncValue<void>? tripActionState});
+
+  $HomeTripModelCopyWith<$Res>? get trip;
 }
 
 /// @nodoc
@@ -87,7 +105,10 @@ class _$HomeStateCopyWithImpl<$Res> implements $HomeStateCopyWith<$Res> {
     Object? quickActions = null,
     Object? userName = null,
     Object? todayDate = null,
+    Object? trip = freezed,
+    Object? tripStarted = null,
     Object? pageState = freezed,
+    Object? tripActionState = freezed,
   }) {
     return _then(_self.copyWith(
       metrics: null == metrics
@@ -106,11 +127,37 @@ class _$HomeStateCopyWithImpl<$Res> implements $HomeStateCopyWith<$Res> {
           ? _self.todayDate
           : todayDate // ignore: cast_nullable_to_non_nullable
               as String,
+      trip: freezed == trip
+          ? _self.trip
+          : trip // ignore: cast_nullable_to_non_nullable
+              as HomeTripModel?,
+      tripStarted: null == tripStarted
+          ? _self.tripStarted
+          : tripStarted // ignore: cast_nullable_to_non_nullable
+              as bool,
       pageState: freezed == pageState
           ? _self.pageState
           : pageState // ignore: cast_nullable_to_non_nullable
               as AsyncValue<void>?,
+      tripActionState: freezed == tripActionState
+          ? _self.tripActionState
+          : tripActionState // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<void>?,
     ));
+  }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $HomeTripModelCopyWith<$Res>? get trip {
+    if (_self.trip == null) {
+      return null;
+    }
+
+    return $HomeTripModelCopyWith<$Res>(_self.trip!, (value) {
+      return _then(_self.copyWith(trip: value));
+    });
   }
 }
 
@@ -212,15 +259,25 @@ extension HomeStatePatterns on HomeState {
             List<QuickAction> quickActions,
             String userName,
             String todayDate,
-            AsyncValue<void>? pageState)?
+            HomeTripModel? trip,
+            bool tripStarted,
+            AsyncValue<void>? pageState,
+            AsyncValue<void>? tripActionState)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _HomeState() when $default != null:
-        return $default(_that.metrics, _that.quickActions, _that.userName,
-            _that.todayDate, _that.pageState);
+        return $default(
+            _that.metrics,
+            _that.quickActions,
+            _that.userName,
+            _that.todayDate,
+            _that.trip,
+            _that.tripStarted,
+            _that.pageState,
+            _that.tripActionState);
       case _:
         return orElse();
     }
@@ -246,14 +303,24 @@ extension HomeStatePatterns on HomeState {
             List<QuickAction> quickActions,
             String userName,
             String todayDate,
-            AsyncValue<void>? pageState)
+            HomeTripModel? trip,
+            bool tripStarted,
+            AsyncValue<void>? pageState,
+            AsyncValue<void>? tripActionState)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeState():
-        return $default(_that.metrics, _that.quickActions, _that.userName,
-            _that.todayDate, _that.pageState);
+        return $default(
+            _that.metrics,
+            _that.quickActions,
+            _that.userName,
+            _that.todayDate,
+            _that.trip,
+            _that.tripStarted,
+            _that.pageState,
+            _that.tripActionState);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -278,14 +345,24 @@ extension HomeStatePatterns on HomeState {
             List<QuickAction> quickActions,
             String userName,
             String todayDate,
-            AsyncValue<void>? pageState)?
+            HomeTripModel? trip,
+            bool tripStarted,
+            AsyncValue<void>? pageState,
+            AsyncValue<void>? tripActionState)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeState() when $default != null:
-        return $default(_that.metrics, _that.quickActions, _that.userName,
-            _that.todayDate, _that.pageState);
+        return $default(
+            _that.metrics,
+            _that.quickActions,
+            _that.userName,
+            _that.todayDate,
+            _that.trip,
+            _that.tripStarted,
+            _that.pageState,
+            _that.tripActionState);
       case _:
         return null;
     }
@@ -300,7 +377,10 @@ class _HomeState implements HomeState {
       final List<QuickAction> quickActions = const [],
       this.userName = '',
       this.todayDate = '',
-      this.pageState})
+      this.trip,
+      this.tripStarted = false,
+      this.pageState,
+      this.tripActionState})
       : _metrics = metrics,
         _quickActions = quickActions;
 
@@ -328,8 +408,20 @@ class _HomeState implements HomeState {
   @override
   @JsonKey()
   final String todayDate;
+// ── Trip ──────────────────────────────────────────────────────────────
+  @override
+  final HomeTripModel? trip;
+// null → no trip assigned today
+  @override
+  @JsonKey()
+  final bool tripStarted;
+// true after startTrip succeeds
+// ── Async states ──────────────────────────────────────────────────────
   @override
   final AsyncValue<void>? pageState;
+// main load / refresh
+  @override
+  final AsyncValue<void>? tripActionState;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -351,8 +443,13 @@ class _HomeState implements HomeState {
                 other.userName == userName) &&
             (identical(other.todayDate, todayDate) ||
                 other.todayDate == todayDate) &&
+            (identical(other.trip, trip) || other.trip == trip) &&
+            (identical(other.tripStarted, tripStarted) ||
+                other.tripStarted == tripStarted) &&
             (identical(other.pageState, pageState) ||
-                other.pageState == pageState));
+                other.pageState == pageState) &&
+            (identical(other.tripActionState, tripActionState) ||
+                other.tripActionState == tripActionState));
   }
 
   @override
@@ -362,11 +459,14 @@ class _HomeState implements HomeState {
       const DeepCollectionEquality().hash(_quickActions),
       userName,
       todayDate,
-      pageState);
+      trip,
+      tripStarted,
+      pageState,
+      tripActionState);
 
   @override
   String toString() {
-    return 'HomeState(metrics: $metrics, quickActions: $quickActions, userName: $userName, todayDate: $todayDate, pageState: $pageState)';
+    return 'HomeState(metrics: $metrics, quickActions: $quickActions, userName: $userName, todayDate: $todayDate, trip: $trip, tripStarted: $tripStarted, pageState: $pageState, tripActionState: $tripActionState)';
   }
 }
 
@@ -383,7 +483,13 @@ abstract mixin class _$HomeStateCopyWith<$Res>
       List<QuickAction> quickActions,
       String userName,
       String todayDate,
-      AsyncValue<void>? pageState});
+      HomeTripModel? trip,
+      bool tripStarted,
+      AsyncValue<void>? pageState,
+      AsyncValue<void>? tripActionState});
+
+  @override
+  $HomeTripModelCopyWith<$Res>? get trip;
 }
 
 /// @nodoc
@@ -402,7 +508,10 @@ class __$HomeStateCopyWithImpl<$Res> implements _$HomeStateCopyWith<$Res> {
     Object? quickActions = null,
     Object? userName = null,
     Object? todayDate = null,
+    Object? trip = freezed,
+    Object? tripStarted = null,
     Object? pageState = freezed,
+    Object? tripActionState = freezed,
   }) {
     return _then(_HomeState(
       metrics: null == metrics
@@ -421,11 +530,37 @@ class __$HomeStateCopyWithImpl<$Res> implements _$HomeStateCopyWith<$Res> {
           ? _self.todayDate
           : todayDate // ignore: cast_nullable_to_non_nullable
               as String,
+      trip: freezed == trip
+          ? _self.trip
+          : trip // ignore: cast_nullable_to_non_nullable
+              as HomeTripModel?,
+      tripStarted: null == tripStarted
+          ? _self.tripStarted
+          : tripStarted // ignore: cast_nullable_to_non_nullable
+              as bool,
       pageState: freezed == pageState
           ? _self.pageState
           : pageState // ignore: cast_nullable_to_non_nullable
               as AsyncValue<void>?,
+      tripActionState: freezed == tripActionState
+          ? _self.tripActionState
+          : tripActionState // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<void>?,
     ));
+  }
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $HomeTripModelCopyWith<$Res>? get trip {
+    if (_self.trip == null) {
+      return null;
+    }
+
+    return $HomeTripModelCopyWith<$Res>(_self.trip!, (value) {
+      return _then(_self.copyWith(trip: value));
+    });
   }
 }
 

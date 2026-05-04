@@ -21,6 +21,7 @@ class StockCategoryFilter extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
+        // mainAxisAlignment: MainAxisAlignment.start,
         children: List.generate(categories.length, (i) {
           final isActive = i == selectedIndex;
           return Padding(

@@ -6,6 +6,8 @@ import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/exception/dio_exceptions.dart';
 import 'package:sabaa/src/infrastructure/network/services/dio_client.dart';
 
+import '../../domain/order_summary/payment_response_model.dart';
+
 part 'order_repository.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -31,19 +33,21 @@ class OrderRepository {
     throw AppException(response.message);
   }
 
-  Future<ApiResponse<CreatePaymentResponse>> createPayment({
-    required String invoiceId,
-    required String paidAmount,
-  }) async {
-    final response = await _remoteDataSource.createPaymeny(
-      invoice_id: invoiceId,
-      paid_amount: paidAmount,
-    );
+Future<ApiResponse<PaymentResponseModel>> createPayment({
+  required String invoiceId,
+  required double amount,
+  required String paymentMethod,
+}) async {
+  final response = await _remoteDataSource.createPayment(
+    invoiceId: invoiceId,
+    amount: amount,
+    paymentMethod: paymentMethod,
+  );
 
-    if (response.status == 201) {
-      return response;
-    }
-
-    throw AppException(response.message);
+  if (response.hasSucceeded) {
+    return response;
   }
+
+  throw AppException(response.message);
+}
 }

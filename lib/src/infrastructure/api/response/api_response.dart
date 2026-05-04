@@ -68,6 +68,6 @@ class ApiResponse<T> {
     'error': error,
   };
 
-  bool get hasSucceeded => status == 200;
+bool get hasSucceeded => status == 200 || status == 201;
   bool get hasFailed => error != null && error == 1;
 }

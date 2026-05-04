@@ -6,7 +6,7 @@ import '../../domain/model/stock_item.dart';
 class StockLevelBadge extends StatelessWidget {
   const StockLevelBadge({super.key, required this.level});
 
-  final StockLevel level;
+  final String level;
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +28,28 @@ class StockLevelBadge extends StatelessWidget {
     );
   }
 
-  _BadgeConfig _badgeConfig(StockLevel level) {
+  _BadgeConfig _badgeConfig(String level) {
     switch (level) {
-      case StockLevel.high:
+      case "High":
         return const _BadgeConfig(
           label: 'HIGH',
           background: Color(0xFFDCFCE7),
           textColor: Color(0xFF15803D),
         );
-      case StockLevel.medium:
+      case "Med":
         return const _BadgeConfig(
           label: 'MED',
           background: Color(0xFFFEF9C3),
           textColor: Color(0xFFA16207),
         );
-      case StockLevel.low:
+      case "Low":
         return const _BadgeConfig(
+          label: 'LOW',
+          background: Color(0xFFFEE2E2),
+          textColor: Color(0xFFB91C1C),
+        );
+    default:
+       return  _BadgeConfig(
           label: 'LOW',
           background: Color(0xFFFEE2E2),
           textColor: Color(0xFFB91C1C),

@@ -31,7 +31,7 @@ class HeaderBanner extends StatelessWidget {
             children: [
               Text(
                 '${'hello'.tr()} $userName',
-               style: AppTextStyle.interSemiBold20.copyWith(
+               style: AppTextStyle.interSemiBold18.copyWith(
                   color: AppColors.white,
                   letterSpacing: -0.14,
                 ),

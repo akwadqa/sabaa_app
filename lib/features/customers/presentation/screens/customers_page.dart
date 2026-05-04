@@ -40,93 +40,10 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Future(() =>
         ref.read(customersControllerProvider.notifier).getCustomers(page: 1));
   }
-
-  // ── Static data (replace with BLoC / provider) ────────────────────────────
-  // static const List<Customer> _allCustomers = [
-  //   Customer(
-  //     id: 'c1',
-  //     name: 'Fresh Mart Ltd.',
-  //     address: '45 West Ave, Block B',
-  //     status: VisitStatus.open,
-  //     orderAmount: r'$420.00',
-  //     avatar: InitialsAvatar(
-  //       initials: 'FM',
-  //       backgroundColor: AppColors.statusPendingBg,
-  //       textColor: AppColors.avatarOrangeText,
-  //     ),
-  //   ),
-  //   Customer(
-  //     id: 'c2',
-  //     name: 'Al Dibaj Supermarket',
-  //     address: 'Dubai, Business Bay',
-  //     status: VisitStatus.pending,
-  //     avatar: ImageAvatar(
-  //       imageUrl: 'https://placehold.co/64x64',
-  //       borderColor: Color(0x33137FEC),
-  //     ),
-  //   ),
-  //   Customer(
-  //     id: 'c3',
-  //     name: '7-Eleven Corner',
-  //     address: '45 West Ave, Block B',
-  //     status: VisitStatus.visited,
-  //     avatar: InitialsAvatar(
-  //       initials: '7E',
-  //       backgroundColor: AppColors.avatarBlueBg,
-  //       textColor: AppColors.avatarBlueText,
-  //     ),
-  //   ),
-  //   Customer(
-  //     id: 'c4',
-  //     name: 'City Grocery',
-  //     address: '45 West Ave, Block B',
-  //     status: VisitStatus.pending,
-  //     orderAmount: null,
-  //     avatar: ImageAvatar(
-  //       imageUrl: 'https://placehold.co/64x64',
-  //     ),
-  //   ),
-  //   Customer(
-  //     id: 'c5',
-  //     name: 'Fresh Mart Ltd.',
-  //     address: '45 West Ave, Block B',
-  //     status: VisitStatus.open,
-  //     orderAmount: r'$420.00',
-  //     avatar: InitialsAvatar(
-  //       initials: 'FM',
-  //       backgroundColor: AppColors.statusPendingBg,
-  //       textColor: AppColors.statusPendingText,
-  //     ),
-  //   ),
-  //   Customer(
-  //     id: 'c6',
-  //     name: 'Quick Mart',
-  //     address: '22 Station Road',
-  //     status: VisitStatus.pending,
-  //     avatar: InitialsAvatar(
-  //       initials: 'QK',
-  //       backgroundColor: AppColors.avatarPurpleBg,
-  //       textColor: AppColors.statusOpenText,
-  //     ),
-  //   ),
-  // ];
-
-  // List<Customer> get _filtered {
-  //   if (_query.isEmpty) return _allCustomers;
-  //   final q = _query.toLowerCase();
-  //   return _allCustomers
-  //       .where(
-  //         (c) =>
-  //             c.name.toLowerCase().contains(q) ||
-  //             c.address.toLowerCase().contains(q),
-  //       )
-  //       .toList();
-  // }
 
   @override
   void dispose() {
@@ -142,28 +59,32 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            16.verticalSpace,
-            FilterSearchBar(
-              hint: 'search_by_customer_name',
-              controller: _searchController,
-              onChanged: (val) {
-                ref.read(customersControllerProvider.notifier).search = val;
-                ref
-                    .read(customersControllerProvider.notifier)
-                    .getCustomers(page: 1, showLoading: true);
-              },
-            ),
-            Expanded(
-              child: controller.when(
-                data: (customers) => _buildBody(context, customers),
-                loading: () => const AppLoader(),
-                error: (e, __) => Center(child: Text('Error: $e')),
+        child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              _buildAppBar(),
+              16.verticalSpace,
+              FilterSearchBar(
+                hint: 'search_by_customer_name',
+                controller: _searchController,
+                isCustomer: true,
+                onChanged: (val) {
+                  ref.read(customersControllerProvider.notifier).search = val;
+                  ref
+                      .read(customersControllerProvider.notifier)
+                      .getCustomers(page: 1, showLoading: true);
+                },
               ),
-            ),
-          ],
+              Expanded(
+                child: controller.when(
+                  data: (customers) => _buildBody(context, customers),
+                  loading: () => const AppLoader(),
+                  error: (e, __) => Center(child: Text('Error: $e')),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -176,7 +97,6 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
       onRefresh: () => ref.read(customersControllerProvider.notifier).refresh(),
       enablePullDown: true,
       child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
         children: [
           16.verticalSpace,
           ..._filtered.map(
@@ -186,7 +106,7 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
                 customer: c,
                 onTap: () {
                   context.push(AppRoutes.orderSummaryScreen,
-                      extra: c.customerId);
+                      extra: c);
                 },
               ),
             ),
