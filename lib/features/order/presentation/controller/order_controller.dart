@@ -37,7 +37,7 @@ class OrderController extends _$OrderController {
 
 Future<bool> createPayment({
   required String invoiceId,
-  required double amount,
+  required String amount,
   required String paymentMethod,
 }) async {
   final current = state.value!;

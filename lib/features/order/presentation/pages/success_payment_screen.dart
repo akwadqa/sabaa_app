@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/presentation/screens/create_customer_success_page.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
@@ -70,7 +72,7 @@ class PaymentSuccessPage extends ConsumerWidget {
                   const SizedBox(height: 10),
 
                   Text(
-                    "${payment.paidAmount.toCurrency()} ${payment.currency}",
+                    payment.paidAmount.toCurrency(),
                     style: AppTextStyle.interBold22
                         .copyWith(color: AppColors.primary),
                   ),
@@ -79,8 +81,9 @@ class PaymentSuccessPage extends ConsumerWidget {
 
                   _row("Invoice", payment.paymentId),
                   _row("Customer", payment.partyName),
-                  _row("Date", payment.referenceDate),
-                  _row("Payment Method", payment.paymentType),
+                  // _row("Paid Amount", payment.paidAmount.toCurrency()),
+                  _row("Payment Type", payment.paymentType),
+                  _row("Payment Method", payment.modeOfPayment),
                 ],
               ),
             ),
@@ -93,7 +96,7 @@ class PaymentSuccessPage extends ConsumerWidget {
                 text: "Done",
                 onTap: () {
                   ref.read(bottomNavIndexProvider.notifier).state = 0;
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  context.goNamed(AppRoutes.mainScreen);
                 },
                 isFiled: true,
                 backgroundColor: AppColors.primary, height: 50, width: double.infinity,

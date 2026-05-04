@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "883466079545",
+    "project_id": "sabaa-app-fcakwd12",
+    "storage_bucket": "sabaa-app-fcakwd12.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883466079545:android:154405abd9b6b860286ce8",
+        "android_client_info": {
+          "package_name": "qa.app.sabaa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlAa7EmYHOx8k_wExSnMCwlJNvsy5VunY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

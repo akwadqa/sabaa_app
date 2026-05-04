@@ -39,7 +39,7 @@ class OrderRemoteDataSource {
 
   Future<ApiResponse<PaymentResponseModel>> createPayment({
     required String invoiceId,
-    required double amount,
+    required String amount,
     required String paymentMethod,
   }) async {
     try {

@@ -1,0 +1,21 @@
+default_platform(:android)
+
+platform :android do
+  desc "Lane for Android Firebase App Distribution"
+  lane :firebase_distribution do
+    sh "flutter clean"
+    sh "flutter build apk --split-per-abi --no-tree-shake-icons"
+
+    firebase_app_distribution(
+      app: "1:883466079545:android:154405abd9b6b860286ce8",
+      # firebase_cli_token: ENV["FIREBASE_TOKEN"],
+
+      android_artifact_type: "APK",
+      android_artifact_path: "../build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk",
+      testers: "mouazhariry5@gmail.com,moh.allaaadeen@gmail.com,abdullahka715@gmail.com,hadeelberkdar09@gmail.com",
+      release_notes: "-  First test release"
+    )
+  end
+end
+
+# ENV["FIREBASE_TOKEN"]

@@ -9,13 +9,11 @@ abstract class PaymentResponseModel with _$PaymentResponseModel {
     required String paymentType,
     required String party,
     required String partyName,
+    required String modeOfPayment,
     required double paidAmount,
     required String currency,
-    required String referenceDate,
-    String? referenceNo,
     required int docStatus,
-    required String createdBy,
-    required String createdAt,
+
   }) = _PaymentResponseModel;
 
   factory PaymentResponseModel.fromJson(Map<String, dynamic> json) =>

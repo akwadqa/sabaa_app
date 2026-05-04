@@ -1,0 +1,30 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "sabaa-app-fcakwd12",
+                    "appId": "1:883466079545:android:154405abd9b6b860286ce8",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "sabaa-app-fcakwd12",
+                    "appId": "1:883466079545:ios:1af52ce7f3bb9215286ce8",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "sabaa-app-fcakwd12",
+                    "configurations": {
+                        "android": "1:883466079545:android:154405abd9b6b860286ce8",
+                        "ios": "1:883466079545:ios:1af52ce7f3bb9215286ce8"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -13,13 +13,10 @@ _PaymentResponseModel _$PaymentResponseModelFromJson(
       paymentType: json['paymentType'] as String,
       party: json['party'] as String,
       partyName: json['partyName'] as String,
+      modeOfPayment: json['modeOfPayment'] as String,
       paidAmount: (json['paidAmount'] as num).toDouble(),
       currency: json['currency'] as String,
-      referenceDate: json['referenceDate'] as String,
-      referenceNo: json['referenceNo'] as String?,
       docStatus: (json['docStatus'] as num).toInt(),
-      createdBy: json['createdBy'] as String,
-      createdAt: json['createdAt'] as String,
     );
 
 Map<String, dynamic> _$PaymentResponseModelToJson(
@@ -29,11 +26,8 @@ Map<String, dynamic> _$PaymentResponseModelToJson(
       'paymentType': instance.paymentType,
       'party': instance.party,
       'partyName': instance.partyName,
+      'modeOfPayment': instance.modeOfPayment,
       'paidAmount': instance.paidAmount,
       'currency': instance.currency,
-      'referenceDate': instance.referenceDate,
-      'referenceNo': instance.referenceNo,
       'docStatus': instance.docStatus,
-      'createdBy': instance.createdBy,
-      'createdAt': instance.createdAt,
     };

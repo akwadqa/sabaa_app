@@ -98,7 +98,7 @@ class _ReturnItemsPageState extends ConsumerState<ReturnItemsPage> {
                 Icon(Icons.check_circle_outline,
                     color: AppColors.white, size: 25),
                 Text(
-                  'create_return'.tr(),
+                  'confirm_return'.tr(),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displaySmall!.copyWith(
                       fontSize: 16,
@@ -180,15 +180,15 @@ class _ReturnOrderBody extends ConsumerWidget {
               context.push(AppRoutes.barcodeScreen, extra: true);
             },
           ),
-          OrderCategoryFilter(
-            categories: state.categories.isNotEmpty
-                ? state.categories.map((e) => e.name).toList()
-                : ['All'],
-            selectedIndex: state.selectedCategoryIndex,
-            onSelected: (i) => ref
-                .read(returnOrderControllerProvider.notifier)
-                .selectCategory(i),
-          ),
+          // OrderCategoryFilter(
+          //   categories: state.categories.isNotEmpty
+          //       ? state.categories.map((e) => e.name).toList()
+          //       : ['All'],
+          //   selectedIndex: state.selectedCategoryIndex,
+          //   onSelected: (i) => ref
+          //       .read(returnOrderControllerProvider.notifier)
+          //       .selectCategory(i),
+          // ),
           _SectionHeader(
             titleKey: 'items',
             count: state.allItems.length,
@@ -212,7 +212,7 @@ class _ReturnOrderBody extends ConsumerWidget {
                         backgroundColor: AppColors.white,
                       ),
                     ),
-                  if (state.filteredItems.isEmpty) AppEmptyDataWidget(),
+                  // if (state.filteredItems.isEmpty) AppEmptyDataWidget(),
                   ...state.filteredItems.map((item) {
                     final isSelected =
                         state.selectedItems.containsKey(item.itemCode);

@@ -7,6 +7,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sabaa/features/auth/application/auth_service.dart';
+import 'package:sabaa/firebase_options.dart';
+import 'package:sabaa/src/core/notifications/services/notification_service.dart';
 // import 'package:sabaa/firebase_options.dart';
 // import 'package:firebase_analytics/firebase_analytics.dart';
 
@@ -22,9 +24,9 @@ abstract class AppInitializer {
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
     // -- FIREBASE INIT -- //
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
     // -- Initialize Notifications -- //
     // final container = ProviderContainer();
@@ -55,7 +57,7 @@ Future<ProviderContainer> initializeProviders() async {
 
   // ? INIT FIREBASE NOTIFICATION SERVICE
 
-  // await container.read(notificationsServiceProvider).init();
+  await container.read(notificationsServiceProvider).init();
   //   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   // analytics.setAnalyticsCollectionEnabled(true);
   return container;

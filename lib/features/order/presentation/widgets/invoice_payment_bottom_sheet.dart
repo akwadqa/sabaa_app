@@ -13,10 +13,11 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 class InvoicePaymentBottomSheet extends StatefulWidget {
   final InvoiceModel invoice;
-final double outstandingBalance;
+  final double outstandingBalance;
   const InvoicePaymentBottomSheet({
     super.key,
-    required this.invoice, required this.outstandingBalance,
+    required this.invoice,
+    required this.outstandingBalance,
   });
 
   @override
@@ -26,7 +27,7 @@ final double outstandingBalance;
 
 class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
   final TextEditingController _amountController = TextEditingController();
-  String _selectedMethod = 'cash'; 
+  String _selectedMethod = 'cash';
 
   @override
   void dispose() {
@@ -66,7 +67,7 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
               ),
             ),
           ),
-          _buildActionButton(widget.invoice.invoiceId,widget.invoice.grandTotal),
+          _buildActionButton(widget.invoice.invoiceId, _amountController.text),
           const SizedBox(height: 34), // Home indicator space
         ],
       ),
@@ -75,7 +76,7 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 22,horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -102,7 +103,9 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(
-              padding: const EdgeInsetsDirectional.only(bottom: 20,),
+              padding: const EdgeInsetsDirectional.only(
+                bottom: 20,
+              ),
               child: const Icon(Icons.close, size: 30, color: AppColors.black),
             ),
           ),
@@ -291,8 +294,7 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
     return GestureDetector(
       onTap: () => setState(() => _selectedMethod = id),
       child: Container(
-          padding: EdgeInsetsDirectional.symmetric(vertical: 30),
-
+        padding: EdgeInsetsDirectional.symmetric(vertical: 30),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
@@ -325,77 +327,76 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
     );
   }
 
-Widget _buildActionButton(String invoiceId,double amount) {
-  return Consumer(
-    builder: (context, ref, _) {
-      final state = ref.watch(orderControllerProvider).value!;
-      final bool hasAmount = _amountController.text.isNotEmpty;
-      final bool isLoading = state.isPaying;
+  Widget _buildActionButton(String invoiceId, String amount) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final state = ref.watch(orderControllerProvider).value!;
+        final bool hasAmount = _amountController.text.isNotEmpty;
+        final bool isLoading = state.isPaying;
 
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 22),
-        width: double.infinity,
-        color: const Color(0x80F2F4F7),
-        child: CustomButtonWidget(
-          text: 'confirm_payment',
-
-          /// 🔥 disable when loading or no amount
-          onTap: (hasAmount && !isLoading)
-              ? () async {
-                  final success = await ref
-                      .read(orderControllerProvider.notifier)
-                      .createPayment(
-                        invoiceId: invoiceId,
-                        amount: amount,
-                        paymentMethod:_selectedMethod
-                      );
-
-                  if (!context.mounted) return;
-
-                  if (success) {
-                    context.goNamed(AppRoutes.paymentSuccessPage);
-                  }
-                }
-              : null,
-
-          isFiled: true,
-          backgroundColor: (hasAmount && !isLoading)
-              ? AppColors.primary
-              : const Color(0xFFA0A0A0),
-
-          height: 48,
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 22),
           width: double.infinity,
-          radius: 12,
+          color: const Color(0x80F2F4F7),
+          child: CustomButtonWidget(
+            text: 'confirm_payment',
 
-          /// 🔥 LOADING UI
-          child: isLoading
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
+            /// 🔥 disable when loading or no amount
+            onTap: (hasAmount && !isLoading)
+                ? () async {
+                    final success = await ref
+                        .read(orderControllerProvider.notifier)
+                        .createPayment(
+                            invoiceId: invoiceId,
+                            amount: amount,
+                            paymentMethod: _selectedMethod);
+
+                    if (!context.mounted) return;
+
+                    if (success) {
+                      context.goNamed(AppRoutes.paymentSuccessPage);
+                    }
+                  }
+                : null,
+
+            isFiled: true,
+            backgroundColor: (hasAmount && !isLoading)
+                ? AppColors.primary
+                : const Color(0xFFA0A0A0),
+
+            height: 48,
+            width: double.infinity,
+            radius: 12,
+
+            /// 🔥 LOADING UI
+            child: isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'confirm_payment'.tr(),
+                        style: AppTextStyle.rubikBold16
+                            .copyWith(color: AppColors.white),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(
+                        Icons.check_circle_outline,
+                        color: AppColors.white,
+                        size: 14,
+                      ),
+                    ],
                   ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'confirm_payment'.tr(),
-                      style: AppTextStyle.rubikBold16
-                          .copyWith(color: AppColors.white),
-                    ),
-                    const SizedBox(width: 12),
-                    const Icon(
-                      Icons.check_circle_outline,
-                      color: AppColors.white,
-                      size: 14,
-                    ),
-                  ],
-                ),
-        ),
-      );
-    },
-  );
-}
+          ),
+        );
+      },
+    );
+  }
 }

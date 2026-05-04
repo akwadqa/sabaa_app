@@ -34,7 +34,7 @@ final class ReturnOrderControllerProvider
 }
 
 String _$returnOrderControllerHash() =>
-    r'd586c090dc321e365b8f7f8cd105399b93143c4b';
+    r'9c77134acfac87319b61d2dbeea7bebe3e14cf51';
 
 abstract class _$ReturnOrderController
     extends $AsyncNotifier<ReturnOrderState> {

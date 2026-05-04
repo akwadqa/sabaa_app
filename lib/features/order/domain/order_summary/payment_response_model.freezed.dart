@@ -18,13 +18,10 @@ mixin _$PaymentResponseModel {
   String get paymentType;
   String get party;
   String get partyName;
+  String get modeOfPayment;
   double get paidAmount;
   String get currency;
-  String get referenceDate;
-  String? get referenceNo;
   int get docStatus;
-  String get createdBy;
-  String get createdAt;
 
   /// Create a copy of PaymentResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -49,41 +46,24 @@ mixin _$PaymentResponseModel {
             (identical(other.party, party) || other.party == party) &&
             (identical(other.partyName, partyName) ||
                 other.partyName == partyName) &&
+            (identical(other.modeOfPayment, modeOfPayment) ||
+                other.modeOfPayment == modeOfPayment) &&
             (identical(other.paidAmount, paidAmount) ||
                 other.paidAmount == paidAmount) &&
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
-            (identical(other.referenceDate, referenceDate) ||
-                other.referenceDate == referenceDate) &&
-            (identical(other.referenceNo, referenceNo) ||
-                other.referenceNo == referenceNo) &&
             (identical(other.docStatus, docStatus) ||
-                other.docStatus == docStatus) &&
-            (identical(other.createdBy, createdBy) ||
-                other.createdBy == createdBy) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.docStatus == docStatus));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      paymentId,
-      paymentType,
-      party,
-      partyName,
-      paidAmount,
-      currency,
-      referenceDate,
-      referenceNo,
-      docStatus,
-      createdBy,
-      createdAt);
+  int get hashCode => Object.hash(runtimeType, paymentId, paymentType, party,
+      partyName, modeOfPayment, paidAmount, currency, docStatus);
 
   @override
   String toString() {
-    return 'PaymentResponseModel(paymentId: $paymentId, paymentType: $paymentType, party: $party, partyName: $partyName, paidAmount: $paidAmount, currency: $currency, referenceDate: $referenceDate, referenceNo: $referenceNo, docStatus: $docStatus, createdBy: $createdBy, createdAt: $createdAt)';
+    return 'PaymentResponseModel(paymentId: $paymentId, paymentType: $paymentType, party: $party, partyName: $partyName, modeOfPayment: $modeOfPayment, paidAmount: $paidAmount, currency: $currency, docStatus: $docStatus)';
   }
 }
 
@@ -98,13 +78,10 @@ abstract mixin class $PaymentResponseModelCopyWith<$Res> {
       String paymentType,
       String party,
       String partyName,
+      String modeOfPayment,
       double paidAmount,
       String currency,
-      String referenceDate,
-      String? referenceNo,
-      int docStatus,
-      String createdBy,
-      String createdAt});
+      int docStatus});
 }
 
 /// @nodoc
@@ -124,13 +101,10 @@ class _$PaymentResponseModelCopyWithImpl<$Res>
     Object? paymentType = null,
     Object? party = null,
     Object? partyName = null,
+    Object? modeOfPayment = null,
     Object? paidAmount = null,
     Object? currency = null,
-    Object? referenceDate = null,
-    Object? referenceNo = freezed,
     Object? docStatus = null,
-    Object? createdBy = null,
-    Object? createdAt = null,
   }) {
     return _then(_self.copyWith(
       paymentId: null == paymentId
@@ -149,6 +123,10 @@ class _$PaymentResponseModelCopyWithImpl<$Res>
           ? _self.partyName
           : partyName // ignore: cast_nullable_to_non_nullable
               as String,
+      modeOfPayment: null == modeOfPayment
+          ? _self.modeOfPayment
+          : modeOfPayment // ignore: cast_nullable_to_non_nullable
+              as String,
       paidAmount: null == paidAmount
           ? _self.paidAmount
           : paidAmount // ignore: cast_nullable_to_non_nullable
@@ -157,26 +135,10 @@ class _$PaymentResponseModelCopyWithImpl<$Res>
           ? _self.currency
           : currency // ignore: cast_nullable_to_non_nullable
               as String,
-      referenceDate: null == referenceDate
-          ? _self.referenceDate
-          : referenceDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      referenceNo: freezed == referenceNo
-          ? _self.referenceNo
-          : referenceNo // ignore: cast_nullable_to_non_nullable
-              as String?,
       docStatus: null == docStatus
           ? _self.docStatus
           : docStatus // ignore: cast_nullable_to_non_nullable
               as int,
-      createdBy: null == createdBy
-          ? _self.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: null == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -279,13 +241,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             String paymentType,
             String party,
             String partyName,
+            String modeOfPayment,
             double paidAmount,
             String currency,
-            String referenceDate,
-            String? referenceNo,
-            int docStatus,
-            String createdBy,
-            String createdAt)?
+            int docStatus)?
         $default, {
     required TResult orElse(),
   }) {
@@ -297,13 +256,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             _that.paymentType,
             _that.party,
             _that.partyName,
+            _that.modeOfPayment,
             _that.paidAmount,
             _that.currency,
-            _that.referenceDate,
-            _that.referenceNo,
-            _that.docStatus,
-            _that.createdBy,
-            _that.createdAt);
+            _that.docStatus);
       case _:
         return orElse();
     }
@@ -329,13 +285,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             String paymentType,
             String party,
             String partyName,
+            String modeOfPayment,
             double paidAmount,
             String currency,
-            String referenceDate,
-            String? referenceNo,
-            int docStatus,
-            String createdBy,
-            String createdAt)
+            int docStatus)
         $default,
   ) {
     final _that = this;
@@ -346,13 +299,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             _that.paymentType,
             _that.party,
             _that.partyName,
+            _that.modeOfPayment,
             _that.paidAmount,
             _that.currency,
-            _that.referenceDate,
-            _that.referenceNo,
-            _that.docStatus,
-            _that.createdBy,
-            _that.createdAt);
+            _that.docStatus);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -377,13 +327,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             String paymentType,
             String party,
             String partyName,
+            String modeOfPayment,
             double paidAmount,
             String currency,
-            String referenceDate,
-            String? referenceNo,
-            int docStatus,
-            String createdBy,
-            String createdAt)?
+            int docStatus)?
         $default,
   ) {
     final _that = this;
@@ -394,13 +341,10 @@ extension PaymentResponseModelPatterns on PaymentResponseModel {
             _that.paymentType,
             _that.party,
             _that.partyName,
+            _that.modeOfPayment,
             _that.paidAmount,
             _that.currency,
-            _that.referenceDate,
-            _that.referenceNo,
-            _that.docStatus,
-            _that.createdBy,
-            _that.createdAt);
+            _that.docStatus);
       case _:
         return null;
     }
@@ -415,13 +359,10 @@ class _PaymentResponseModel implements PaymentResponseModel {
       required this.paymentType,
       required this.party,
       required this.partyName,
+      required this.modeOfPayment,
       required this.paidAmount,
       required this.currency,
-      required this.referenceDate,
-      this.referenceNo,
-      required this.docStatus,
-      required this.createdBy,
-      required this.createdAt});
+      required this.docStatus});
   factory _PaymentResponseModel.fromJson(Map<String, dynamic> json) =>
       _$PaymentResponseModelFromJson(json);
 
@@ -434,19 +375,13 @@ class _PaymentResponseModel implements PaymentResponseModel {
   @override
   final String partyName;
   @override
+  final String modeOfPayment;
+  @override
   final double paidAmount;
   @override
   final String currency;
   @override
-  final String referenceDate;
-  @override
-  final String? referenceNo;
-  @override
   final int docStatus;
-  @override
-  final String createdBy;
-  @override
-  final String createdAt;
 
   /// Create a copy of PaymentResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -476,41 +411,24 @@ class _PaymentResponseModel implements PaymentResponseModel {
             (identical(other.party, party) || other.party == party) &&
             (identical(other.partyName, partyName) ||
                 other.partyName == partyName) &&
+            (identical(other.modeOfPayment, modeOfPayment) ||
+                other.modeOfPayment == modeOfPayment) &&
             (identical(other.paidAmount, paidAmount) ||
                 other.paidAmount == paidAmount) &&
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
-            (identical(other.referenceDate, referenceDate) ||
-                other.referenceDate == referenceDate) &&
-            (identical(other.referenceNo, referenceNo) ||
-                other.referenceNo == referenceNo) &&
             (identical(other.docStatus, docStatus) ||
-                other.docStatus == docStatus) &&
-            (identical(other.createdBy, createdBy) ||
-                other.createdBy == createdBy) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.docStatus == docStatus));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      paymentId,
-      paymentType,
-      party,
-      partyName,
-      paidAmount,
-      currency,
-      referenceDate,
-      referenceNo,
-      docStatus,
-      createdBy,
-      createdAt);
+  int get hashCode => Object.hash(runtimeType, paymentId, paymentType, party,
+      partyName, modeOfPayment, paidAmount, currency, docStatus);
 
   @override
   String toString() {
-    return 'PaymentResponseModel(paymentId: $paymentId, paymentType: $paymentType, party: $party, partyName: $partyName, paidAmount: $paidAmount, currency: $currency, referenceDate: $referenceDate, referenceNo: $referenceNo, docStatus: $docStatus, createdBy: $createdBy, createdAt: $createdAt)';
+    return 'PaymentResponseModel(paymentId: $paymentId, paymentType: $paymentType, party: $party, partyName: $partyName, modeOfPayment: $modeOfPayment, paidAmount: $paidAmount, currency: $currency, docStatus: $docStatus)';
   }
 }
 
@@ -527,13 +445,10 @@ abstract mixin class _$PaymentResponseModelCopyWith<$Res>
       String paymentType,
       String party,
       String partyName,
+      String modeOfPayment,
       double paidAmount,
       String currency,
-      String referenceDate,
-      String? referenceNo,
-      int docStatus,
-      String createdBy,
-      String createdAt});
+      int docStatus});
 }
 
 /// @nodoc
@@ -553,13 +468,10 @@ class __$PaymentResponseModelCopyWithImpl<$Res>
     Object? paymentType = null,
     Object? party = null,
     Object? partyName = null,
+    Object? modeOfPayment = null,
     Object? paidAmount = null,
     Object? currency = null,
-    Object? referenceDate = null,
-    Object? referenceNo = freezed,
     Object? docStatus = null,
-    Object? createdBy = null,
-    Object? createdAt = null,
   }) {
     return _then(_PaymentResponseModel(
       paymentId: null == paymentId
@@ -578,6 +490,10 @@ class __$PaymentResponseModelCopyWithImpl<$Res>
           ? _self.partyName
           : partyName // ignore: cast_nullable_to_non_nullable
               as String,
+      modeOfPayment: null == modeOfPayment
+          ? _self.modeOfPayment
+          : modeOfPayment // ignore: cast_nullable_to_non_nullable
+              as String,
       paidAmount: null == paidAmount
           ? _self.paidAmount
           : paidAmount // ignore: cast_nullable_to_non_nullable
@@ -586,26 +502,10 @@ class __$PaymentResponseModelCopyWithImpl<$Res>
           ? _self.currency
           : currency // ignore: cast_nullable_to_non_nullable
               as String,
-      referenceDate: null == referenceDate
-          ? _self.referenceDate
-          : referenceDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      referenceNo: freezed == referenceNo
-          ? _self.referenceNo
-          : referenceNo // ignore: cast_nullable_to_non_nullable
-              as String?,
       docStatus: null == docStatus
           ? _self.docStatus
           : docStatus // ignore: cast_nullable_to_non_nullable
               as int,
-      createdBy: null == createdBy
-          ? _self.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: null == createdAt
-          ? _self.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
