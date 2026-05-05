@@ -9,20 +9,23 @@ class OrderState {
   final AsyncValue<OrderSummaryModel>? orderSummary;
   final bool isPaying;
   final PaymentResponseModel? paymentData;
+  final bool filterLoading;
 
   OrderState({
     required this.ordersTypeFilter,
     required this.orderSummary,
-    required this.isPaying, this.paymentData,
+    required this.isPaying,
+    this.paymentData,
+    required this.filterLoading,
   });
 
   factory OrderState.init() {
     return OrderState(
-      
       ordersTypeFilter: 'all',
       orderSummary: AsyncLoading(),
       isPaying: false,
       paymentData: null,
+      filterLoading: false,
     );
   }
   OrderState copyWith({
@@ -31,12 +34,14 @@ class OrderState {
     AsyncValue<OrderSummaryModel>? orderSummary,
     bool? isPaying,
     PaymentResponseModel? paymentData,
+    bool? filterLoading,
   }) {
     return OrderState(
       ordersTypeFilter: ordersTypeFilter ?? this.ordersTypeFilter,
       orderSummary: orderSummary ?? this.orderSummary,
       isPaying: isPaying ?? this.isPaying,
       paymentData: paymentData ?? this.paymentData,
+      filterLoading: filterLoading ?? this.filterLoading,
     );
   }
 }

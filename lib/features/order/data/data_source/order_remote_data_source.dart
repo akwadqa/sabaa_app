@@ -15,14 +15,15 @@ class OrderRemoteDataSource {
   OrderRemoteDataSource(this._networkService);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status}) async {
+      {required String customerId, String? status ,required int page}) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.orderSummary,
         queryParameters: {
           'customer_id': customerId,
           // 'customer_id': 1017,
-          // 'status': status,
+          'status': status,
+          'page': page,
         },
       );
 

@@ -22,9 +22,9 @@ class OrderRepository {
   OrderRepository(this._remoteDataSource);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status}) async {
+      {required String customerId, String? status , required int page}) async {
     final response = await _remoteDataSource.getOrderSummary(
-        customerId: customerId, status: status);
+        customerId: customerId, status: status, page: page);
 
     if (response.status == 200) {
       return response;
