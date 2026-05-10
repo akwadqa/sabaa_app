@@ -12,8 +12,10 @@ import 'package:sabaa/features/order/presentation/widgets/order_summary_filters_
 import 'package:sabaa/features/order/presentation/widgets/order_summary_invoice_card.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_stat_card.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
+import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_app_bar.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
@@ -28,11 +30,10 @@ class OrderSummaryPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomDeafultAppbar(title: 'order_summary'.tr()),
-      body: _OrderSummaryPageContent(customer:customer),
+      body: _OrderSummaryPageContent(customer: customer),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-            context.push(AppRoutes.newOrderScreen,extra: customer);
-
+          context.push(AppRoutes.newOrderScreen, extra: customer);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         backgroundColor: AppColors.primary,
@@ -58,7 +59,7 @@ class _OrderSummaryPageContentState
     super.initState();
     Future(() => ref
         .read(orderControllerProvider.notifier)
-        .getOrderSummary(widget.customer.customerId!));
+        .getOrderSummary(customerId: widget.customer.customerId!, page: 1));
   }
 
   @override
@@ -71,7 +72,8 @@ class _OrderSummaryPageContentState
         AsyncLoading();
 
     return controller.when(
-      data: (orderSummary) => _buildBody(selectedFilter, orderSummary,widget.customer),
+      data: (orderSummary) =>
+          _buildBody(selectedFilter, orderSummary, widget.customer),
       loading: () => const AppLoader(),
       error: (e, st) => AppErrorWidget(),
     );
@@ -79,123 +81,104 @@ class _OrderSummaryPageContentState
     // return _buildBody(selectedFilter);
   }
 
-  Widget _buildBody(String selectedFilter, OrderSummaryModel orderSummary, CustomerModel customer) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Shop Subtitle
-          Text(
-           customer.name??"" ,
-            style:
-                AppTextStyle.rubikRegular12.copyWith(color: AppColors.blueGrey),
-          ),
-          const SizedBox(height: 30),
+  Widget _buildBody(String selectedFilter, OrderSummaryModel orderSummary,
+      CustomerModel customer) {
+    final isLoading = ref.watch(
+        orderControllerProvider.select((val) => val.value!.filterLoading));
 
-          // Stat Cards
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 20,
-            children: [
-              OrderSummaryStatCard(
-                label: 'total_sales',
-                value: orderSummary.totalSales.formatNumbers(),
-                color: AppColors.successGreen,
-                iconPath: Icons.trending_up,
-              ),
-              OrderSummaryStatCard(
-                label: 'out_balance',
-                value: orderSummary.outstandingBalance.toCurrency(),
-                color: AppColors.errorRed,
-                iconPath: Icons.account_balance_wallet,
-              ),
-              OrderSummaryStatCard(
-                label: 'return_sales',
-                value: orderSummary.totalReturnSales.toString(),
-                color: AppColors.warnYellow,
-                iconPath: Icons.signal_cellular_alt,
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Filters
-          OrderSummaryFiltersList(
-            selectedFilter: selectedFilter,
-          ),
-          const SizedBox(height: 24),
-
-          // Recent Invoices Header
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              'recent_invoices'.tr(),
-              style: AppTextStyle.rubikBold18.copyWith(color: AppColors.black),
+    return AppPaginationWidget(
+      key: ValueKey<String>(selectedFilter),
+      onLoading: (page) => ref
+          .read(orderControllerProvider.notifier)
+          .loadNextPage(customer.customerId!),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Shop Subtitle
+            Text(
+              customer.name ?? "",
+              style: AppTextStyle.rubikRegular12
+                  .copyWith(color: AppColors.blueGrey),
             ),
-          ),
-          const SizedBox(height: 18),
+            const SizedBox(height: 30),
 
-          ...List.from(orderSummary.invoices.map((invoice) {
-            return Column(
+            // Stat Cards
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 20,
               children: [
-                OrderSummaryInvoiceCard(
-                  invoice:invoice,
-                  customer: customer,
-                  // date: invoice.postingDate,
-                  // id: invoice.invoiceId,
-                  outstandingBalance: orderSummary.outstandingBalance,
-                  // status: invoice.status,
-                  actions:
-                      invoice.status == 'Paid' ? ['return'] : ['return', 'pay'],
+                OrderSummaryStatCard(
+                  label: 'total_sales',
+                  value: orderSummary.totalSales.formatNumbers(),
+                  color: AppColors.successGreen,
+                  iconPath: Icons.trending_up,
                 ),
-                if (orderSummary.invoices.last != invoice)
-                  const SizedBox(height: 18),
+                OrderSummaryStatCard(
+                  label: 'out_balance',
+                  value: orderSummary.outstandingBalance.toCurrency(),
+                  color: AppColors.errorRed,
+                  iconPath: Icons.account_balance_wallet,
+                ),
+                OrderSummaryStatCard(
+                  label: 'return_sales',
+                  value: orderSummary.totalReturnSales.toString(),
+                  color: AppColors.warnYellow,
+                  iconPath: Icons.signal_cellular_alt,
+                ),
               ],
-            );
-          }).toList()),
+            ),
+            const SizedBox(height: 24),
 
-          // Invoices List
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'paid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\99821\\2024',
-          //   amount: '400 QAR',
-          //   status: 'return',
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'partly_paid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'paid',
-          //   actions: ['return'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'unpaid',
-          //   actions: ['return', 'pay'],
-          // ),
-          // const SizedBox(height: 18),
-          // const OrderSummaryInvoiceCard(
-          //   id: 'SIV\\37446\\2025',
-          //   amount: '400 QAR',
-          //   status: 'return',
-          // ),
-        ],
+            // Filters
+            OrderSummaryFiltersList(
+              selectedFilter: selectedFilter,
+              customerId: widget.customer.customerId!,
+            ),
+            const SizedBox(height: 24),
+
+            // Recent Invoices Header
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                'recent_invoices'.tr(),
+                style:
+                    AppTextStyle.rubikBold18.copyWith(color: AppColors.black),
+              ),
+            ),
+            const SizedBox(height: 18),
+            if (isLoading)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: LinearProgressIndicator(
+                  color: AppColors.primary,
+                  backgroundColor: AppColors.white,
+                ),
+              ),
+            if (orderSummary.invoices.isEmpty) AppEmptyDataWidget(),
+
+            ...List.from(orderSummary.invoices.map((invoice) {
+              return Column(
+                children: [
+                  OrderSummaryInvoiceCard(
+                    invoice: invoice,
+                    customer: customer,
+                    // date: invoice.postingDate,
+                    // id: invoice.invoiceId,
+                    outstandingBalance: orderSummary.outstandingBalance,
+                    // status: invoice.status,
+                    actions: invoice.status == 'Paid'
+                        ? ['return']
+                        : ['return', 'pay'],
+                  ),
+                  if (orderSummary.invoices.last != invoice)
+                    const SizedBox(height: 18),
+                ],
+              );
+            }).toList()),
+          ],
+        ),
       ),
     );
   }

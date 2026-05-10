@@ -33,7 +33,7 @@ final class OrderControllerProvider
   OrderController create() => OrderController();
 }
 
-String _$orderControllerHash() => r'e196276479287ffb565c560f52d4f85fcb289b8e';
+String _$orderControllerHash() => r'992ba904bb2d28b97fceaa37790341775b2e1c86';
 
 abstract class _$OrderController extends $AsyncNotifier<OrderState> {
   FutureOr<OrderState> build();

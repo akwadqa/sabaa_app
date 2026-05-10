@@ -367,6 +367,7 @@ mixin _$OrderProductModel {
   String get category;
   double get price;
   double get availableStock;
+  List<UomModel> get uoms;
 
   /// Create a copy of OrderProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -394,17 +395,25 @@ mixin _$OrderProductModel {
                 other.category == category) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
-                other.availableStock == availableStock));
+                other.availableStock == availableStock) &&
+            const DeepCollectionEquality().equals(other.uoms, uoms));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, itemCode, productName,
-      productImage, category, price, availableStock);
+  int get hashCode => Object.hash(
+      runtimeType,
+      itemCode,
+      productName,
+      productImage,
+      category,
+      price,
+      availableStock,
+      const DeepCollectionEquality().hash(uoms));
 
   @override
   String toString() {
-    return 'OrderProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock)';
+    return 'OrderProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, uoms: $uoms)';
   }
 }
 
@@ -420,7 +429,8 @@ abstract mixin class $OrderProductModelCopyWith<$Res> {
       String? productImage,
       String category,
       double price,
-      double availableStock});
+      double availableStock,
+      List<UomModel> uoms});
 }
 
 /// @nodoc
@@ -442,6 +452,7 @@ class _$OrderProductModelCopyWithImpl<$Res>
     Object? category = null,
     Object? price = null,
     Object? availableStock = null,
+    Object? uoms = null,
   }) {
     return _then(_self.copyWith(
       itemCode: null == itemCode
@@ -468,6 +479,10 @@ class _$OrderProductModelCopyWithImpl<$Res>
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as double,
+      uoms: null == uoms
+          ? _self.uoms
+          : uoms // ignore: cast_nullable_to_non_nullable
+              as List<UomModel>,
     ));
   }
 }
@@ -565,8 +580,14 @@ extension OrderProductModelPatterns on OrderProductModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String itemCode, String productName, String? productImage,
-            String category, double price, double availableStock)?
+    TResult Function(
+            String itemCode,
+            String productName,
+            String? productImage,
+            String category,
+            double price,
+            double availableStock,
+            List<UomModel> uoms)?
         $default, {
     required TResult orElse(),
   }) {
@@ -574,7 +595,7 @@ extension OrderProductModelPatterns on OrderProductModel {
     switch (_that) {
       case _OrderProductModel() when $default != null:
         return $default(_that.itemCode, _that.productName, _that.productImage,
-            _that.category, _that.price, _that.availableStock);
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         return orElse();
     }
@@ -595,15 +616,21 @@ extension OrderProductModelPatterns on OrderProductModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String itemCode, String productName, String? productImage,
-            String category, double price, double availableStock)
+    TResult Function(
+            String itemCode,
+            String productName,
+            String? productImage,
+            String category,
+            double price,
+            double availableStock,
+            List<UomModel> uoms)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _OrderProductModel():
         return $default(_that.itemCode, _that.productName, _that.productImage,
-            _that.category, _that.price, _that.availableStock);
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -623,15 +650,21 @@ extension OrderProductModelPatterns on OrderProductModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String itemCode, String productName, String? productImage,
-            String category, double price, double availableStock)?
+    TResult? Function(
+            String itemCode,
+            String productName,
+            String? productImage,
+            String category,
+            double price,
+            double availableStock,
+            List<UomModel> uoms)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _OrderProductModel() when $default != null:
         return $default(_that.itemCode, _that.productName, _that.productImage,
-            _that.category, _that.price, _that.availableStock);
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         return null;
     }
@@ -647,7 +680,9 @@ class _OrderProductModel implements OrderProductModel {
       this.productImage,
       required this.category,
       required this.price,
-      required this.availableStock});
+      required this.availableStock,
+      required final List<UomModel> uoms})
+      : _uoms = uoms;
   factory _OrderProductModel.fromJson(Map<String, dynamic> json) =>
       _$OrderProductModelFromJson(json);
 
@@ -663,6 +698,13 @@ class _OrderProductModel implements OrderProductModel {
   final double price;
   @override
   final double availableStock;
+  final List<UomModel> _uoms;
+  @override
+  List<UomModel> get uoms {
+    if (_uoms is EqualUnmodifiableListView) return _uoms;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_uoms);
+  }
 
   /// Create a copy of OrderProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -694,17 +736,25 @@ class _OrderProductModel implements OrderProductModel {
                 other.category == category) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
-                other.availableStock == availableStock));
+                other.availableStock == availableStock) &&
+            const DeepCollectionEquality().equals(other._uoms, _uoms));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, itemCode, productName,
-      productImage, category, price, availableStock);
+  int get hashCode => Object.hash(
+      runtimeType,
+      itemCode,
+      productName,
+      productImage,
+      category,
+      price,
+      availableStock,
+      const DeepCollectionEquality().hash(_uoms));
 
   @override
   String toString() {
-    return 'OrderProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock)';
+    return 'OrderProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, uoms: $uoms)';
   }
 }
 
@@ -722,7 +772,8 @@ abstract mixin class _$OrderProductModelCopyWith<$Res>
       String? productImage,
       String category,
       double price,
-      double availableStock});
+      double availableStock,
+      List<UomModel> uoms});
 }
 
 /// @nodoc
@@ -744,6 +795,7 @@ class __$OrderProductModelCopyWithImpl<$Res>
     Object? category = null,
     Object? price = null,
     Object? availableStock = null,
+    Object? uoms = null,
   }) {
     return _then(_OrderProductModel(
       itemCode: null == itemCode
@@ -770,6 +822,10 @@ class __$OrderProductModelCopyWithImpl<$Res>
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as double,
+      uoms: null == uoms
+          ? _self._uoms
+          : uoms // ignore: cast_nullable_to_non_nullable
+              as List<UomModel>,
     ));
   }
 }

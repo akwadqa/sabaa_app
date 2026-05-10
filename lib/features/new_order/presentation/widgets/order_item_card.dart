@@ -9,6 +9,7 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 
 import '../../../van_stock/domain/model/product_model.dart';
+import '../../domain/model/new_order_model.dart';
 import '../../domain/model/order_item.dart';
 import '../controller/new_order_controller.dart';
 import 'quantity_stepper.dart';
@@ -23,7 +24,8 @@ class OrderItemCard extends ConsumerStatefulWidget {
     required this.onDelete,
     required this.isSelected,
     // required this.availableStock,
-    required this.onUnitChanged, required this.selectedUnit,
+    required this.onUnitChanged,
+    required this.selectedUnit,
   });
 
   final bool isSelected;
@@ -34,7 +36,7 @@ class OrderItemCard extends ConsumerStatefulWidget {
   final VoidCallback onIncrement;
   final VoidCallback onDelete;
   final Function(String) onUnitChanged;
-final String selectedUnit;
+  final String selectedUnit;
 
   @override
   ConsumerState<OrderItemCard> createState() => _OrderItemCardState();
@@ -43,8 +45,6 @@ final String selectedUnit;
 class _OrderItemCardState extends ConsumerState<OrderItemCard> {
   late TextEditingController _quantityController;
   // Unit options for dropdown
-  static const List<String> _units = ['Box', 'Ctn', 'Pcs', ];
-
   @override
   void initState() {
     super.initState();
@@ -110,8 +110,29 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
   // Color get _priceColor => widget.item.isReturn ? AppColors.accent : AppColors.primary;
   // Color get _borderColor => widget.item.isReturn ? AppColors.primary : const Color(0xFFF3F4F6);
 
+  double getPriceByUom(OrderProductModel product, String selectedUom) {
+    final uom = product.uoms.firstWhere(
+      (e) => e.uom == selectedUom,
+      orElse: () => product.uoms.first,
+    );
+
+    return uom.price;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final units = widget.item.uoms.map((e) => e.uom).toList();
+    final safeUnit =
+        units.contains(widget.selectedUnit) ? widget.selectedUnit : units.first;
+    final selectedPrice = widget.item.uoms
+        .firstWhere(
+          (e) => e.uom == widget.selectedUnit,
+          orElse: () => widget.item.uoms.first,
+        )
+        .price;
+    final qty = widget.quantity;
+
+    final total = selectedPrice * qty;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -169,7 +190,7 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                         ),
                         2.horizontalSpace,
                         Text(
-                          '${widget.item.price.toStringAsFixed(2)} QAR',
+                          selectedPrice.toCurrency(),
                           style: AppTextStyle.interSemiBold14.copyWith(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w700,
@@ -203,8 +224,8 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
             Row(
               children: [
                 _UnitDropdown(
-                  selectedUnit: widget.selectedUnit,
-                  units: _units,
+                  selectedUnit: safeUnit,
+                  units: units,
                   onChanged: (unit) {
                     widget.onUnitChanged(unit);
                   },

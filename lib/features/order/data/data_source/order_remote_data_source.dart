@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
+import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 
 import '../../domain/order_summary/payment_response_model.dart';
 
@@ -12,14 +15,15 @@ class OrderRemoteDataSource {
   OrderRemoteDataSource(this._networkService);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status}) async {
+      {required String customerId, String? status ,required int page}) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.orderSummary,
         queryParameters: {
           'customer_id': customerId,
           // 'customer_id': 1017,
-          // 'status': status,
+          'status': status,
+          'page': page,
         },
       );
 

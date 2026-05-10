@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
+
 part 'new_order_model.freezed.dart';
 part 'new_order_model.g.dart';
 
@@ -23,6 +25,7 @@ abstract class OrderProductModel with _$OrderProductModel {
     required String category,
     required double price,
     required double availableStock,
+    required List<UomModel> uoms,
   }) = _OrderProductModel;
 
   factory OrderProductModel.fromJson(Map<String, dynamic> json) =>

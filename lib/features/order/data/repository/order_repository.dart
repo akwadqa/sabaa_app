@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/data_source/order_remote_data_source.dart';
+import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/exception/dio_exceptions.dart';
@@ -21,9 +22,9 @@ class OrderRepository {
   OrderRepository(this._remoteDataSource);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status}) async {
+      {required String customerId, String? status , required int page}) async {
     final response = await _remoteDataSource.getOrderSummary(
-        customerId: customerId, status: status);
+        customerId: customerId, status: status, page: page);
 
     if (response.status == 200) {
       return response;

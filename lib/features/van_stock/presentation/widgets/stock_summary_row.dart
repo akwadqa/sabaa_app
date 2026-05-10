@@ -48,13 +48,14 @@ class _SummaryCard extends StatelessWidget {
 
   final String labelKey;
   final String value;
-  final Color  valueColor;
+  final Color valueColor;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 12,vertical: 20),
+        padding:
+            const EdgeInsetsDirectional.symmetric(horizontal: 12, vertical: 20),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(12),

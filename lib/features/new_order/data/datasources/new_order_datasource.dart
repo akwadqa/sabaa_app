@@ -49,7 +49,7 @@ Future<ApiResponse<void>> createInvoice({
       data: {
         "customer_id": customerId,
         "items": items,
-        "deliveryFee": deliveryFee,
+        "delivery_charge": deliveryFee,
       },
     );
 

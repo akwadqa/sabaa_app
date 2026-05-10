@@ -138,7 +138,7 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
         text = AppColors.unpaidText;
         labelKey = 'Unpaid';
         break;
-      case 'Partly':
+      case 'Partly Paid':
         bg = AppColors.partlyPaidBg;
         text = AppColors.partlyPaidText;
         labelKey = 'Partly Paid';

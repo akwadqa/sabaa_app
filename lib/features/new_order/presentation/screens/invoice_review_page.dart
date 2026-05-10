@@ -36,23 +36,46 @@ class InvoiceReviewPage extends ConsumerWidget {
     // 🔥 Map to UI model
     final items = selectedProducts.map((e) {
       final selected = state.selectedItems[e.product.itemCode];
-      final total = e.product.price * (selected?.quantity ?? 0);
+      // final total = e.product.price * (selected?.quantity ?? 0);
+      final selectedUnit = selected?.unit ?? e.product.uoms.first.uom;
 
+      final price = e.product.uoms
+          .firstWhere(
+            (u) => u.uom == selectedUnit,
+            orElse: () => e.product.uoms.first,
+          )
+          .price;
+
+      final qty = selected?.quantity ?? 0;
+
+      final total = price * qty;
       return InvoiceItemUI(
         name: e.product.productName,
-        count: selected?.quantity ?? 0,
-        total: formatPrice(total),
+        count: qty,
+        total: total.toCurrency(),
       );
     }).toList();
 
     // 🔥 Calculations
-    final subtotalValue = selectedProducts.fold<double>(
-      0,
-      (sum, e) =>
-          sum +
-          (e.product.price *
-              (state.selectedItems[e.product.itemCode]?.quantity ?? 0)),
-    );
+final subtotalValue = selectedProducts.fold<double>(
+  0,
+  (sum, e) {
+    final selected = state.selectedItems[e.product.itemCode];
+
+    final unit = selected?.unit ?? e.product.uoms.first.uom;
+
+    final price = e.product.uoms
+        .firstWhere(
+          (u) => u.uom == unit,
+          orElse: () => e.product.uoms.first,
+        )
+        .price;
+
+    final qty = selected?.quantity ?? 0;
+
+    return sum + (price * qty);
+  },
+);
 
     final taxValue = subtotalValue * 0.15;
     final totalValue = subtotalValue + taxValue;
@@ -108,8 +131,10 @@ class InvoiceReviewPage extends ConsumerWidget {
                           height: 56,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient:  LinearGradient(
-                              colors:isValid? AppColors.primaryGradient:[AppColors.blueGrey,AppColors.gray],
+                            gradient: LinearGradient(
+                              colors: isValid
+                                  ? AppColors.primaryGradient
+                                  : [AppColors.blueGrey, AppColors.gray],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),

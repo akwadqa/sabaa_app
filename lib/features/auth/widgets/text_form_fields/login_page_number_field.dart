@@ -56,28 +56,26 @@ class _LoginPageNumberFieldState extends ConsumerState<LoginPageNumberField> {
     return Directionality(
       textDirection: ui.TextDirection.ltr,
       child: IntlPhoneField(
-        
         autovalidateMode: AutovalidateMode.onUnfocus,
         invalidNumberMessage: context.tr('invalidNumber'),
         controller: _nationalController,
         initialCountryCode: 'QA',
         onSaved: (newValue) {
-          _updateFullPhone(newValue?.countryCode??"");
-          
+          _updateFullPhone(newValue?.countryCode ?? "");
         },
         onChanged: widget.onChange,
         // (phone) {
-    
-          // ref
-          //     .read(signInControllerProvider.notifier)
-          //     .changePhoneNumber(phone.number);
-            
+
+        // ref
+        //     .read(signInControllerProvider.notifier)
+        //     .changePhoneNumber(phone.number);
+
         //   //     .checkPhoneFilled(phone.number.isNotEmpty);
         // },
         onCountryChanged: (country) {
           _updateFullPhone('+${country.dialCode}');
         },
-        validator:mobileNumberValidationIntl(context),
+        validator: mobileNumberValidationIntl(context),
         // disableLengthCheck: true,
         dropdownIcon: Icon(
           Icons.arrow_drop_down_rounded,
@@ -96,8 +94,8 @@ class _LoginPageNumberFieldState extends ConsumerState<LoginPageNumberField> {
         keyboardType: TextInputType.phone,
         style: AppTextStyle.interRegular14.copyWith(color: AppColors.black),
         decoration: InputDecoration(
-          
           filled: true,
+          fillColor: AppColors.white,
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.primary),
             borderRadius: BorderRadius.circular(10),

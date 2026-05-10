@@ -21,6 +21,7 @@ mixin _$ProductModel {
   double get price;
   double get availableStock;
   String get stockLevel;
+  List<UomModel> get uoms;
 
   /// Create a copy of ProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -50,17 +51,26 @@ mixin _$ProductModel {
             (identical(other.availableStock, availableStock) ||
                 other.availableStock == availableStock) &&
             (identical(other.stockLevel, stockLevel) ||
-                other.stockLevel == stockLevel));
+                other.stockLevel == stockLevel) &&
+            const DeepCollectionEquality().equals(other.uoms, uoms));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, itemCode, productName,
-      productImage, category, price, availableStock, stockLevel);
+  int get hashCode => Object.hash(
+      runtimeType,
+      itemCode,
+      productName,
+      productImage,
+      category,
+      price,
+      availableStock,
+      stockLevel,
+      const DeepCollectionEquality().hash(uoms));
 
   @override
   String toString() {
-    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel)';
+    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel, uoms: $uoms)';
   }
 }
 
@@ -77,7 +87,8 @@ abstract mixin class $ProductModelCopyWith<$Res> {
       String category,
       double price,
       double availableStock,
-      String stockLevel});
+      String stockLevel,
+      List<UomModel> uoms});
 }
 
 /// @nodoc
@@ -99,6 +110,7 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
     Object? price = null,
     Object? availableStock = null,
     Object? stockLevel = null,
+    Object? uoms = null,
   }) {
     return _then(_self.copyWith(
       itemCode: null == itemCode
@@ -129,6 +141,10 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
           ? _self.stockLevel
           : stockLevel // ignore: cast_nullable_to_non_nullable
               as String,
+      uoms: null == uoms
+          ? _self.uoms
+          : uoms // ignore: cast_nullable_to_non_nullable
+              as List<UomModel>,
     ));
   }
 }
@@ -233,7 +249,8 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel)?
+            String stockLevel,
+            List<UomModel> uoms)?
         $default, {
     required TResult orElse(),
   }) {
@@ -247,7 +264,8 @@ extension ProductModelPatterns on ProductModel {
             _that.category,
             _that.price,
             _that.availableStock,
-            _that.stockLevel);
+            _that.stockLevel,
+            _that.uoms);
       case _:
         return orElse();
     }
@@ -275,7 +293,8 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel)
+            String stockLevel,
+            List<UomModel> uoms)
         $default,
   ) {
     final _that = this;
@@ -288,7 +307,8 @@ extension ProductModelPatterns on ProductModel {
             _that.category,
             _that.price,
             _that.availableStock,
-            _that.stockLevel);
+            _that.stockLevel,
+            _that.uoms);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -315,7 +335,8 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel)?
+            String stockLevel,
+            List<UomModel> uoms)?
         $default,
   ) {
     final _that = this;
@@ -328,7 +349,8 @@ extension ProductModelPatterns on ProductModel {
             _that.category,
             _that.price,
             _that.availableStock,
-            _that.stockLevel);
+            _that.stockLevel,
+            _that.uoms);
       case _:
         return null;
     }
@@ -345,7 +367,9 @@ class _ProductModel implements ProductModel {
       required this.category,
       required this.price,
       required this.availableStock,
-      required this.stockLevel});
+      required this.stockLevel,
+      required final List<UomModel> uoms})
+      : _uoms = uoms;
   factory _ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
 
@@ -363,6 +387,13 @@ class _ProductModel implements ProductModel {
   final double availableStock;
   @override
   final String stockLevel;
+  final List<UomModel> _uoms;
+  @override
+  List<UomModel> get uoms {
+    if (_uoms is EqualUnmodifiableListView) return _uoms;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_uoms);
+  }
 
   /// Create a copy of ProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -396,17 +427,26 @@ class _ProductModel implements ProductModel {
             (identical(other.availableStock, availableStock) ||
                 other.availableStock == availableStock) &&
             (identical(other.stockLevel, stockLevel) ||
-                other.stockLevel == stockLevel));
+                other.stockLevel == stockLevel) &&
+            const DeepCollectionEquality().equals(other._uoms, _uoms));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, itemCode, productName,
-      productImage, category, price, availableStock, stockLevel);
+  int get hashCode => Object.hash(
+      runtimeType,
+      itemCode,
+      productName,
+      productImage,
+      category,
+      price,
+      availableStock,
+      stockLevel,
+      const DeepCollectionEquality().hash(_uoms));
 
   @override
   String toString() {
-    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel)';
+    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel, uoms: $uoms)';
   }
 }
 
@@ -425,7 +465,8 @@ abstract mixin class _$ProductModelCopyWith<$Res>
       String category,
       double price,
       double availableStock,
-      String stockLevel});
+      String stockLevel,
+      List<UomModel> uoms});
 }
 
 /// @nodoc
@@ -448,6 +489,7 @@ class __$ProductModelCopyWithImpl<$Res>
     Object? price = null,
     Object? availableStock = null,
     Object? stockLevel = null,
+    Object? uoms = null,
   }) {
     return _then(_ProductModel(
       itemCode: null == itemCode
@@ -478,6 +520,321 @@ class __$ProductModelCopyWithImpl<$Res>
           ? _self.stockLevel
           : stockLevel // ignore: cast_nullable_to_non_nullable
               as String,
+      uoms: null == uoms
+          ? _self._uoms
+          : uoms // ignore: cast_nullable_to_non_nullable
+              as List<UomModel>,
+    ));
+  }
+}
+
+/// @nodoc
+mixin _$UomModel {
+  String get uom;
+  double get price;
+
+  /// Create a copy of UomModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $UomModelCopyWith<UomModel> get copyWith =>
+      _$UomModelCopyWithImpl<UomModel>(this as UomModel, _$identity);
+
+  /// Serializes this UomModel to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UomModel &&
+            (identical(other.uom, uom) || other.uom == uom) &&
+            (identical(other.price, price) || other.price == price));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, uom, price);
+
+  @override
+  String toString() {
+    return 'UomModel(uom: $uom, price: $price)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $UomModelCopyWith<$Res> {
+  factory $UomModelCopyWith(UomModel value, $Res Function(UomModel) _then) =
+      _$UomModelCopyWithImpl;
+  @useResult
+  $Res call({String uom, double price});
+}
+
+/// @nodoc
+class _$UomModelCopyWithImpl<$Res> implements $UomModelCopyWith<$Res> {
+  _$UomModelCopyWithImpl(this._self, this._then);
+
+  final UomModel _self;
+  final $Res Function(UomModel) _then;
+
+  /// Create a copy of UomModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uom = null,
+    Object? price = null,
+  }) {
+    return _then(_self.copyWith(
+      uom: null == uom
+          ? _self.uom
+          : uom // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _self.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [UomModel].
+extension UomModelPatterns on UomModel {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_UomModel value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_UomModel value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_UomModel value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String uom, double price)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel() when $default != null:
+        return $default(_that.uom, _that.price);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String uom, double price) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel():
+        return $default(_that.uom, _that.price);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String uom, double price)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _UomModel() when $default != null:
+        return $default(_that.uom, _that.price);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _UomModel implements UomModel {
+  const _UomModel({required this.uom, required this.price});
+  factory _UomModel.fromJson(Map<String, dynamic> json) =>
+      _$UomModelFromJson(json);
+
+  @override
+  final String uom;
+  @override
+  final double price;
+
+  /// Create a copy of UomModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UomModelCopyWith<_UomModel> get copyWith =>
+      __$UomModelCopyWithImpl<_UomModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$UomModelToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _UomModel &&
+            (identical(other.uom, uom) || other.uom == uom) &&
+            (identical(other.price, price) || other.price == price));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, uom, price);
+
+  @override
+  String toString() {
+    return 'UomModel(uom: $uom, price: $price)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$UomModelCopyWith<$Res>
+    implements $UomModelCopyWith<$Res> {
+  factory _$UomModelCopyWith(_UomModel value, $Res Function(_UomModel) _then) =
+      __$UomModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call({String uom, double price});
+}
+
+/// @nodoc
+class __$UomModelCopyWithImpl<$Res> implements _$UomModelCopyWith<$Res> {
+  __$UomModelCopyWithImpl(this._self, this._then);
+
+  final _UomModel _self;
+  final $Res Function(_UomModel) _then;
+
+  /// Create a copy of UomModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? uom = null,
+    Object? price = null,
+  }) {
+    return _then(_UomModel(
+      uom: null == uom
+          ? _self.uom
+          : uom // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _self.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }

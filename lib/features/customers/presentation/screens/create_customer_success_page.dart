@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/presentation/controller/customer_controller.dart';
+import 'package:sabaa/features/customers/presentation/widgets/create_customer_success_page/customer_info_card.dart';
+import 'package:sabaa/features/customers/presentation/widgets/create_customer_success_page/customer_success_message.dart';
+import 'package:sabaa/features/customers/presentation/widgets/create_customer_success_page/success_icon_indicator.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
@@ -30,30 +33,9 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
             // Success Icon Section
             const SuccessIcon(),
             const SizedBox(height: 24),
-            // Success Message Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 35),
-              child: Column(
-                children: [
-                  Text(
-                    'customer_added_successfully'.tr(),
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.rubikBold25
-                        .copyWith(color: AppColors.black),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'customer_info_saved'.tr(),
-                    textAlign: TextAlign.center,
-                    style: AppTextStyle.rubikMedium18
-                        .copyWith(color: AppColors.gray04),
-                  ),
-                ],
-              ),
-            ),
+            const CustomerSuccessMessage(),
             const SizedBox(height: 30),
-            // Customer Info Card
-            _CustomerInfoCard(
+            CustomerInfoCard(
               shopName: '${customer.name} Supermarket',
               customerName: customer.name ?? 'name',
               phoneNumber: customer.phone ?? '0000000000',

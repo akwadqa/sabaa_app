@@ -30,6 +30,9 @@ _OrderProductModel _$OrderProductModelFromJson(Map<String, dynamic> json) =>
       category: json['category'] as String,
       price: (json['price'] as num).toDouble(),
       availableStock: (json['availableStock'] as num).toDouble(),
+      uoms: (json['uoms'] as List<dynamic>)
+          .map((e) => UomModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$OrderProductModelToJson(_OrderProductModel instance) =>
@@ -40,6 +43,7 @@ Map<String, dynamic> _$OrderProductModelToJson(_OrderProductModel instance) =>
       'category': instance.category,
       'price': instance.price,
       'availableStock': instance.availableStock,
+      'uoms': instance.uoms,
     };
 
 _OrderCategoryModel _$OrderCategoryModelFromJson(Map<String, dynamic> json) =>
