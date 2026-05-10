@@ -17,13 +17,13 @@ class CustomersController extends _$CustomersController {
   int _currentPage = 1;
   int _totalPages = 1;
 
-  void changeSelectedType(String? type) {
-    state = AsyncData(state.value!.copyWith(customerType: type));
-  }
+  // void changeSelectedType(String? type) {
+  //   state = AsyncData(state.value!.copyWith(customerType: type));
+  // }
 
-  void changeSelectedGroup(String? group) {
-    state = AsyncData(state.value!.copyWith(customerGroup: group));
-  }
+  // void changeSelectedGroup(String? group) {
+  //   state = AsyncData(state.value!.copyWith(customerGroup: group));
+  // }
 
   void changeSelectedZone(String? zone) {
     state = AsyncData(state.value!.copyWith(zone: zone));
@@ -54,8 +54,8 @@ class CustomersController extends _$CustomersController {
         building_number: state.value!.building ?? '',
         zone_number: state.value!.zone ?? '',
         // customer_type: state.value!.customerType ?? '',
-        customer_type: 'Company',
-        customer_group: 'test customer grp',
+        // customer_type: 'Company',
+        // customer_group: 'test customer grp',
         // customer_group: state.value!.customerGroup ?? '',
       );
 
@@ -80,8 +80,8 @@ class CustomersController extends _$CustomersController {
     return currentState != null &&
         (currentState.name?.isNotEmpty ?? false) &&
         (currentState.phone?.isNotEmpty ?? false) &&
-        (currentState.customerType?.isNotEmpty ?? false) &&
-        (currentState.customerGroup?.isNotEmpty ?? false) &&
+        // (currentState.customerType?.isNotEmpty ?? false) &&
+        // (currentState.customerGroup?.isNotEmpty ?? false) &&
         (currentState.street?.isNotEmpty ?? false) &&
         (currentState.building?.isNotEmpty ?? false) &&
         (currentState.zone?.isNotEmpty ?? false);

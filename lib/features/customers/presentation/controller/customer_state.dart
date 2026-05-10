@@ -7,8 +7,8 @@ class CustomerState {
   final String? street;
   final String? building;
   final String? zone;
-  final String? customerType;
-  final String? customerGroup;
+  // final String? customerType;
+  // final String? customerGroup;
 
   final AsyncValue<CustomerModel>? createCustomerResponse;
   final AsyncValue<List<CustomerModel>>? customersList;
@@ -19,8 +19,9 @@ class CustomerState {
     this.street,
     this.building,
     this.zone,
-    this.customerType,
-    this.customerGroup, this.createCustomerResponse, this.customersList,
+    // this.customerType,
+    // this.customerGroup, 
+    this.createCustomerResponse, this.customersList,
   });
 
   factory CustomerState.init() {
@@ -31,9 +32,9 @@ class CustomerState {
       street: '',
       building: '',
       zone: null,
-      customerType: null,
+      // customerType: null,
       customersList: null,
-      customerGroup: null,
+      // customerGroup: null,
     );
   }
 
@@ -43,8 +44,8 @@ class CustomerState {
     String? street,
     String? building,
     String? zone,
-    String? customerType,
-    String? customerGroup,
+    // String? customerType,
+    // String? customerGroup,
     AsyncValue<CustomerModel>? createCustomerResponse,
     AsyncValue<List<CustomerModel>>? customersList,
 
@@ -56,8 +57,8 @@ class CustomerState {
       building: building ?? this.building,
       customersList: customersList ?? this.customersList,
       zone: zone ?? this.zone,
-      customerType: customerType ?? this.customerType,
-      customerGroup: customerGroup ?? this.customerGroup,
+      // customerType: customerType ?? this.customerType,
+      // customerGroup: customerGroup ?? this.customerGroup,
       createCustomerResponse: createCustomerResponse ?? this.createCustomerResponse,
     );
   }
