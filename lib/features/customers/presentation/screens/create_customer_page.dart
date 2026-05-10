@@ -130,24 +130,24 @@ class _CreateCustomerPageContentState
             const SizedBox(height: 18),
 
             // Customer Type
-            CustomLabeledDropdown(
-              label: 'customer_type',
-              hint: 'select_customer_type',
-              value: customer?.customerType,
-              items: _types,
-              onChanged: (value) => controller.changeSelectedType(value),
-            ),
-            const SizedBox(height: 18),
+            // CustomLabeledDropdown(
+            //   label: 'customer_type',
+            //   hint: 'select_customer_type',
+            //   value: customer?.customerType,
+            //   items: _types,
+            //   onChanged: (value) => controller.changeSelectedType(value),
+            // ),
+            // const SizedBox(height: 18),
 
             // Customer Group
-            CustomLabeledDropdown(
-              label: 'customer_group',
-              hint: 'select_customer_group',
-              value: customer?.customerGroup,
-              items: _groups,
-              onChanged: (value) => controller.changeSelectedGroup(value),
-            ),
-            const SizedBox(height: 18),
+            // CustomLabeledDropdown(
+            //   label: 'customer_group',
+            //   hint: 'select_customer_group',
+            //   value: customer?.customerGroup,
+            //   items: _groups,
+            //   onChanged: (value) => controller.changeSelectedGroup(value),
+            // ),
+            // const SizedBox(height: 18),
 
             // Street Number
             CustomLabeledTextField(
@@ -170,13 +170,22 @@ class _CreateCustomerPageContentState
             const SizedBox(height: 18),
 
             // Zone Number
-            CustomLabeledDropdown(
+            // CustomLabeledDropdown(
+            //   label: 'zone_number',
+            //   hint: 'select_zone_number',
+            //   value: customer?.zone,
+            //   items: _zones,
+            //   onChanged: (value) => controller.changeSelectedZone(value),
+            // ),
+            CustomLabeledTextField(
               label: 'zone_number',
               hint: 'select_zone_number',
-              value: customer?.zone,
-              items: _zones,
               onChanged: (value) => controller.changeSelectedZone(value),
+              // controller: _buildingController,
+              keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 18),
+
             22.verticalSpace,
             createCustomerResponse.maybeWhen(
               orElse: () => CustomButtonWidget(

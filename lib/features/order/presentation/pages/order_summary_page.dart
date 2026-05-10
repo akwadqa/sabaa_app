@@ -88,9 +88,14 @@ class _OrderSummaryPageContentState
 
     return AppPaginationWidget(
       key: ValueKey<String>(selectedFilter),
-      onLoading: (page) => ref
-          .read(orderControllerProvider.notifier)
-          .loadNextPage(customer.customerId!),
+      onLoading: (page) {
+        if (orderSummary.invoices.isEmpty) {
+          return Future.value(false);
+        }
+        return ref
+            .read(orderControllerProvider.notifier)
+            .loadNextPage(customer.customerId!);
+      },
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

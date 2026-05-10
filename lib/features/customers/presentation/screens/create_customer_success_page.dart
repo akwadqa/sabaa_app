@@ -27,61 +27,65 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 45),
-            // Success Icon Section
-            const SuccessIcon(),
-            const SizedBox(height: 24),
-            const CustomerSuccessMessage(),
-            const SizedBox(height: 30),
-            CustomerInfoCard(
-              shopName: '${customer.name} Supermarket',
-              customerName: customer.name ?? 'name',
-              phoneNumber: customer.phone ?? '0000000000',
-              address: customer.address ?? 'address',
-            ),
-            30.verticalSpace,
-            CustomButtonWidget(
-              text: 'done'.tr(),
-              elevation: 10,
-              shadowColor: AppColors.primary.withOpacity(0.3),
-              backgroundColor: AppColors.primary,
-              radius: 12,
-              onTap: () {
-                ref
-                    .read(customersControllerProvider.notifier)
-                    .getCustomers(page: 1, showLoading: true);
-                context.go(AppRoutes.mainScreen);
-              },
-              isFiled: false,
-              height: 48,
-              width: 300,
-              style: AppTextStyle.rubikBold18.copyWith(color: AppColors.white),
-            ),
-            30.verticalSpace,
-            CustomButtonWidget(
-              text: 'proceed_to_create_order'.tr(),
-              elevation: 5,
-              // shadowColor: AppColors.primary.withOpacity(0.3),
-              backgroundColor: AppColors.white,
-              radius: 12,
-              onTap: () {
-                context.go(AppRoutes.mainScreen);
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 45),
+              // Success Icon Section
+              const SuccessIcon(),
+              const SizedBox(height: 24),
+              const CustomerSuccessMessage(),
+              const SizedBox(height: 30),
+              CustomerInfoCard(
+                shopName: '${customer.name} Supermarket',
+                customerName: customer.name ?? 'name',
+                phoneNumber: customer.phone ?? '0000000000',
+                address: customer.address ?? 'address',
+              ),
+              30.verticalSpace,
+              CustomButtonWidget(
+                text: 'done'.tr(),
+                elevation: 10,
+                shadowColor: AppColors.primary.withOpacity(0.3),
+                backgroundColor: AppColors.primary,
+                radius: 12,
+                onTap: () {
+                  ref
+                      .read(customersControllerProvider.notifier)
+                      .getCustomers(page: 1, showLoading: true);
+                  context.go(AppRoutes.mainScreen);
+                },
+                isFiled: false,
+                height: 48,
+                width: 300,
+                style:
+                    AppTextStyle.rubikBold18.copyWith(color: AppColors.white),
+              ),
+              12.verticalSpace,
+              CustomButtonWidget(
+                text: 'proceed_to_create_order'.tr(),
+                elevation: 5,
+                // shadowColor: AppColors.primary.withOpacity(0.3),
+                backgroundColor: AppColors.white,
+                radius: 12,
+                onTap: () {
+                  context.go(AppRoutes.mainScreen);
 
-                context.push(AppRoutes.newOrderScreen, extra: customer);
+                  context.push(AppRoutes.newOrderScreen, extra: customer);
 
-                ref
-                    .read(customersControllerProvider.notifier)
-                    .getCustomers(page: 1, showLoading: true);
-              },
-              isFiled: false,
-              height: 48,
-              width: 300,
-              style:
-                  AppTextStyle.rubikBold18.copyWith(color: AppColors.primary),
-            ),
-          ],
+                  ref
+                      .read(customersControllerProvider.notifier)
+                      .getCustomers(page: 1, showLoading: true);
+                },
+                isFiled: false,
+                height: 48,
+                width: 300,
+                style:
+                    AppTextStyle.rubikBold18.copyWith(color: AppColors.primary),
+              ),
+              12.verticalSpace
+            ],
+          ),
         ),
       ),
     );
