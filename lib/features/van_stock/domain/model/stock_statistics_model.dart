@@ -13,4 +13,4 @@ abstract class StockStatistics with _$StockStatistics {
 
   factory StockStatistics.fromJson(Map<String, dynamic> json) =>
       _$StockStatisticsFromJson(json);
-} 
+}

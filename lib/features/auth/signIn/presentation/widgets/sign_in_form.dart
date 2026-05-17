@@ -12,6 +12,7 @@ import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
+import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 class SignInForm extends ConsumerStatefulWidget {
   const SignInForm({super.key});
@@ -19,7 +20,7 @@ class SignInForm extends ConsumerStatefulWidget {
   @override
   ConsumerState<SignInForm> createState() => _SignInFormState();
 }
- 
+
 class _SignInFormState extends ConsumerState<SignInForm> {
   // String? _phoneNumber;
   final _formKey = GlobalKey<FormState>();
@@ -69,15 +70,17 @@ class _SignInFormState extends ConsumerState<SignInForm> {
             20.verticalSpace,
             Consumer(builder: (context, ref, child) {
               final signInProvider = ref.watch(signInControllerProvider);
-        
+
               if (signInProvider is AsyncLoading) {
                 return AppLoader();
               }
               final isEnabled = signInProvider.value?.isFormValid ?? false;
-        
+
               return CustomButtonWidget(
                 text: 'login'.tr(),
                 onTap: () => !isEnabled ? null : _submit(ref),
+
+                style: AppTextStyle.rubikBold18.copyWith(color: AppColors.white),
                 isFiled: true,
                 height: 48,
                 width: double.infinity,
