@@ -18,7 +18,7 @@ class OrderController extends _$OrderController {
   int _currentPage = 1;
   int _totalPages = 1;
   bool _isLoadingPage = false;
-
+String? _customerId;
   Future<void> changeSelectedType(
       {required String type, required String customerId}) async {
     _invoices.clear();
@@ -40,6 +40,7 @@ class OrderController extends _$OrderController {
       {required String customerId,
       required int page,
       bool showLoading = true}) async {
+
     try {
       _isLoadingPage = true;
       if (showLoading) {
@@ -73,7 +74,7 @@ class OrderController extends _$OrderController {
           invoices: [..._invoices]);
       state = AsyncData(
           state.value!.copyWith(orderSummary: AsyncData(updatedSummary)));
-
+_customerId=customerId;
       return updatedSummary;
     } catch (e, st) {
       state = AsyncData(state.value!.copyWith(orderSummary: AsyncError(e, st)));
@@ -92,11 +93,11 @@ class OrderController extends _$OrderController {
     return result != null;
   }
 
-  Future<bool> refresh(String customerId) async {
+  Future<bool> refresh({String? customerId}) async {
     _invoices.clear();
     _currentPage = 0;
     _totalPages = 0;
-    await getOrderSummary(customerId: customerId, page: 1);
+    await getOrderSummary(customerId: customerId??_customerId!, page: 1);
     return true;
   }
 

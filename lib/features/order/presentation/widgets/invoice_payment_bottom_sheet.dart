@@ -354,7 +354,8 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
                     if (!context.mounted) return;
 
                     if (success) {
-                      context.goNamed(AppRoutes.paymentSuccessPage);
+                      Navigator.of(context).pop();
+                      context.push(AppRoutes.paymentSuccessPage);
                     }
                   }
                 : null,

@@ -7,6 +7,7 @@ import 'package:sabaa/features/customers/domain/model/create_customer_response/c
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/controller/order_controller.dart';
+import 'package:sabaa/features/order/presentation/widgets/invoice_payment_bottom_sheet.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_filter_chip.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_filters_list.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_invoice_card.dart';
@@ -21,19 +22,60 @@ import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
-class OrderSummaryPage extends StatelessWidget {
-  const OrderSummaryPage({super.key, required this.customer});
+class OrderSummaryPage extends ConsumerStatefulWidget {
+  const OrderSummaryPage({
+    super.key,
+    required this.customer,
+    this.invoice,
+    this.openPayment = false,
+  });
+
   final CustomerModel customer;
+  final InvoiceModel? invoice;
+  final bool openPayment;
+
+  @override
+  ConsumerState<OrderSummaryPage> createState() =>
+      _OrderSummaryPageState();
+}
+class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
+  bool _opened = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 🔥 open payment AFTER build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.openPayment && widget.invoice != null && !_opened) {
+        _opened = true;
+
+        _openPaymentSheet(widget.invoice!);
+      }
+    });
+  }
+
+  void _openPaymentSheet(InvoiceModel invoice) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return InvoicePaymentBottomSheet(
+          invoice: invoice, outstandingBalance: invoice.outstandingAmount,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomDeafultAppbar(title: 'order_summary'.tr()),
-      body: _OrderSummaryPageContent(customer: customer),
+      body: _OrderSummaryPageContent(customer:widget. customer),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push(AppRoutes.newOrderScreen, extra: customer);
+          context.push(AppRoutes.newOrderScreen, extra:widget. customer);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         backgroundColor: AppColors.primary,

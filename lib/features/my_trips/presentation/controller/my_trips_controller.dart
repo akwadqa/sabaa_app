@@ -16,33 +16,32 @@ part 'my_trips_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class MyTripsController extends _$MyTripsController {
-
   // ──────────────────────────────────────────────────────────────────────────
   // Build
   // ──────────────────────────────────────────────────────────────────────────
-Timer? _timer;
-String? _activeVisitId;
-int _seconds = 0;
- @override
-FutureOr<MyTripsState> build() async {
-  final today = DateTime.now();
-  final weekDays = _buildWeekDays(today);
+  Timer? _timer;
+  String? _activeVisitId;
+  int _seconds = 0;
+  @override
+  FutureOr<MyTripsState> build() async {
+    final today = DateTime.now();
+    final weekDays = _buildWeekDays(today);
 
-  final initial = MyTripsState(
-    weekDays: weekDays,
-    selectedDate: today,
-    stops: const [], // 🔥 empty (no mock)
-    trips: const [],
-    pageState: const AsyncLoading(),
-  );
+    final initial = MyTripsState(
+      weekDays: weekDays,
+      selectedDate: today,
+      stops: const [], // 🔥 empty (no mock)
+      trips: const [],
+      pageState: const AsyncLoading(),
+    );
 
-  state = AsyncData(initial);
+    state = AsyncData(initial);
 
-  /// 🔥 IMPORTANT: fetch today's trips
-  await _fetchTrips(today);
+    /// 🔥 IMPORTANT: fetch today's trips
+    await _fetchTrips(today);
 
-  return state.value!;
-}
+    return state.value!;
+  }
 
   // ──────────────────────────────────────────────────────────────────────────
   // Calendar — builds ±15 days window centred on today
@@ -53,7 +52,7 @@ FutureOr<MyTripsState> build() async {
   List<WeekDayModel> _buildWeekDays(
     DateTime selected, {
     int daysBefore = 20,
-    int daysAfter  = 20,
+    int daysAfter = 20,
   }) {
     final today = DateTime.now();
     final start = today.subtract(Duration(days: daysBefore));
@@ -63,7 +62,7 @@ FutureOr<MyTripsState> build() async {
       (i) {
         final d = start.add(Duration(days: i));
         return WeekDayModel(
-          date:       DateTime(d.year, d.month, d.day),
+          date: DateTime(d.year, d.month, d.day),
           isSelected: _isSameDay(d, selected),
         );
       },
@@ -73,45 +72,46 @@ FutureOr<MyTripsState> build() async {
   bool _isSameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
 
+  void _startTimer(String visitId) {
+    _timer?.cancel();
 
-void _startTimer(String visitId) {
-  _timer?.cancel();
+    _activeVisitId = visitId;
+    _seconds = 0;
 
-  _activeVisitId = visitId;
-  _seconds = 0;
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _seconds++;
 
-  _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-    _seconds++;
+      final current = state.value;
+      if (current == null) return;
 
-    final current = state.value;
-    if (current == null) return;
+      final updatedStops = current.stops.map((s) {
+        if (s.id == visitId) {
+          return s.copyWith(
+            elapsedTime: _formatDuration(_seconds),
+          );
+        }
+        return s;
+      }).toList();
 
-    final updatedStops = current.stops.map((s) {
-      if (s.id == visitId) {
-        return s.copyWith(
-          elapsedTime: _formatDuration(_seconds),
-        );
-      }
-      return s;
-    }).toList();
+      state = AsyncData(current.copyWith(stops: updatedStops));
+    });
+  }
 
-    state = AsyncData(current.copyWith(stops: updatedStops));
-  });
-}
-void _stopTimer() {
-  _timer?.cancel();
-  _activeVisitId = null;
-  _seconds = 0;
-}
-String _formatDuration(int seconds) {
-  final h = seconds ~/ 3600;
-  final m = (seconds % 3600) ~/ 60;
-  final s = seconds % 60;
+  void _stopTimer() {
+    _timer?.cancel();
+    _activeVisitId = null;
+    _seconds = 0;
+  }
 
-  return '${h.toString().padLeft(2, '0')}:'
-      '${m.toString().padLeft(2, '0')}:'
-      '${s.toString().padLeft(2, '0')}';
-}
+  String _formatDuration(int seconds) {
+    final h = seconds ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    final s = seconds % 60;
+
+    return '${h.toString().padLeft(2, '0')}:'
+        '${m.toString().padLeft(2, '0')}:'
+        '${s.toString().padLeft(2, '0')}';
+  }
   // ──────────────────────────────────────────────────────────────────────────
   // Day selection
   // ──────────────────────────────────────────────────────────────────────────
@@ -125,15 +125,14 @@ String _formatDuration(int seconds) {
 
     state = AsyncData(
       current.copyWith(
-        weekDays:     weekDays,
+        weekDays: weekDays,
         selectedDate: date,
-        pageState:    const AsyncLoading(),
+        pageState: const AsyncLoading(),
       ),
     );
 
     await _fetchTrips(date);
   }
-
 
   // ──────────────────────────────────────────────────────────────────────────
   // Fetch trips from API
@@ -146,7 +145,7 @@ String _formatDuration(int seconds) {
           '${date.month.toString().padLeft(2, '0')}-'
           '${date.day.toString().padLeft(2, '0')}';
 
-      final repo     = ref.read(myTripsRepositoryProvider);
+      final repo = ref.read(myTripsRepositoryProvider);
       final response = await repo.getTrips(date: isoDate);
 
       if (response.hasFailed) {
@@ -166,8 +165,8 @@ String _formatDuration(int seconds) {
 
       state = AsyncData(
         state.value!.copyWith(
-          trips:     trips,
-          stops:     stops,
+          trips: trips,
+          stops: stops,
           pageState: const AsyncData(null),
         ),
       );
@@ -195,15 +194,17 @@ String _formatDuration(int seconds) {
       for (final visit in trip.visits) {
         stops.add(
           RouteStop(
-            id:           visit.name,
-            order:        order++,
+            id: visit.name,
+            order: order++,
             customerName: visit.customerName,
-            customerPhone:visit.customerPhone ,
-            address:      visit.location??"Location not found",   // closest field available from API
-            status:       _mapStatus(visit.status),
+            customerPhone: visit.customerPhone,
+            address: visit.location ??
+                "Location not found", // closest field available from API
+            status: _mapStatus(visit.status),
             checkedOutAt: visit.checkOutTime != null
                 ? _formatTime(visit.checkOutTime!)
                 : null,
+            customerId: visit.customerId,
           ),
         );
       }
@@ -235,10 +236,10 @@ String _formatDuration(int seconds) {
   String _formatTime(String raw) {
     try {
       final parts = raw.split(':');
-      final hour   = int.parse(parts[0]);
+      final hour = int.parse(parts[0]);
       final minute = parts[1];
       final suffix = hour >= 12 ? 'PM' : 'AM';
-      final h12    = hour % 12 == 0 ? 12 : hour % 12;
+      final h12 = hour % 12 == 0 ? 12 : hour % 12;
       return '${h12.toString().padLeft(2, '0')}:$minute $suffix';
     } catch (_) {
       return raw;
@@ -248,97 +249,96 @@ String _formatDuration(int seconds) {
   // ──────────────────────────────────────────────────────────────────────────
   // Mock data  ← remove / replace when API is ready
   // ──────────────────────────────────────────────────────────────────────────
-  
-bool _isToday(DateTime date) {
-  final now = DateTime.now();
-  return now.year == date.year &&
-      now.month == date.month &&
-      now.day == date.day;
-}
 
-Future<void> updateVisitStatus({
-  required String visitId,
-  required RouteStopStatus status,
-}) async {
-  final current = state.value;
-  if (current == null) return;
-
-  /// ❌ NOT TODAY
-  if (!_isToday(current.selectedDate!)) {
-    Dev.logError("You can only update today visits");
- 
-    AppToast.errorToast('You can only update today visits');
-    return;
+  bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return now.year == date.year &&
+        now.month == date.month &&
+        now.day == date.day;
   }
 
-  /// ❌ MULTIPLE CHECK-IN
-  final hasActiveVisit = current.stops.any(
-    (s) => s.status == RouteStopStatus.inProgress,
-  );
+  Future<void> updateVisitStatus({
+    required String visitId,
+    required RouteStopStatus status,
+  }) async {
+    final current = state.value;
+    if (current == null) return;
 
-  if (status == RouteStopStatus.inProgress && hasActiveVisit) {
-    Dev.logError("Finish current visit first");
+    /// ❌ NOT TODAY
+    if (!_isToday(current.selectedDate!)) {
+      Dev.logError("You can only update today visits");
 
-    AppToast.errorToast('Finish current visit first');
-    return;
-  }
-
-  try {
-    /// 🔥 optimistic update
-    final updatedStops = current.stops.map((s) {
-      if (s.id == visitId) {
-        return s.copyWith(
-          status: status,
-          elapsedTime: status == RouteStopStatus.inProgress
-              ? '00:00:00'
-              : s.elapsedTime,
-        );
-      }
-      return s;
-    }).toList();
-
-    state = AsyncData(current.copyWith(stops: updatedStops));
-
-    /// ⏱ TIMER
-    if (status == RouteStopStatus.inProgress) {
-      _startTimer(visitId);
-    } else {
-      _stopTimer();
+      AppToast.errorToast('You can only update today visits');
+      return;
     }
 
-    /// 🔥 API
-    final repo = ref.read(myTripsRepositoryProvider);
-
-    await repo.updateVisitStatus(
-      visitId: visitId,
-      status: _mapStatusToApi(status),
+    /// ❌ MULTIPLE CHECK-IN
+    final hasActiveVisit = current.stops.any(
+      (s) => s.status == RouteStopStatus.inProgress,
     );
 
-    /// ✅ SUCCESS
-    AppToast.successToast('Visit updated successfully');
+    if (status == RouteStopStatus.inProgress && hasActiveVisit) {
+      Dev.logError("Finish current visit first");
 
-    /// 🔄 REFRESH
-    await _fetchTrips(current.selectedDate!);
+      AppToast.errorToast('Finish current visit first');
+      return;
+    }
 
-  } catch (e) {
-    AppToast.errorToast(e.toString());
+    try {
+      /// 🔥 optimistic update
+      final updatedStops = current.stops.map((s) {
+        if (s.id == visitId) {
+          return s.copyWith(
+            status: status,
+            elapsedTime: status == RouteStopStatus.inProgress
+                ? '00:00:00'
+                : s.elapsedTime,
+          );
+        }
+        return s;
+      }).toList();
+
+      state = AsyncData(current.copyWith(stops: updatedStops));
+
+      /// ⏱ TIMER
+      if (status == RouteStopStatus.inProgress) {
+        _startTimer(visitId);
+      } else {
+        _stopTimer();
+      }
+
+      /// 🔥 API
+      final repo = ref.read(myTripsRepositoryProvider);
+
+      await repo.updateVisitStatus(
+        visitId: visitId,
+        status: _mapStatusToApi(status),
+      );
+
+      /// ✅ SUCCESS
+      AppToast.successToast('Visit updated successfully');
+
+      /// 🔄 REFRESH
+      await _fetchTrips(current.selectedDate!);
+    } catch (e) {
+      AppToast.errorToast(e.toString());
+    }
   }
-}
 
-String _mapStatusToApi(RouteStopStatus status) {
-  switch (status) {
-    case RouteStopStatus.inProgress:
-      return 'In Progress'; // ✅ FIXED
-    case RouteStopStatus.visited:
-      return 'Completed';   // ✅
-    case RouteStopStatus.pending:
-      return 'Pending';     // ✅
-    case RouteStopStatus.skipped:
-      return 'Skipped';     // ✅
-    case RouteStopStatus.failed:
-      return 'Failed';      // ✅
-    case RouteStopStatus.completed:
-      return 'Completed';   // ✅
+  String _mapStatusToApi(RouteStopStatus status) {
+    switch (status) {
+      case RouteStopStatus.inProgress:
+        return 'In Progress'; // ✅ FIXED
+      case RouteStopStatus.visited:
+        return 'Completed'; // ✅
+      case RouteStopStatus.pending:
+        return 'Pending'; // ✅
+      case RouteStopStatus.skipped:
+        return 'Skipped'; // ✅
+      case RouteStopStatus.failed:
+        return 'Failed'; // ✅
+      case RouteStopStatus.completed:
+        return 'Completed'; // ✅
+    }
   }
-}
 }

@@ -44,44 +44,50 @@ class _SignInFormState extends ConsumerState<SignInForm> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        spacing: 22,
-        children: [
-          EmailTextFormField(
-            emailController: emailController,
-            onSaved: (value) {
-              ref.read(signInControllerProvider.notifier).updateEmail(value!);
-            },
-          ),
-          PasswordFormField(
-            passwordController: passwordController,
-            onSaved: (value) {
-              ref
-                  .read(signInControllerProvider.notifier)
-                  .updatePassword(value!);
-            },
-          ),
-          20.verticalSpace,
-          Consumer(builder: (context, ref, child) {
-            final signInProvider = ref.watch(signInControllerProvider);
-
-            if (signInProvider is AsyncLoading) {
-              return AppLoader();
-            }
-            final isEnabled = signInProvider.value?.isFormValid ?? false;
-
-            return CustomButtonWidget(
-              text: 'login'.tr(),
-              onTap: () => !isEnabled ? null : _submit(ref),
-              isFiled: true,
-              height: 48,
-              width: double.infinity,
-              backgroundColor: !isEnabled ? AppColors.gray : AppColors.primary,
-              radius: 8,
-            );
-            // return Container();
-          }),
-        ],
+      child: SingleChildScrollView(
+  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+  padding: EdgeInsets.only(
+    bottom: MediaQuery.of(context).viewInsets.bottom,
+  ),
+        child: Column(
+          spacing: 22,
+          children: [
+            EmailTextFormField(
+              emailController: emailController,
+              onSaved: (value) {
+                ref.read(signInControllerProvider.notifier).updateEmail(value!);
+              },
+            ),
+            PasswordFormField(
+              passwordController: passwordController,
+              onSaved: (value) {
+                ref
+                    .read(signInControllerProvider.notifier)
+                    .updatePassword(value!);
+              },
+            ),
+            20.verticalSpace,
+            Consumer(builder: (context, ref, child) {
+              final signInProvider = ref.watch(signInControllerProvider);
+        
+              if (signInProvider is AsyncLoading) {
+                return AppLoader();
+              }
+              final isEnabled = signInProvider.value?.isFormValid ?? false;
+        
+              return CustomButtonWidget(
+                text: 'login'.tr(),
+                onTap: () => !isEnabled ? null : _submit(ref),
+                isFiled: true,
+                height: 48,
+                width: double.infinity,
+                backgroundColor: !isEnabled ? AppColors.gray : AppColors.primary,
+                radius: 8,
+              );
+              // return Container();
+            }),
+          ],
+        ),
       ),
     );
   }

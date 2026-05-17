@@ -12,6 +12,7 @@ _DailyPerformanceModel _$DailyPerformanceModelFromJson(
       totalSales: (json['totalSales'] as num).toInt(),
       totalVisitsCompleted: (json['totalVisitsCompleted'] as num).toInt(),
       totalOrdersCreated: (json['totalOrdersCreated'] as num).toInt(),
+      totalVisitsSkipped: (json['totalVisitsSkipped'] as num).toInt(),
       totalPaymentsCollected: (json['totalPaymentsCollected'] as num).toInt(),
     );
 
@@ -21,5 +22,6 @@ Map<String, dynamic> _$DailyPerformanceModelToJson(
       'totalSales': instance.totalSales,
       'totalVisitsCompleted': instance.totalVisitsCompleted,
       'totalOrdersCreated': instance.totalOrdersCreated,
+      'totalVisitsSkipped': instance.totalVisitsSkipped,
       'totalPaymentsCollected': instance.totalPaymentsCollected,
     };

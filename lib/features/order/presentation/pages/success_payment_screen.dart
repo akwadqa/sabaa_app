@@ -16,8 +16,7 @@ class PaymentSuccessPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final payment =
-        ref.watch(orderControllerProvider).value!.paymentData;
+    final payment = ref.watch(orderControllerProvider).value!.paymentData;
 
     if (payment == null) {
       return const Scaffold(
@@ -95,11 +94,15 @@ class PaymentSuccessPage extends ConsumerWidget {
               child: CustomButtonWidget(
                 text: "Done",
                 onTap: () {
-                  ref.read(bottomNavIndexProvider.notifier).state = 0;
-                  context.goNamed(AppRoutes.mainScreen);
+                  // ref.read(bottomNavIndexProvider.notifier).state = 0;
+                  // context.pop();
+                  context.pop();
+                  ref.read(orderControllerProvider.notifier).refresh();
                 },
                 isFiled: true,
-                backgroundColor: AppColors.primary, height: 50, width: double.infinity,
+                backgroundColor: AppColors.primary,
+                height: 50,
+                width: double.infinity,
               ),
             ),
 

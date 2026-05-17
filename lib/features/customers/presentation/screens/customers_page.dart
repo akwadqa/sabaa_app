@@ -105,8 +105,14 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
               child: CustomerCard(
                 customer: c,
                 onTap: () {
-                  context.push(AppRoutes.orderSummaryScreen,
-                      extra: c);
+                context.pushNamed(
+  AppRoutes.orderSummaryScreen,
+  extra: {
+    'customer': c,
+    'invoice': null,
+    'openPayment': false,
+  },
+);
                 },
               ),
             ),

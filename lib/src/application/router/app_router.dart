@@ -14,6 +14,7 @@ import 'package:sabaa/features/new_order/presentation/screens/invoice_review_pag
 import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
@@ -281,23 +282,43 @@ class AppRouter {
             );
           },
         ),
+        // GoRoute(
+        //   path: AppRoutes.orderSummaryScreen,
+        //   name: AppRoutes.orderSummaryScreen,
+        //   parentNavigatorKey: rootKey,
+        //   pageBuilder: (BuildContext context, GoRouterState state) {
+        //     return CustomTransitionPage(
+        //       child: OrderSummaryPage(
+        //         customer: state.extra as CustomerModel,
+        //       ),
+        //       key: state.pageKey,
+        //       transitionsBuilder:
+        //           (context, animation, secondaryAnimation, child) {
+        //         return FadeTransition(opacity: animation, child: child);
+        //       },
+        //     );
+        //   },
+        // ),
         GoRoute(
-          path: AppRoutes.orderSummaryScreen,
-          name: AppRoutes.orderSummaryScreen,
-          parentNavigatorKey: rootKey,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              child: OrderSummaryPage(
-                customer: state.extra as CustomerModel,
-              ),
-              key: state.pageKey,
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            );
-          },
-        ),
+  path: AppRoutes.orderSummaryScreen,
+  name: AppRoutes.orderSummaryScreen,
+  parentNavigatorKey: rootKey,
+  pageBuilder: (BuildContext context, GoRouterState state) {
+    final extra = state.extra as Map<String, dynamic>?;
+
+    return CustomTransitionPage(
+      key: state.pageKey,
+      child: OrderSummaryPage(
+        customer: extra?['customer'] as CustomerModel,
+        invoice: extra?['invoice'] as InvoiceModel?,
+        openPayment: extra?['openPayment'] ?? false,
+      ),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+    );
+  },
+),
         GoRoute(
           path: AppRoutes.barcodeScreen,
           name: AppRoutes.barcodeScreen,

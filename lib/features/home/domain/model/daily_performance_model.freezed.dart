@@ -17,6 +17,7 @@ mixin _$DailyPerformanceModel {
   int get totalSales;
   int get totalVisitsCompleted;
   int get totalOrdersCreated;
+  int get totalVisitsSkipped;
   int get totalPaymentsCollected;
 
   /// Create a copy of DailyPerformanceModel
@@ -41,6 +42,8 @@ mixin _$DailyPerformanceModel {
                 other.totalVisitsCompleted == totalVisitsCompleted) &&
             (identical(other.totalOrdersCreated, totalOrdersCreated) ||
                 other.totalOrdersCreated == totalOrdersCreated) &&
+            (identical(other.totalVisitsSkipped, totalVisitsSkipped) ||
+                other.totalVisitsSkipped == totalVisitsSkipped) &&
             (identical(other.totalPaymentsCollected, totalPaymentsCollected) ||
                 other.totalPaymentsCollected == totalPaymentsCollected));
   }
@@ -48,11 +51,11 @@ mixin _$DailyPerformanceModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, totalSales, totalVisitsCompleted,
-      totalOrdersCreated, totalPaymentsCollected);
+      totalOrdersCreated, totalVisitsSkipped, totalPaymentsCollected);
 
   @override
   String toString() {
-    return 'DailyPerformanceModel(totalSales: $totalSales, totalVisitsCompleted: $totalVisitsCompleted, totalOrdersCreated: $totalOrdersCreated, totalPaymentsCollected: $totalPaymentsCollected)';
+    return 'DailyPerformanceModel(totalSales: $totalSales, totalVisitsCompleted: $totalVisitsCompleted, totalOrdersCreated: $totalOrdersCreated, totalVisitsSkipped: $totalVisitsSkipped, totalPaymentsCollected: $totalPaymentsCollected)';
   }
 }
 
@@ -66,6 +69,7 @@ abstract mixin class $DailyPerformanceModelCopyWith<$Res> {
       {int totalSales,
       int totalVisitsCompleted,
       int totalOrdersCreated,
+      int totalVisitsSkipped,
       int totalPaymentsCollected});
 }
 
@@ -85,6 +89,7 @@ class _$DailyPerformanceModelCopyWithImpl<$Res>
     Object? totalSales = null,
     Object? totalVisitsCompleted = null,
     Object? totalOrdersCreated = null,
+    Object? totalVisitsSkipped = null,
     Object? totalPaymentsCollected = null,
   }) {
     return _then(_self.copyWith(
@@ -99,6 +104,10 @@ class _$DailyPerformanceModelCopyWithImpl<$Res>
       totalOrdersCreated: null == totalOrdersCreated
           ? _self.totalOrdersCreated
           : totalOrdersCreated // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalVisitsSkipped: null == totalVisitsSkipped
+          ? _self.totalVisitsSkipped
+          : totalVisitsSkipped // ignore: cast_nullable_to_non_nullable
               as int,
       totalPaymentsCollected: null == totalPaymentsCollected
           ? _self.totalPaymentsCollected
@@ -201,16 +210,24 @@ extension DailyPerformanceModelPatterns on DailyPerformanceModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(int totalSales, int totalVisitsCompleted,
-            int totalOrdersCreated, int totalPaymentsCollected)?
+    TResult Function(
+            int totalSales,
+            int totalVisitsCompleted,
+            int totalOrdersCreated,
+            int totalVisitsSkipped,
+            int totalPaymentsCollected)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _DailyPerformanceModel() when $default != null:
-        return $default(_that.totalSales, _that.totalVisitsCompleted,
-            _that.totalOrdersCreated, _that.totalPaymentsCollected);
+        return $default(
+            _that.totalSales,
+            _that.totalVisitsCompleted,
+            _that.totalOrdersCreated,
+            _that.totalVisitsSkipped,
+            _that.totalPaymentsCollected);
       case _:
         return orElse();
     }
@@ -231,15 +248,23 @@ extension DailyPerformanceModelPatterns on DailyPerformanceModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(int totalSales, int totalVisitsCompleted,
-            int totalOrdersCreated, int totalPaymentsCollected)
+    TResult Function(
+            int totalSales,
+            int totalVisitsCompleted,
+            int totalOrdersCreated,
+            int totalVisitsSkipped,
+            int totalPaymentsCollected)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _DailyPerformanceModel():
-        return $default(_that.totalSales, _that.totalVisitsCompleted,
-            _that.totalOrdersCreated, _that.totalPaymentsCollected);
+        return $default(
+            _that.totalSales,
+            _that.totalVisitsCompleted,
+            _that.totalOrdersCreated,
+            _that.totalVisitsSkipped,
+            _that.totalPaymentsCollected);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -259,15 +284,23 @@ extension DailyPerformanceModelPatterns on DailyPerformanceModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(int totalSales, int totalVisitsCompleted,
-            int totalOrdersCreated, int totalPaymentsCollected)?
+    TResult? Function(
+            int totalSales,
+            int totalVisitsCompleted,
+            int totalOrdersCreated,
+            int totalVisitsSkipped,
+            int totalPaymentsCollected)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _DailyPerformanceModel() when $default != null:
-        return $default(_that.totalSales, _that.totalVisitsCompleted,
-            _that.totalOrdersCreated, _that.totalPaymentsCollected);
+        return $default(
+            _that.totalSales,
+            _that.totalVisitsCompleted,
+            _that.totalOrdersCreated,
+            _that.totalVisitsSkipped,
+            _that.totalPaymentsCollected);
       case _:
         return null;
     }
@@ -281,6 +314,7 @@ class _DailyPerformanceModel implements DailyPerformanceModel {
       {required this.totalSales,
       required this.totalVisitsCompleted,
       required this.totalOrdersCreated,
+      required this.totalVisitsSkipped,
       required this.totalPaymentsCollected});
   factory _DailyPerformanceModel.fromJson(Map<String, dynamic> json) =>
       _$DailyPerformanceModelFromJson(json);
@@ -291,6 +325,8 @@ class _DailyPerformanceModel implements DailyPerformanceModel {
   final int totalVisitsCompleted;
   @override
   final int totalOrdersCreated;
+  @override
+  final int totalVisitsSkipped;
   @override
   final int totalPaymentsCollected;
 
@@ -321,6 +357,8 @@ class _DailyPerformanceModel implements DailyPerformanceModel {
                 other.totalVisitsCompleted == totalVisitsCompleted) &&
             (identical(other.totalOrdersCreated, totalOrdersCreated) ||
                 other.totalOrdersCreated == totalOrdersCreated) &&
+            (identical(other.totalVisitsSkipped, totalVisitsSkipped) ||
+                other.totalVisitsSkipped == totalVisitsSkipped) &&
             (identical(other.totalPaymentsCollected, totalPaymentsCollected) ||
                 other.totalPaymentsCollected == totalPaymentsCollected));
   }
@@ -328,11 +366,11 @@ class _DailyPerformanceModel implements DailyPerformanceModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, totalSales, totalVisitsCompleted,
-      totalOrdersCreated, totalPaymentsCollected);
+      totalOrdersCreated, totalVisitsSkipped, totalPaymentsCollected);
 
   @override
   String toString() {
-    return 'DailyPerformanceModel(totalSales: $totalSales, totalVisitsCompleted: $totalVisitsCompleted, totalOrdersCreated: $totalOrdersCreated, totalPaymentsCollected: $totalPaymentsCollected)';
+    return 'DailyPerformanceModel(totalSales: $totalSales, totalVisitsCompleted: $totalVisitsCompleted, totalOrdersCreated: $totalOrdersCreated, totalVisitsSkipped: $totalVisitsSkipped, totalPaymentsCollected: $totalPaymentsCollected)';
   }
 }
 
@@ -348,6 +386,7 @@ abstract mixin class _$DailyPerformanceModelCopyWith<$Res>
       {int totalSales,
       int totalVisitsCompleted,
       int totalOrdersCreated,
+      int totalVisitsSkipped,
       int totalPaymentsCollected});
 }
 
@@ -367,6 +406,7 @@ class __$DailyPerformanceModelCopyWithImpl<$Res>
     Object? totalSales = null,
     Object? totalVisitsCompleted = null,
     Object? totalOrdersCreated = null,
+    Object? totalVisitsSkipped = null,
     Object? totalPaymentsCollected = null,
   }) {
     return _then(_DailyPerformanceModel(
@@ -381,6 +421,10 @@ class __$DailyPerformanceModelCopyWithImpl<$Res>
       totalOrdersCreated: null == totalOrdersCreated
           ? _self.totalOrdersCreated
           : totalOrdersCreated // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalVisitsSkipped: null == totalVisitsSkipped
+          ? _self.totalVisitsSkipped
+          : totalVisitsSkipped // ignore: cast_nullable_to_non_nullable
               as int,
       totalPaymentsCollected: null == totalPaymentsCollected
           ? _self.totalPaymentsCollected

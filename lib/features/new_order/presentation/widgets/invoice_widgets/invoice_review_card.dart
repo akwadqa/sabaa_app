@@ -21,13 +21,13 @@ class InvoiceReviewCard extends StatelessWidget {
     super.key,
     required this.items,
     required this.subtotal,
-    required this.tax,
+    required this.deliveyFee,
     required this.total,
   });
 
   final List<InvoiceItemUI> items;
   final String subtotal;
-  final String tax;
+  final String? deliveyFee;
   final String total;
 
   @override
@@ -125,10 +125,11 @@ class InvoiceReviewCard extends StatelessWidget {
             
            8.verticalSpace,
             
-          /// ── TAX ───────────────────────────
+          /// ── deliveyFee ───────────────────────────
+         if(deliveyFee!=null)
           _AmountRow(
-            title: 'tax',
-            value: tax,
+            title: 'delivery_fee',
+            value: deliveyFee!,
           ),
             
            16.verticalSpace,

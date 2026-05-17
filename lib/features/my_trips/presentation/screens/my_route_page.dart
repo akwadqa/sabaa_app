@@ -1,13 +1,14 @@
-
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/my_trips/domain/model/route_stop_model.dart';
 import 'package:sabaa/features/my_trips/presentation/controller/my_trips_controller.dart';
 import 'package:sabaa/features/my_trips/presentation/controller/my_trips_state.dart';
 import 'package:sabaa/features/my_trips/presentation/widgets/route_stop_card.dart';
 import 'package:sabaa/features/my_trips/presentation/widgets/week_day_picker.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
@@ -21,9 +22,7 @@ class MyRoutePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return _RouteBody();
-
   }
 }
 
@@ -31,7 +30,6 @@ class MyRoutePage extends ConsumerWidget {
 
 class _RouteBody extends ConsumerWidget {
   const _RouteBody();
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -88,8 +86,16 @@ class _RouteBody extends ConsumerWidget {
                                 ? null
                                 : () => _onCheckOut(ref, stop),
                             onNavigate: () => _onNavigate(stop),
-                            onContact: () => openPhoneDialer(stop.customerPhone),
+                            onContact: () =>
+                                openPhoneDialer(stop.customerPhone),
                             onViewSummary: () => _onViewSummary(stop),
+                            onTap: () =>
+                                stop.status != RouteStopStatus.pending
+                                    ? context.push(AppRoutes.orderSummaryScreen,
+                                        extra: CustomerModel(
+                                            customerId: stop.customerId,
+                                            name: stop.customerName))
+                                    : null,
                           ),
                         ),
                       ),
@@ -140,7 +146,10 @@ class _RouteBody extends ConsumerWidget {
   // }
 
   void _onNavigate(RouteStop stop) {/* TODO */}
-  void _onContact(RouteStop stop) {openPhoneDialer(stop.customerPhone);}
+  void _onContact(RouteStop stop) {
+    openPhoneDialer(stop.customerPhone);
+  }
+
   void _onViewSummary(RouteStop stop) {/* TODO */}
 }
 

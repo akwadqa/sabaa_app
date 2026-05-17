@@ -13,11 +13,10 @@ class StockItemCard extends StatelessWidget {
 
   final StockItem item;
 
-  Color get _stockValueColor =>
-      item.stockLevel == "Low" ? AppColors.red : AppColors.textPrimary;
-  Color get _lowStockBorderColor => item.stockLevel == "Low"
-      ? AppColors.lightRed
-      : AppColors.navBorder;
+  // Color get _stockValueColor =>
+  //     item.stockLevel == "Low" ? AppColors.red : AppColors.textPrimary;
+  // Color get _lowStockBorderColor =>
+  //     item.stockLevel == "Low" ? AppColors.lightRed : AppColors.navBorder;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +29,10 @@ class StockItemCard extends StatelessWidget {
         // border: Border.all(color: AppColors.navBorder),
         border: Border(
           left: BorderSide(
-              color: _lowStockBorderColor,
-              width: item.stockLevel == "Low" ? 6 : 1),
+              color: AppColors.navBorder,
+              width:
+                  //  item.stockLevel == "Low" ? 6 :
+                  1),
         ),
         boxShadow: const [
           BoxShadow(
@@ -45,7 +46,7 @@ class StockItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // ── Product image ────────────────────────────
-          _ProductImage(imageUrl:ServicesUrls.imageUrl+ item.imageUrl),
+          _ProductImage(imageUrl: ServicesUrls.imageUrl + item.imageUrl),
           12.horizontalSpace,
 
           // ── Product details ──────────────────────────
@@ -86,30 +87,27 @@ class StockItemCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${'stock'.tr()}: ',
-                            style: AppTextStyle.interMedium12.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          TextSpan(
-                            text: item.stockLabel,
-                            style: AppTextStyle.interSemiBold14.copyWith(
-                              fontSize: 12,
-                              color: _stockValueColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     Text(
-                      item.price.toStringAsFixed(2),
+                      item.price.toCurrency(),
                       style: AppTextStyle.interSemiBold14.copyWith(
                         fontSize: 12,
-                        color: AppColors.secondPrimary,
+                        color: AppColors.paidText,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppColors.navBorder),
+                      ),
+                      child: Text(
+                        item.stockLabel, // 🔥 only value
+                        style: AppTextStyle.interSemiBold14.copyWith(
+                          color: AppColors.secondPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ],

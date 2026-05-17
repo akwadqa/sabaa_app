@@ -16,7 +16,6 @@ T _$identity<T>(T value) => value;
 mixin _$StockStatistics {
   int get totalStockItems;
   double get totalStockValue;
-  int get lowStockItems;
 
   /// Create a copy of StockStatistics
   /// with the given fields replaced by the non-null parameter values.
@@ -37,19 +36,17 @@ mixin _$StockStatistics {
             (identical(other.totalStockItems, totalStockItems) ||
                 other.totalStockItems == totalStockItems) &&
             (identical(other.totalStockValue, totalStockValue) ||
-                other.totalStockValue == totalStockValue) &&
-            (identical(other.lowStockItems, lowStockItems) ||
-                other.lowStockItems == lowStockItems));
+                other.totalStockValue == totalStockValue));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, totalStockItems, totalStockValue, lowStockItems);
+      Object.hash(runtimeType, totalStockItems, totalStockValue);
 
   @override
   String toString() {
-    return 'StockStatistics(totalStockItems: $totalStockItems, totalStockValue: $totalStockValue, lowStockItems: $lowStockItems)';
+    return 'StockStatistics(totalStockItems: $totalStockItems, totalStockValue: $totalStockValue)';
   }
 }
 
@@ -59,7 +56,7 @@ abstract mixin class $StockStatisticsCopyWith<$Res> {
           StockStatistics value, $Res Function(StockStatistics) _then) =
       _$StockStatisticsCopyWithImpl;
   @useResult
-  $Res call({int totalStockItems, double totalStockValue, int lowStockItems});
+  $Res call({int totalStockItems, double totalStockValue});
 }
 
 /// @nodoc
@@ -77,7 +74,6 @@ class _$StockStatisticsCopyWithImpl<$Res>
   $Res call({
     Object? totalStockItems = null,
     Object? totalStockValue = null,
-    Object? lowStockItems = null,
   }) {
     return _then(_self.copyWith(
       totalStockItems: null == totalStockItems
@@ -88,10 +84,6 @@ class _$StockStatisticsCopyWithImpl<$Res>
           ? _self.totalStockValue
           : totalStockValue // ignore: cast_nullable_to_non_nullable
               as double,
-      lowStockItems: null == lowStockItems
-          ? _self.lowStockItems
-          : lowStockItems // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -189,16 +181,13 @@ extension StockStatisticsPatterns on StockStatistics {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)?
-        $default, {
+    TResult Function(int totalStockItems, double totalStockValue)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _StockStatistics() when $default != null:
-        return $default(
-            _that.totalStockItems, _that.totalStockValue, _that.lowStockItems);
+        return $default(_that.totalStockItems, _that.totalStockValue);
       case _:
         return orElse();
     }
@@ -219,15 +208,12 @@ extension StockStatisticsPatterns on StockStatistics {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)
-        $default,
+    TResult Function(int totalStockItems, double totalStockValue) $default,
   ) {
     final _that = this;
     switch (_that) {
       case _StockStatistics():
-        return $default(
-            _that.totalStockItems, _that.totalStockValue, _that.lowStockItems);
+        return $default(_that.totalStockItems, _that.totalStockValue);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -247,15 +233,12 @@ extension StockStatisticsPatterns on StockStatistics {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)?
-        $default,
+    TResult? Function(int totalStockItems, double totalStockValue)? $default,
   ) {
     final _that = this;
     switch (_that) {
       case _StockStatistics() when $default != null:
-        return $default(
-            _that.totalStockItems, _that.totalStockValue, _that.lowStockItems);
+        return $default(_that.totalStockItems, _that.totalStockValue);
       case _:
         return null;
     }
@@ -266,9 +249,7 @@ extension StockStatisticsPatterns on StockStatistics {
 @JsonSerializable()
 class _StockStatistics implements StockStatistics {
   const _StockStatistics(
-      {required this.totalStockItems,
-      required this.totalStockValue,
-      required this.lowStockItems});
+      {required this.totalStockItems, required this.totalStockValue});
   factory _StockStatistics.fromJson(Map<String, dynamic> json) =>
       _$StockStatisticsFromJson(json);
 
@@ -276,8 +257,6 @@ class _StockStatistics implements StockStatistics {
   final int totalStockItems;
   @override
   final double totalStockValue;
-  @override
-  final int lowStockItems;
 
   /// Create a copy of StockStatistics
   /// with the given fields replaced by the non-null parameter values.
@@ -302,19 +281,17 @@ class _StockStatistics implements StockStatistics {
             (identical(other.totalStockItems, totalStockItems) ||
                 other.totalStockItems == totalStockItems) &&
             (identical(other.totalStockValue, totalStockValue) ||
-                other.totalStockValue == totalStockValue) &&
-            (identical(other.lowStockItems, lowStockItems) ||
-                other.lowStockItems == lowStockItems));
+                other.totalStockValue == totalStockValue));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, totalStockItems, totalStockValue, lowStockItems);
+      Object.hash(runtimeType, totalStockItems, totalStockValue);
 
   @override
   String toString() {
-    return 'StockStatistics(totalStockItems: $totalStockItems, totalStockValue: $totalStockValue, lowStockItems: $lowStockItems)';
+    return 'StockStatistics(totalStockItems: $totalStockItems, totalStockValue: $totalStockValue)';
   }
 }
 
@@ -326,7 +303,7 @@ abstract mixin class _$StockStatisticsCopyWith<$Res>
       __$StockStatisticsCopyWithImpl;
   @override
   @useResult
-  $Res call({int totalStockItems, double totalStockValue, int lowStockItems});
+  $Res call({int totalStockItems, double totalStockValue});
 }
 
 /// @nodoc
@@ -344,7 +321,6 @@ class __$StockStatisticsCopyWithImpl<$Res>
   $Res call({
     Object? totalStockItems = null,
     Object? totalStockValue = null,
-    Object? lowStockItems = null,
   }) {
     return _then(_StockStatistics(
       totalStockItems: null == totalStockItems
@@ -355,10 +331,6 @@ class __$StockStatisticsCopyWithImpl<$Res>
           ? _self.totalStockValue
           : totalStockValue // ignore: cast_nullable_to_non_nullable
               as double,
-      lowStockItems: null == lowStockItems
-          ? _self.lowStockItems
-          : lowStockItems // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }

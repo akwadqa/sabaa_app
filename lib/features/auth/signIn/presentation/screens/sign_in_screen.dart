@@ -15,8 +15,9 @@ class SignInScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.background,
+  resizeToAvoidBottomInset: true,
 
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: AuthScreen(child: _SignInContent()),
     );
   }

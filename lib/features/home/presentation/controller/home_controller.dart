@@ -60,7 +60,7 @@ class HomeController extends _$HomeController {
           ),
           PerformanceMetric(
             label: 'skip_visit',
-            value: '3',
+            value:  data.dailyPerformance.totalVisitsSkipped.toString(),
             icon: Icons.block_flipped,
             iconColor: AppColors.metricOrangeIcon,
             subtitle: "today_skips",

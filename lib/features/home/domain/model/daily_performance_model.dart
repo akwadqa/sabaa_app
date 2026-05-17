@@ -10,6 +10,7 @@ abstract class DailyPerformanceModel with _$DailyPerformanceModel {
     required int totalSales,
     required int totalVisitsCompleted,
     required int totalOrdersCreated,
+    required int totalVisitsSkipped,
     required int totalPaymentsCollected,
   }) = _DailyPerformanceModel;
 

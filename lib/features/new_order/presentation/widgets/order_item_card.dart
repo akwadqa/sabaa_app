@@ -177,8 +177,9 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    4.verticalSpace,
+                    8.verticalSpace,
                     Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
                           child: Text(
@@ -188,7 +189,7 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                             ),
                           ),
                         ),
-                        2.horizontalSpace,
+                        // 20.horizontalSpace,
                         Text(
                           selectedPrice.toCurrency(),
                           style: AppTextStyle.interSemiBold14.copyWith(

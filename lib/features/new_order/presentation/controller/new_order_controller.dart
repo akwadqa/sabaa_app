@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/new_order/data/repositories/new_order_repository.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
 import 'package:sabaa/src/logger/log_services/dev_logger.dart';
@@ -177,7 +178,7 @@ class NewOrderController extends _$NewOrderController {
       showLoading: false,
     );
   }
-// email=saba@akwad.qa&password=Akwad@2025
+// email=saba@akwad.qa&password= 
   // ── Selection ──────────────────────────
 
   void toggleItem(ProductModel item) {
@@ -264,48 +265,81 @@ class NewOrderController extends _$NewOrderController {
     state = AsyncData(current.copyWith(selectedItems: map));
   }
 
+Future<InvoiceModel?> createInvoice() async {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(isSubmitting: true));
 
-  Future<bool> createInvoice() async {
-    final current = state.value!;
-    state = AsyncData(current.copyWith(isSubmitting: true));
+  try {
+    final repo = ref.read(newOrderRepositoryProvider);
 
-    try {
-      final customerId = current.customer?.customerId;
-      final deliveryFee = current.deliveryFee;
-      final repo = ref.read(newOrderRepositoryProvider);
-
-      final items = current.selectedItems.values.map((e) {
+    final response = await repo.createInvoice(
+      customerId: current.customer!.customerId!,
+      items: current.selectedItems.values.map((e) {
         return {
           "itemCode": e.product.itemCode,
           "qty": e.quantity,
           "uom": e.unit,
         };
-      }).toList();
+      }).toList(),
+      deliveryFee: current.deliveryFee!,
+    );
 
-      if (customerId == null) {
-        Dev.logError('customer?.id==null');
-
-        return false;
-      }
-      await repo.createInvoice(
-        customerId: customerId,
-        items: items,
-        deliveryFee: deliveryFee!,
-      );
     final latest = state.value!;
+    state = AsyncData(latest.copyWith(
+      selectedItems: {},
+      isSubmitting: false,
+    ));
 
-      state =
-          AsyncData(latest.copyWith(selectedItems: {}, isSubmitting: false));
+    return response.data; // 🔥 RETURN INVOICE
 
-      return true;
-    } catch (e) {
+  } catch (e) {
     final latest = state.value!;
-
-      state = AsyncData(latest.copyWith(isSubmitting: false));
-      AppToast.errorToast('Failed to create invoice');
-      return false;
-    }
+    state = AsyncData(latest.copyWith(isSubmitting: false));
+    AppToast.errorToast('Failed to create invoice');
+    return null;
   }
+}
+  // Future<bool> createInvoice() async {
+  //   final current = state.value!;
+  //   state = AsyncData(current.copyWith(isSubmitting: true));
+
+  //   try {
+  //     final customerId = current.customer?.customerId;
+  //     final deliveryFee = current.deliveryFee;
+  //     final repo = ref.read(newOrderRepositoryProvider);
+
+  //     final items = current.selectedItems.values.map((e) {
+  //       return {
+  //         "itemCode": e.product.itemCode,
+  //         "qty": e.quantity,
+  //         "uom": e.unit,
+  //       };
+  //     }).toList();
+
+  //     if (customerId == null) {
+  //       Dev.logError('customer?.id==null');
+
+  //       return false;
+  //     }
+  //     await repo.createInvoice(
+  //       customerId: customerId,
+  //       items: items,
+  //       deliveryFee: deliveryFee!,
+  //     );
+  //   final latest = state.value!;
+
+  //     state =
+  //         AsyncData(latest.copyWith(selectedItems: {}, isSubmitting: false));
+
+  //     return true;
+  //   } catch (e) {
+  //   final latest = state.value!;
+
+  //     state = AsyncData(latest.copyWith(isSubmitting: false));
+  //     AppToast.errorToast('Failed to create invoice');
+  //     return false;
+  //   }
+  // }
 
   void clearOrder() {
     final current = state.value!;

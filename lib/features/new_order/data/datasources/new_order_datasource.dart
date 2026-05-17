@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
@@ -38,7 +39,7 @@ class NewOrderDatasource {
     }
   }
 
-Future<ApiResponse<void>> createInvoice({
+Future<ApiResponse<InvoiceModel>> createInvoice({
   required String customerId,
   required String deliveryFee,
   required List<Map<String, dynamic>> items,
@@ -58,7 +59,7 @@ Future<ApiResponse<void>> createInvoice({
       throw Exception('Create invoice failed');
     }
 
-    return ApiResponse.fromJson(response.data, (_) {});
+    return ApiResponse.fromJson(response.data, (json) =>InvoiceModel.fromJson(json as Map<String,dynamic>));
   } catch (e) {
     Dev.logError('Error in createInvoice: $e');
     rethrow;

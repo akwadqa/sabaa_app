@@ -19,8 +19,7 @@ mixin _$ProductModel {
   String? get productImage;
   String get category;
   double get price;
-  double get availableStock;
-  String get stockLevel;
+  double get availableStock; // required String stockLevel,
   List<UomModel> get uoms;
 
   /// Create a copy of ProductModel
@@ -50,8 +49,6 @@ mixin _$ProductModel {
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
                 other.availableStock == availableStock) &&
-            (identical(other.stockLevel, stockLevel) ||
-                other.stockLevel == stockLevel) &&
             const DeepCollectionEquality().equals(other.uoms, uoms));
   }
 
@@ -65,12 +62,11 @@ mixin _$ProductModel {
       category,
       price,
       availableStock,
-      stockLevel,
       const DeepCollectionEquality().hash(uoms));
 
   @override
   String toString() {
-    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel, uoms: $uoms)';
+    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, uoms: $uoms)';
   }
 }
 
@@ -87,7 +83,6 @@ abstract mixin class $ProductModelCopyWith<$Res> {
       String category,
       double price,
       double availableStock,
-      String stockLevel,
       List<UomModel> uoms});
 }
 
@@ -109,7 +104,6 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
     Object? category = null,
     Object? price = null,
     Object? availableStock = null,
-    Object? stockLevel = null,
     Object? uoms = null,
   }) {
     return _then(_self.copyWith(
@@ -137,10 +131,6 @@ class _$ProductModelCopyWithImpl<$Res> implements $ProductModelCopyWith<$Res> {
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as double,
-      stockLevel: null == stockLevel
-          ? _self.stockLevel
-          : stockLevel // ignore: cast_nullable_to_non_nullable
-              as String,
       uoms: null == uoms
           ? _self.uoms
           : uoms // ignore: cast_nullable_to_non_nullable
@@ -249,7 +239,6 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel,
             List<UomModel> uoms)?
         $default, {
     required TResult orElse(),
@@ -257,15 +246,8 @@ extension ProductModelPatterns on ProductModel {
     final _that = this;
     switch (_that) {
       case _ProductModel() when $default != null:
-        return $default(
-            _that.itemCode,
-            _that.productName,
-            _that.productImage,
-            _that.category,
-            _that.price,
-            _that.availableStock,
-            _that.stockLevel,
-            _that.uoms);
+        return $default(_that.itemCode, _that.productName, _that.productImage,
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         return orElse();
     }
@@ -293,22 +275,14 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel,
             List<UomModel> uoms)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _ProductModel():
-        return $default(
-            _that.itemCode,
-            _that.productName,
-            _that.productImage,
-            _that.category,
-            _that.price,
-            _that.availableStock,
-            _that.stockLevel,
-            _that.uoms);
+        return $default(_that.itemCode, _that.productName, _that.productImage,
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -335,22 +309,14 @@ extension ProductModelPatterns on ProductModel {
             String category,
             double price,
             double availableStock,
-            String stockLevel,
             List<UomModel> uoms)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _ProductModel() when $default != null:
-        return $default(
-            _that.itemCode,
-            _that.productName,
-            _that.productImage,
-            _that.category,
-            _that.price,
-            _that.availableStock,
-            _that.stockLevel,
-            _that.uoms);
+        return $default(_that.itemCode, _that.productName, _that.productImage,
+            _that.category, _that.price, _that.availableStock, _that.uoms);
       case _:
         return null;
     }
@@ -367,7 +333,6 @@ class _ProductModel implements ProductModel {
       required this.category,
       required this.price,
       required this.availableStock,
-      required this.stockLevel,
       required final List<UomModel> uoms})
       : _uoms = uoms;
   factory _ProductModel.fromJson(Map<String, dynamic> json) =>
@@ -385,9 +350,9 @@ class _ProductModel implements ProductModel {
   final double price;
   @override
   final double availableStock;
-  @override
-  final String stockLevel;
+// required String stockLevel,
   final List<UomModel> _uoms;
+// required String stockLevel,
   @override
   List<UomModel> get uoms {
     if (_uoms is EqualUnmodifiableListView) return _uoms;
@@ -426,8 +391,6 @@ class _ProductModel implements ProductModel {
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
                 other.availableStock == availableStock) &&
-            (identical(other.stockLevel, stockLevel) ||
-                other.stockLevel == stockLevel) &&
             const DeepCollectionEquality().equals(other._uoms, _uoms));
   }
 
@@ -441,12 +404,11 @@ class _ProductModel implements ProductModel {
       category,
       price,
       availableStock,
-      stockLevel,
       const DeepCollectionEquality().hash(_uoms));
 
   @override
   String toString() {
-    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, stockLevel: $stockLevel, uoms: $uoms)';
+    return 'ProductModel(itemCode: $itemCode, productName: $productName, productImage: $productImage, category: $category, price: $price, availableStock: $availableStock, uoms: $uoms)';
   }
 }
 
@@ -465,7 +427,6 @@ abstract mixin class _$ProductModelCopyWith<$Res>
       String category,
       double price,
       double availableStock,
-      String stockLevel,
       List<UomModel> uoms});
 }
 
@@ -488,7 +449,6 @@ class __$ProductModelCopyWithImpl<$Res>
     Object? category = null,
     Object? price = null,
     Object? availableStock = null,
-    Object? stockLevel = null,
     Object? uoms = null,
   }) {
     return _then(_ProductModel(
@@ -516,10 +476,6 @@ class __$ProductModelCopyWithImpl<$Res>
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as double,
-      stockLevel: null == stockLevel
-          ? _self.stockLevel
-          : stockLevel // ignore: cast_nullable_to_non_nullable
-              as String,
       uoms: null == uoms
           ? _self._uoms
           : uoms // ignore: cast_nullable_to_non_nullable

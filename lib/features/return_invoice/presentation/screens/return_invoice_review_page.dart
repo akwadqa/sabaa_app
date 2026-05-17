@@ -152,7 +152,7 @@ class ReturnInvoiceReviewPage extends ConsumerWidget {
           InvoiceReviewCard(
             items: items,
             subtotal: formatPrice(subtotalValue),
-            tax: '15%',
+            deliveyFee: null,
             total: formatPrice(totalValue),
           ).symmetricPadding(horizontal: 12, vertical: 16),
         ],

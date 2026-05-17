@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/presentation/widgets/add_customer_page/custom_labeled_text_filed.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/invoice_widgets/invoice_review_card.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
@@ -57,28 +58,28 @@ class InvoiceReviewPage extends ConsumerWidget {
     }).toList();
 
     // 🔥 Calculations
-final subtotalValue = selectedProducts.fold<double>(
-  0,
-  (sum, e) {
-    final selected = state.selectedItems[e.product.itemCode];
+    final subtotalValue = selectedProducts.fold<double>(
+      0,
+      (sum, e) {
+        final selected = state.selectedItems[e.product.itemCode];
 
-    final unit = selected?.unit ?? e.product.uoms.first.uom;
+        final unit = selected?.unit ?? e.product.uoms.first.uom;
 
-    final price = e.product.uoms
-        .firstWhere(
-          (u) => u.uom == unit,
-          orElse: () => e.product.uoms.first,
-        )
-        .price;
+        final price = e.product.uoms
+            .firstWhere(
+              (u) => u.uom == unit,
+              orElse: () => e.product.uoms.first,
+            )
+            .price;
 
-    final qty = selected?.quantity ?? 0;
+        final qty = selected?.quantity ?? 0;
 
-    return sum + (price * qty);
-  },
-);
+        return sum + (price * qty);
+      },
+    );
 
-    final taxValue = subtotalValue * 0.15;
-    final totalValue = subtotalValue + taxValue;
+    final deliveryFee = double.parse(state.deliveryFee ?? "0");
+    final totalValue = subtotalValue + deliveryFee;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -104,16 +105,10 @@ final subtotalValue = selectedProducts.fold<double>(
                           final controller =
                               ref.read(newOrderControllerProvider.notifier);
 
-                          final success = await controller.createInvoice();
+                          final invoice = await controller.createInvoice();
 
-                          // if (!context.mounted) return false;
-
-                          if (success) {
-                            // await Future.delayed(
-                            //     const Duration(milliseconds: 300));
-
-                            await _showSuccessDialog(context, ref);
-                            return true;
+                          if (invoice != null) {
+                            await _showSuccessDialog(context, ref, invoice);
                           }
 
                           // return success;
@@ -182,7 +177,7 @@ final subtotalValue = selectedProducts.fold<double>(
           InvoiceReviewCard(
             items: items,
             subtotal: formatPrice(subtotalValue),
-            tax: '15%',
+            deliveyFee: state.deliveryFee ?? "0",
             total: formatPrice(totalValue),
           ).symmetricPadding(horizontal: 12, vertical: 16),
         ],
@@ -211,7 +206,9 @@ final subtotalValue = selectedProducts.fold<double>(
     );
   }
 
-  Future<void> _showSuccessDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _showSuccessDialog(
+      BuildContext context, WidgetRef ref, InvoiceModel? invoice) async {
+    final state = ref.watch(newOrderControllerProvider).value!;
     return await showDialog(
       context: context,
       barrierDismissible: false,
@@ -259,10 +256,25 @@ final subtotalValue = selectedProducts.fold<double>(
                       CustomButtonWidget(
                         text: "pay_now",
                         onTap: () {
-                          int count = 0;
-                          Navigator.popUntil(context, (route) {
-                            return count++ == 4;
-                          });
+                          // int count = 0;
+                          // Navigator.popUntil(context, (route) {
+                          //   return count++ == 4;
+                          // });
+
+                          // Navigator.popUntil(context, (route) {
+                          //   return route.settings.name ==
+                          //       AppRoutes.customerDetailsScreen;
+                          // });
+                          context.goNamed(AppRoutes.mainScreen); // ✅ best
+
+                          context.pushNamed(
+                            AppRoutes.orderSummaryScreen,
+                            extra: {
+                              'customer': state.customer,
+                              'invoice': invoice,
+                              'openPayment': true,
+                            },
+                          );
                           // ref.read(bottomNavIndexProvider.notifier).state = 0;
                           // Navigator.popUntil(context,
                           //     (route) => route == AppRoutes.orderSummaryScreen);
