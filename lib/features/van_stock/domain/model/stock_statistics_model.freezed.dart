@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$StockStatistics {
   int get totalStockItems;
   double get totalStockValue;
-  int get lowStockItems;
+  int? get lowStockItems;
 
   /// Create a copy of StockStatistics
   /// with the given fields replaced by the non-null parameter values.
@@ -59,7 +59,7 @@ abstract mixin class $StockStatisticsCopyWith<$Res> {
           StockStatistics value, $Res Function(StockStatistics) _then) =
       _$StockStatisticsCopyWithImpl;
   @useResult
-  $Res call({int totalStockItems, double totalStockValue, int lowStockItems});
+  $Res call({int totalStockItems, double totalStockValue, int? lowStockItems});
 }
 
 /// @nodoc
@@ -77,7 +77,7 @@ class _$StockStatisticsCopyWithImpl<$Res>
   $Res call({
     Object? totalStockItems = null,
     Object? totalStockValue = null,
-    Object? lowStockItems = null,
+    Object? lowStockItems = freezed,
   }) {
     return _then(_self.copyWith(
       totalStockItems: null == totalStockItems
@@ -88,10 +88,10 @@ class _$StockStatisticsCopyWithImpl<$Res>
           ? _self.totalStockValue
           : totalStockValue // ignore: cast_nullable_to_non_nullable
               as double,
-      lowStockItems: null == lowStockItems
+      lowStockItems: freezed == lowStockItems
           ? _self.lowStockItems
           : lowStockItems // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }
@@ -190,7 +190,7 @@ extension StockStatisticsPatterns on StockStatistics {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)?
+            int totalStockItems, double totalStockValue, int? lowStockItems)?
         $default, {
     required TResult orElse(),
   }) {
@@ -220,7 +220,7 @@ extension StockStatisticsPatterns on StockStatistics {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)
+            int totalStockItems, double totalStockValue, int? lowStockItems)
         $default,
   ) {
     final _that = this;
@@ -248,7 +248,7 @@ extension StockStatisticsPatterns on StockStatistics {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            int totalStockItems, double totalStockValue, int lowStockItems)?
+            int totalStockItems, double totalStockValue, int? lowStockItems)?
         $default,
   ) {
     final _that = this;
@@ -268,7 +268,7 @@ class _StockStatistics implements StockStatistics {
   const _StockStatistics(
       {required this.totalStockItems,
       required this.totalStockValue,
-      required this.lowStockItems});
+      this.lowStockItems});
   factory _StockStatistics.fromJson(Map<String, dynamic> json) =>
       _$StockStatisticsFromJson(json);
 
@@ -277,7 +277,7 @@ class _StockStatistics implements StockStatistics {
   @override
   final double totalStockValue;
   @override
-  final int lowStockItems;
+  final int? lowStockItems;
 
   /// Create a copy of StockStatistics
   /// with the given fields replaced by the non-null parameter values.
@@ -326,7 +326,7 @@ abstract mixin class _$StockStatisticsCopyWith<$Res>
       __$StockStatisticsCopyWithImpl;
   @override
   @useResult
-  $Res call({int totalStockItems, double totalStockValue, int lowStockItems});
+  $Res call({int totalStockItems, double totalStockValue, int? lowStockItems});
 }
 
 /// @nodoc
@@ -344,7 +344,7 @@ class __$StockStatisticsCopyWithImpl<$Res>
   $Res call({
     Object? totalStockItems = null,
     Object? totalStockValue = null,
-    Object? lowStockItems = null,
+    Object? lowStockItems = freezed,
   }) {
     return _then(_StockStatistics(
       totalStockItems: null == totalStockItems
@@ -355,10 +355,10 @@ class __$StockStatisticsCopyWithImpl<$Res>
           ? _self.totalStockValue
           : totalStockValue // ignore: cast_nullable_to_non_nullable
               as double,
-      lowStockItems: null == lowStockItems
+      lowStockItems: freezed == lowStockItems
           ? _self.lowStockItems
           : lowStockItems // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
     ));
   }
 }

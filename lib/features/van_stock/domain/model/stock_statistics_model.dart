@@ -8,7 +8,7 @@ abstract class StockStatistics with _$StockStatistics {
   const factory StockStatistics({
     required int totalStockItems,
     required double totalStockValue,
-    required int lowStockItems,
+     int? lowStockItems,
   }) = _StockStatistics;
 
   factory StockStatistics.fromJson(Map<String, dynamic> json) =>
