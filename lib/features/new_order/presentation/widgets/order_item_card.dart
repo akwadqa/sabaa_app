@@ -168,14 +168,32 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.item.productName,
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        color: AppColors.textHeading,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.item.productName,
+                            style: AppTextStyle.interSemiBold14.copyWith(
+                              color: AppColors.textHeading,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        12.horizontalSpace,
+              if (widget.isSelected)
+                GestureDetector(
+                  onTap: widget.onDelete,
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppColors.red,
+                    size: 25,
+                  ),
+                ),
+                      ],
                     ),
                     8.verticalSpace,
                     Row(
@@ -208,16 +226,7 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
               //     color: AppColors.primary,
               //     size: 22,
               //   ),
-              12.horizontalSpace,
-              if (widget.isSelected)
-                GestureDetector(
-                  onTap: widget.onDelete,
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: AppColors.red,
-                    size: 25,
-                  ),
-                ),
+              
             ],
           ),
           12.verticalSpace,

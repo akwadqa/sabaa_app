@@ -18,7 +18,7 @@ class HeaderBanner extends StatelessWidget {
 
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xl,
-        vertical: AppSpacing.xxl,
+        vertical:40,
       ),
       decoration: BoxDecoration(
         color: AppColors.primary,
@@ -40,7 +40,7 @@ class HeaderBanner extends StatelessWidget {
               const Text('👋', style: TextStyle(fontSize: 22)),
             ],
           ),
-          8.verticalSpace,
+          12.verticalSpace,
            Text(
             'ready_for_your_route_today'.tr(),
              style: AppTextStyle.interMedium18.copyWith(

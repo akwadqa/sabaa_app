@@ -52,7 +52,7 @@ class QuickActionCardButton extends ConsumerWidget {
     if (_isBeginTrip) {
       final isLoading = tripActionState is AsyncLoading;
       final label = tripStarted ? 'trip_in_progress' : 'begin_trip';
-      final color = tripStarted ? AppColors.green : action.color;
+      final color = tripStarted ? AppColors.metricGreenIcon : action.color;
 
       return Expanded(
         child: GestureDetector(
@@ -69,8 +69,10 @@ class QuickActionCardButton extends ConsumerWidget {
                   } else {
                     Dev.logLine("startTrip");
 
-                    await ref.read(homeControllerProvider.notifier).startTrip();
-                    if (_isBeginTrip) {
+                    final anyTrip = await ref
+                        .read(homeControllerProvider.notifier)
+                        .startTrip();
+                    if (_isBeginTrip && anyTrip) {
                       await Future.delayed(Duration(seconds: 3));
                       ref.read(bottomNavIndexProvider.notifier).state = 1;
                       ref.read(myTripsControllerProvider.notifier).refresh();

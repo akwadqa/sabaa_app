@@ -123,7 +123,7 @@ class _HomeBody extends ConsumerWidget {
                     crossAxisCount: 2,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 0.95,
+                    childAspectRatio: 1.0,
                   ),
                   itemBuilder: (_, i) =>
                       PerformanceCard(metric: state.metrics[i]),

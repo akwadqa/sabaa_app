@@ -11,6 +11,7 @@ import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
+import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
@@ -67,7 +68,7 @@ class _SignInFormState extends ConsumerState<SignInForm> {
                     .updatePassword(value!);
               },
             ),
-            20.verticalSpace,
+            // 1.verticalSpace,
             Consumer(builder: (context, ref, child) {
               final signInProvider = ref.watch(signInControllerProvider);
 
@@ -86,7 +87,7 @@ class _SignInFormState extends ConsumerState<SignInForm> {
                 width: double.infinity,
                 backgroundColor: !isEnabled ? AppColors.gray : AppColors.primary,
                 radius: 8,
-              );
+              ).onlyPadding(top: 10);
               // return Container();
             }),
           ],
