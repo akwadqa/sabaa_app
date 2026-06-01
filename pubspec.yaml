@@ -5,7 +5,7 @@ description: "🚚 Field Sales & Delivery Management App that helps teams manage
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -86,7 +86,6 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icons/
     - assets/images/
@@ -94,6 +93,11 @@ flutter:
     - assets/lottie/
     - .env
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_logo.png"  
+  remove_alpha_ios: true  
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

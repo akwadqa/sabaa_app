@@ -195,7 +195,7 @@ class _CreateCustomerPageContentState
                   backgroundColor: (controller.isFormValid &&
                           _formKey.currentState?.validate() == true)
                       ? AppColors.primary
-                      : AppColors.grey,
+                      : AppColors.darkMedGrey,
                   radius: 12,
                   onTap: (controller.isFormValid &&
                           _formKey.currentState?.validate() == true)

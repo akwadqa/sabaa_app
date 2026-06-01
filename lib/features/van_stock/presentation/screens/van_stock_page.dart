@@ -222,7 +222,7 @@ class _StockBody extends ConsumerWidget {
                 if (state.filteredItems.isEmpty) AppEmptyDataWidget(),
                 ...state.filteredItems.map(
                   (item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: 18),
                     child: StockItemCard(item: item),
                   ),
                 ),

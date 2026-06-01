@@ -167,6 +167,8 @@
     "delivery_fee": "رسوم التوصيل",
     "enter_delivery_fee": "أدخل رسوم التوصيل",
     "confirm_order": "تأكيد الطلب",
-    "confirm_return": "تأكيد الإرجاع"
+    "confirm_return": "تأكيد الإرجاع",
+    "press_again_to_exit": "اضغط مرة أخرى للخروج"
+
 
 }

@@ -552,6 +552,7 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
           ),
           Center(
             child: Dialog(
+              backgroundColor: AppColors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -562,11 +563,12 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
                   children: [
                     ClipOval(
                       child: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.all(8),
                         color: AppColors.red.withValues(alpha: 0.2),
                         child: Icon(
                           Icons.delete_forever,
                           color: AppColors.darkRed,
+                          size: 35,
                         ),
                       ),
                     ),
@@ -574,7 +576,7 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
                     Text(
                       "remove_item_title".tr(),
                       style: AppTextStyle.interBold22.copyWith(
-                        color: AppColors.dark,
+                        color: AppColors.black,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -589,13 +591,13 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
                     ),
                     const SizedBox(height: 20),
 
-                    Text(
-                      "invoice_created_successfully".tr(),
-                      textAlign: TextAlign.center,
-                      style: AppTextStyle.interRegular14.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
+                    // Text(
+                    //   "invoice_created_successfully".tr(),
+                    //   textAlign: TextAlign.center,
+                    //   style: AppTextStyle.interRegular14.copyWith(
+                    //     color: AppColors.textSecondary,
+                    //   ),
+                    // ),
                     30.verticalSpace,
                     CustomButtonWidget(
                       text: "yes_remove".tr(),
@@ -603,8 +605,8 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
                       isFiled: true,
                       height: 44,
                       radius: 10,
-                      backgroundColor: AppColors.red,
-                      style: AppTextStyle.interSemiBold14.copyWith(
+                      backgroundColor: AppColors.darkRed,
+                      style: AppTextStyle.interSemiBold20.copyWith(
                         color: Colors.white,
                       ),
                       width: double.infinity,
@@ -618,8 +620,8 @@ Future<bool> showRemoveConfirmDialog(BuildContext context) async {
                       radius: 10,
                       backgroundColor: AppColors.white,
                       width: double.infinity,
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        color: AppColors.textPrimary,
+                      style: AppTextStyle.interSemiBold18.copyWith(
+                        color: AppColors.primary,
                       ),
                     ),
                   ],

@@ -37,22 +37,23 @@ class CustomerInfoCard extends StatelessWidget {
       ),
       child: IntrinsicHeight(
         child: Column(
+          spacing: 20,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            const SizedBox(height: 18),
+            // _buildHeader(),
+            // const SizedBox(height: 18),
             _InfoRow(
               icon: Icons.person_outline,
               label: 'customer_name'.tr(),
               value: customerName,
             ),
-            const SizedBox(height: 12),
+            // const SizedBox(height: 12),
             _InfoRow(
               icon: Icons.phone_outlined,
               label: 'phone_number'.tr(),
               value: phoneNumber,
             ),
-            const SizedBox(height: 12),
+            // const SizedBox(height: 12),
             _InfoRow(
               icon: Icons.location_on_outlined,
               label: 'address_label'.tr(),
@@ -121,24 +122,25 @@ class _InfoRow extends StatelessWidget {
             color: AppColors.background,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: AppColors.grey, size: 20),
+          child: Icon(icon, color: AppColors.darkGray, size: 20),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
+            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label.toUpperCase(),
                 style: AppTextStyle.rubikSemiBold16.copyWith(
                   color: AppColors.black,
-                  fontSize: 12,
+                  // fontSize: 12,
                 ),
               ),
               Text(
                 value,
                 style:
-                    AppTextStyle.rubikRegular16.copyWith(color: AppColors.grey),
+                    AppTextStyle.rubikRegular16.copyWith(color: AppColors.gray),
               ),
             ],
           ),

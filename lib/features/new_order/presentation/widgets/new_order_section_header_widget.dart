@@ -6,7 +6,7 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 class NewOrderSectionHeaderWidget extends StatelessWidget {
-  const NewOrderSectionHeaderWidget({
+  const NewOrderSectionHeaderWidget({super.key, 
     required this.titleKey,
     required this.count,
     required this.isReturn,

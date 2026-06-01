@@ -173,6 +173,8 @@
     "delivery_fee": "Delivery fee",
     "enter_delivery_fee": "Enter delivery fee",
     "confirm_order": "Confirm order",
-    "confirm_return": "Confirm return"
+    "confirm_return": "Confirm return",
+    "press_again_to_exit": "Press again to exit"
+
 
 }

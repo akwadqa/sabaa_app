@@ -141,23 +141,23 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
           ),
         ],
       ),
-      actions: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          margin: const EdgeInsets.only(right: 16),
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: isReturn ? AppColors.primary : AppColors.chevronBg,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            Icons.swap_horiz_rounded,
-            color: isReturn ? AppColors.white : AppColors.textSecondary,
-            size: 20,
-          ),
-        ),
-      ],
+      // actions: [
+      //   AnimatedContainer(
+      //     duration: const Duration(milliseconds: 220),
+      //     margin: const EdgeInsets.only(right: 16),
+      //     width: 36,
+      //     height: 36,
+      //     decoration: BoxDecoration(
+      //       color: isReturn ? AppColors.primary : AppColors.chevronBg,
+      //       borderRadius: BorderRadius.circular(8),
+      //     ),
+      //     child: Icon(
+      //       Icons.swap_horiz_rounded,
+      //       color: isReturn ? AppColors.white : AppColors.textSecondary,
+      //       size: 20,
+      //     ),
+      //   ),
+      // ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Divider(height: 1, color: AppColors.navBorder),
@@ -180,7 +180,7 @@ class _OrderBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
       child: Column(
         spacing: 18,
         children: [

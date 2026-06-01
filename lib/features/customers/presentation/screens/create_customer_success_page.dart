@@ -27,15 +27,16 @@ class CreateCustomerSuccessPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 45),
+              45.verticalSpace,
               // Success Icon Section
               const SuccessIcon(),
-              const SizedBox(height: 24),
+              24.verticalSpace,
               const CustomerSuccessMessage(),
-              const SizedBox(height: 30),
+              30.verticalSpace,
               CustomerInfoCard(
                 shopName: '${customer.name} Supermarket',
                 customerName: customer.name ?? 'name',

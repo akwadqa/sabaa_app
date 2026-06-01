@@ -66,6 +66,7 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
   static const Color darkShadow = Color(0x19000000);
   static const Color dark = Color(0xFF201C11);
   static const Color darkMedGrey = Color(0x1AA0A0A0);
+  static const Color disabledButton = Color(0xFFA0A0A0);
   static const Color borderGrey = Color(0xFFe8e8e8);
 
   static const Color stockImageBg = Color(0xFFF3F4F6);

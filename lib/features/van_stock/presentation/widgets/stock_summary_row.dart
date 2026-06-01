@@ -35,7 +35,7 @@ class StockSummaryRow extends StatelessWidget {
           valueColor: AppColors.textPrimary,
         ),
       ],
-    ).symmetricPadding(horizontal: 16);
+    ).symmetricPadding(horizontal: 18);
   }
 }
 

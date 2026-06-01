@@ -221,6 +221,7 @@ class InvoiceReviewPage extends ConsumerWidget {
             ),
             Center(
               child: Dialog(
+                backgroundColor: AppColors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

@@ -56,7 +56,7 @@ class PaymentSuccessPage extends ConsumerWidget {
             /// CARD
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(vertical: 40,horizontal: 25),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -66,17 +66,16 @@ class PaymentSuccessPage extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  Text("AMOUNT PAID"),
+                  Text("AMOUNT PAID",style: AppTextStyle.interMedium18.copyWith()),
 
-                  const SizedBox(height: 10),
-
+10.verticalSpace,
                   Text(
                     payment.paidAmount.toCurrency(),
                     style: AppTextStyle.interBold22
-                        .copyWith(color: AppColors.primary),
+                        .copyWith(color: AppColors.primary,fontSize: 30,fontWeight: FontWeight.w900),
                   ),
-
-                  const Divider(height: 30),
+20.verticalSpace,
+                  // const Divider(height: 30),
 
                   _row("Invoice", payment.paymentId),
                   _row("Customer", payment.partyName),
@@ -102,6 +101,7 @@ class PaymentSuccessPage extends ConsumerWidget {
                 isFiled: true,
                 backgroundColor: AppColors.primary,
                 height: 50,
+                radius: 8,
                 width: double.infinity,
               ),
             ),
@@ -119,8 +119,8 @@ class PaymentSuccessPage extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title),
-          Text(value),
+          Text(title,style: AppTextStyle.interMedium14),
+          Text(value,style: AppTextStyle.interMedium14),
         ],
       ),
     );

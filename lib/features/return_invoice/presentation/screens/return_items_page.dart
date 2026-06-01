@@ -167,7 +167,7 @@ class _ReturnOrderBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 12),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
       child: Column(
         spacing: 18,
         children: [

@@ -56,7 +56,7 @@ class _RouteBody extends ConsumerWidget {
 
             // ── Today's stops header ─────────────────────────────────
             _TodayStopsHeader(count: asyncState.requireValue.stops.length)
-                .symmetricPadding(horizontal: 12),
+                .onlyPadding(start: 20),
             14.verticalSpace,
 
             // ── Stop list ────────────────────────────────────────────

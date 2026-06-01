@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -299,42 +300,65 @@ class _UnitDropdown extends StatelessWidget {
 
   final String selectedUnit;
   final List<String> units;
-  final Function(String) onChanged;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 44,
+      padding: const EdgeInsetsDirectional.only(start: 12, end: 8),
       decoration: BoxDecoration(
-        color: AppColors.secondCard,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: AppColors.borderGrey,
-          width: 1,
         ),
       ),
-      child: DropdownButton<String>(
-        value: selectedUnit,
-
-        // isExpanded: true,
-        underline: const SizedBox(),
-        icon: Icon(Icons.keyboard_arrow_down_sharp),
-        iconSize: 16,
-        items: units.map((unit) {
-          return DropdownMenuItem(
-            value: unit,
-            child: Text(
-              unit,
-              style: AppTextStyle.interSemiBold14.copyWith(
-                color: AppColors.textHeading,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<String>(
+          value: selectedUnit,
+          isDense: true,
+          iconStyleData: const IconStyleData(
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 20,
+              color: AppColors.blueGrey,
+            ),
+          ),
+          buttonStyleData: const ButtonStyleData(
+            padding: EdgeInsets.zero,
+            height: 44,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            elevation: 4,
+            maxHeight: 220,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          menuItemStyleData: const MenuItemStyleData(
+            height: 42,
+            padding: EdgeInsets.symmetric(horizontal: 12),
+          ),
+          items: units.map((unit) {
+            return DropdownMenuItem<String>(
+              value: unit,
+              child: Text(
+                unit,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyle.interSemiBold14.copyWith(
+                  color: AppColors.textHeading,
+                ),
               ),
-            ).onlyPadding(end: 8),
-          );
-        }).toList(),
-        onChanged: (value) {
-          if (value != null) onChanged(value);
-        },
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              onChanged(value);
+            }
+          },
+        ),
       ),
     );
   }

@@ -31,7 +31,7 @@ class FilterSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // ── Search field ─────────────────────────────────────────
         Flexible(
@@ -62,26 +62,27 @@ class FilterSearchBar extends StatelessWidget {
         ),
         // const SizedBox(width: 8),
     (isCustomer)?
-        InkWell(
-        onTap: () {
-        context.push(AppRoutes.addCustomerScreen);
-        },
-        child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.navBorder),
-        ),
-        child: const Icon(
-        Icons.add,
-        color: AppColors.primary,
-        size: 24,
-        ),
-        ),
-    )
-    .onlyPadding(start: 16):
+           Flexible(
+            child: GestureDetector(
+          onTap: () {
+          context.push(AppRoutes.addCustomerScreen);
+          },
+          child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.navBorder),
+          ),
+          child: const Icon(
+          Icons.add,
+          color: AppColors.primary,
+          size: 24,
+          ),
+          ),
+              ),
+        ):
         Flexible(
           child: GestureDetector(
             onTap: onBarcodeTap,
@@ -101,6 +102,6 @@ class FilterSearchBar extends StatelessWidget {
           ),
         ),
       ],
-    );
+    ).symmetricPadding(horizontal:  18);
  }
 }

@@ -25,7 +25,7 @@ class StockCategoryFilter extends StatelessWidget {
         children: List.generate(categories.length, (i) {
           final isActive = i == selectedIndex;
           return Padding(
-            padding: EdgeInsetsDirectional.only(start: i < categories.length - 1 ? 14 : 0),
+            padding: EdgeInsetsDirectional.only(start: i < categories.length - 1 ? 18 : 0),
             child: _CategoryChip(
               labelKey: categories[i].labelKey,
               isActive: isActive,
@@ -57,7 +57,7 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isActive ? AppColors.secondPrimary : AppColors.white,
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(20),
           border: isActive
               ? null
               : Border.all(color: AppColors.navBorder),

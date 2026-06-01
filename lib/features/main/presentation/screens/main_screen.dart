@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -6,13 +7,46 @@ import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
 import 'package:sabaa/features/my_trips/presentation/screens/my_route_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
+import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
+  @override
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
+  DateTime? _lastBackPressed;
+
+  Future<bool> _onWillPop() async {
+    final currentIndex = ref.read(bottomNavIndexProvider);
+
+    // Any tab except Home
+    if (currentIndex != 0) {
+      ref.read(bottomNavIndexProvider.notifier).state = 0;
+      return false;
+    }
+
+    // Home tab
+    final now = DateTime.now();
+
+    if (_lastBackPressed == null ||
+        now.difference(_lastBackPressed!) >
+            const Duration(seconds: 2)) {
+      _lastBackPressed = now;
+
+        AppToast.infoToast('press_again_to_exit'.tr());
+
+
+      return false;
+    }
+
+    return true;
+  }
   static const List<NavDestination> _destinations = [
     NavDestination(
       label: 'nav_home',
@@ -37,21 +71,33 @@ class MainScreen extends ConsumerWidget {
   ];
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      bottomNavigationBar: _BottomNavBar(
-        destinations: _destinations,
-        currentIndex: currentIndex,
-        onTap: (index) {
-          ref.read(bottomNavIndexProvider.notifier).state = index;
-        },
-      ),
-      body: IndexedStack(
-        index: currentIndex,
-        children: _destinations.map((d) => d.page).toList(),
+    return PopScope(
+  canPop: false,
+  onPopInvokedWithResult: (didPop, result) async {
+    if (didPop) return;
+
+    final shouldPop = await _onWillPop();
+
+    if (shouldPop && mounted) {
+      Navigator.of(context).maybePop();
+    }
+  },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        bottomNavigationBar: _BottomNavBar(
+          destinations: _destinations,
+          currentIndex: currentIndex,
+          onTap: (index) {
+            ref.read(bottomNavIndexProvider.notifier).state = index;
+          },
+        ),
+        body: IndexedStack(
+          index: currentIndex,
+          children: _destinations.map((d) => d.page).toList(),
+        ),
       ),
     );
   }

@@ -59,32 +59,29 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              _buildAppBar(),
-              16.verticalSpace,
-              FilterSearchBar(
-                hint: 'search_by_customer_name',
-                controller: _searchController,
-                isCustomer: true,
-                onChanged: (val) {
-                  ref.read(customersControllerProvider.notifier).search = val;
-                  ref
-                      .read(customersControllerProvider.notifier)
-                      .getCustomers(page: 1, showLoading: true);
-                },
+        child: Column(
+          children: [
+            _buildAppBar(),
+            16.verticalSpace,
+            FilterSearchBar(
+              hint: 'search_by_customer_name',
+              controller: _searchController,
+              isCustomer: true,
+              onChanged: (val) {
+                ref.read(customersControllerProvider.notifier).search = val;
+                ref
+                    .read(customersControllerProvider.notifier)
+                    .getCustomers(page: 1, showLoading: true);
+              },
+            ),
+            Expanded(
+              child: controller.when(
+                data: (customers) => _buildBody(context, customers).symmetricPadding(horizontal: 20),
+                loading: () => const AppLoader(),
+                error: (e, __) => Center(child: Text('Error: $e')),
               ),
-              Expanded(
-                child: controller.when(
-                  data: (customers) => _buildBody(context, customers),
-                  loading: () => const AppLoader(),
-                  error: (e, __) => Center(child: Text('Error: $e')),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -105,14 +102,14 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
               child: CustomerCard(
                 customer: c,
                 onTap: () {
-                context.pushNamed(
-  AppRoutes.orderSummaryScreen,
-  extra: {
-    'customer': c,
-    'invoice': null,
-    'openPayment': false,
-  },
-);
+                  context.pushNamed(
+                    AppRoutes.orderSummaryScreen,
+                    extra: {
+                      'customer': c,
+                      'invoice': null,
+                      'openPayment': false,
+                    },
+                  );
                 },
               ),
             ),

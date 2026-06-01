@@ -36,4 +36,17 @@ class AppToast {
     );
   }
 
+static void infoToast(String message) {
+  toastification.dismissAll();
+
+  toastification.show(
+    autoCloseDuration: const Duration(seconds: 2),
+    alignment: Alignment.bottomCenter,
+    type: ToastificationType.info,
+    showProgressBar: false,
+    style: ToastificationStyle.flat,
+    primaryColor: AppColors.primary,
+    description: Text(message),
+  );
+}
 }

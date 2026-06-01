@@ -76,16 +76,16 @@ class _HomeBody extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: AlignmentGeometry.centerRight,
-                  child: GestureDetector(
-                      onTap: () {
-                        ref.read(localStorageServiceProvider).logout();
-                        context.goNamed(AppRoutes.signInScreen);
-                      },
-                      child: Icon(Icons.logout,color: Colors.red,)),
-                ),
-                20.verticalSpace,
+                // Align(
+                //   alignment: AlignmentGeometry.centerRight,
+                //   child: GestureDetector(
+                //       onTap: () {
+                //         ref.read(localStorageServiceProvider).logout();
+                //         context.goNamed(AppRoutes.signInScreen);
+                //       },
+                //       child: Icon(Icons.logout,color: Colors.red,)),
+                // ),
+                // 20.verticalSpace,
 
                 // ── Banner ───────────────────────────────────────────
                 HeaderBanner(userName: state.userName),
