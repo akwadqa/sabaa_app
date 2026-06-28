@@ -24,7 +24,7 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
       email: json['email'] as String,
       fullName: json['fullName'] as String,
       isEnabled: json['isEnabled'] as bool,
-      warehouse: json['warehouse'] as String,
+      warehouse: json['warehouse'] as String?,
       role: json['role'] as String,
     );
 

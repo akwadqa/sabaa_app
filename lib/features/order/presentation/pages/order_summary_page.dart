@@ -7,6 +7,7 @@ import 'package:sabaa/features/customers/domain/model/create_customer_response/c
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/controller/order_controller.dart';
+import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/features/order/presentation/widgets/invoice_payment_bottom_sheet.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_filter_chip.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_filters_list.dart';
@@ -35,9 +36,9 @@ class OrderSummaryPage extends ConsumerStatefulWidget {
   final bool openPayment;
 
   @override
-  ConsumerState<OrderSummaryPage> createState() =>
-      _OrderSummaryPageState();
+  ConsumerState<OrderSummaryPage> createState() => _OrderSummaryPageState();
 }
+
 class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
   bool _opened = false;
 
@@ -61,7 +62,8 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
       isScrollControlled: true,
       builder: (_) {
         return InvoicePaymentBottomSheet(
-          invoice: invoice, outstandingBalance: invoice.outstandingAmount,
+          invoice: invoice,
+          outstandingBalance: invoice.outstandingAmount,
         );
       },
     );
@@ -72,10 +74,10 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomDeafultAppbar(title: 'order_summary'.tr()),
-      body: _OrderSummaryPageContent(customer:widget. customer),
+      body: _OrderSummaryPageContent(customer: widget.customer),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.push(AppRoutes.newOrderScreen, extra:widget. customer);
+          context.push(AppRoutes.newOrderScreen, extra: widget.customer);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
         backgroundColor: AppColors.primary,
@@ -208,16 +210,29 @@ class _OrderSummaryPageContentState
             ...List.from(orderSummary.invoices.map((invoice) {
               return Column(
                 children: [
-                  OrderSummaryInvoiceCard(
-                    invoice: invoice,
-                    customer: customer,
-                    // date: invoice.postingDate,
-                    // id: invoice.invoiceId,
-                    outstandingBalance: orderSummary.outstandingBalance,
-                    // status: invoice.status,
-                    actions: invoice.status == 'Paid'
-                        ? ['return']
-                        : ['return', 'pay'],
+                  GestureDetector(
+                    onTap: () {
+                      context.push(
+                        AppRoutes.invoiceReviewScreen,
+                        extra: {
+                          'mode': InvoiceReviewMode.viewOnly,
+                          'invoiceId': invoice.invoiceId,
+                        },
+                      );
+// HERE
+                      // context.push(AppRoutes.returnInvoiceReviewScreen,extra: {"isReturn":false});
+                    },
+                    child: OrderSummaryInvoiceCard(
+                      invoice: invoice,
+                      customer: customer,
+                      // date: invoice.postingDate,
+                      // id: invoice.invoiceId,
+                      outstandingBalance: orderSummary.outstandingBalance,
+                      // status: invoice.status,
+                      actions: invoice.status == 'Paid'
+                          ? ['return']
+                          : ['return', 'pay'],
+                    ),
                   ),
                   if (orderSummary.invoices.last != invoice)
                     const SizedBox(height: 18),

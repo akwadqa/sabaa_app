@@ -17,6 +17,7 @@ import 'package:sabaa/features/order/domain/create_payment/create_payment_respon
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
+import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
 
 import '../../../features/barcode_scanner/presentation/screen/barcode_scanner_page.dart';
@@ -195,9 +196,12 @@ class AppRouter {
           name: AppRoutes.returnInvoiceReviewScreen,
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
 
             return CustomTransitionPage(
               child: ReturnInvoiceReviewPage(
+                isReturn: extra?['isReturn'] as bool,
+
               ),
               key: state.pageKey,
               transitionsBuilder:
@@ -300,22 +304,36 @@ class AppRouter {
         //   },
         // ),
         GoRoute(
-  path: AppRoutes.orderSummaryScreen,
-  name: AppRoutes.orderSummaryScreen,
-  parentNavigatorKey: rootKey,
-  pageBuilder: (BuildContext context, GoRouterState state) {
-    final extra = state.extra as Map<String, dynamic>?;
+          path: AppRoutes.orderSummaryScreen,
+          name: AppRoutes.orderSummaryScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>?;
 
-    return CustomTransitionPage(
-      key: state.pageKey,
-      child: OrderSummaryPage(
-        customer: extra?['customer'] as CustomerModel,
-        invoice: extra?['invoice'] as InvoiceModel?,
-        openPayment: extra?['openPayment'] ?? false,
-      ),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(opacity: animation, child: child);
-      },
+            return CustomTransitionPage(
+              key: state.pageKey,
+              child: OrderSummaryPage(
+                customer: extra?['customer'] as CustomerModel,
+                invoice: extra?['invoice'] as InvoiceModel?,
+                openPayment: extra?['openPayment'] ?? false,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        // In your router configuration
+GoRoute(
+  name: AppRoutes.invoiceReviewScreen,
+  path: AppRoutes.invoiceReviewScreen,
+  // path: '/invoice-review',
+  builder: (context, state) {
+    final extra = state.extra as Map<String, dynamic>;
+    return UnifiedInvoiceReviewPage(
+      mode: extra['mode'] as InvoiceReviewMode,
+      invoiceId: extra['invoiceId'] as String?,
     );
   },
 ),

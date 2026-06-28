@@ -213,8 +213,7 @@ class InvoiceReviewPage extends ConsumerWidget {
       context: context,
       barrierDismissible: false,
       builder: (_) {
-        return Stack(
-          children: [
+        return Stack(          children: [
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(color: Colors.transparent),

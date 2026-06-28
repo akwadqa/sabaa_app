@@ -381,7 +381,7 @@ mixin _$UserModel {
   @JsonKey(name: 'isEnabled')
   bool get isEnabled;
   @JsonKey(name: 'warehouse')
-  String get warehouse;
+  String? get warehouse;
   @JsonKey(name: 'role')
   String get role;
 
@@ -432,7 +432,7 @@ abstract mixin class $UserModelCopyWith<$Res> {
       @JsonKey(name: 'email') String email,
       @JsonKey(name: 'fullName') String fullName,
       @JsonKey(name: 'isEnabled') bool isEnabled,
-      @JsonKey(name: 'warehouse') String warehouse,
+      @JsonKey(name: 'warehouse') String? warehouse,
       @JsonKey(name: 'role') String role});
 }
 
@@ -452,7 +452,7 @@ class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
     Object? email = null,
     Object? fullName = null,
     Object? isEnabled = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? role = null,
   }) {
     return _then(_self.copyWith(
@@ -472,10 +472,10 @@ class _$UserModelCopyWithImpl<$Res> implements $UserModelCopyWith<$Res> {
           ? _self.isEnabled
           : isEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable
@@ -582,7 +582,7 @@ extension UserModelPatterns on UserModel {
             @JsonKey(name: 'email') String email,
             @JsonKey(name: 'fullName') String fullName,
             @JsonKey(name: 'isEnabled') bool isEnabled,
-            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'warehouse') String? warehouse,
             @JsonKey(name: 'role') String role)?
         $default, {
     required TResult orElse(),
@@ -617,7 +617,7 @@ extension UserModelPatterns on UserModel {
             @JsonKey(name: 'email') String email,
             @JsonKey(name: 'fullName') String fullName,
             @JsonKey(name: 'isEnabled') bool isEnabled,
-            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'warehouse') String? warehouse,
             @JsonKey(name: 'role') String role)
         $default,
   ) {
@@ -650,7 +650,7 @@ extension UserModelPatterns on UserModel {
             @JsonKey(name: 'email') String email,
             @JsonKey(name: 'fullName') String fullName,
             @JsonKey(name: 'isEnabled') bool isEnabled,
-            @JsonKey(name: 'warehouse') String warehouse,
+            @JsonKey(name: 'warehouse') String? warehouse,
             @JsonKey(name: 'role') String role)?
         $default,
   ) {
@@ -673,7 +673,7 @@ class _UserModel implements UserModel {
       @JsonKey(name: 'email') required this.email,
       @JsonKey(name: 'fullName') required this.fullName,
       @JsonKey(name: 'isEnabled') required this.isEnabled,
-      @JsonKey(name: 'warehouse') required this.warehouse,
+      @JsonKey(name: 'warehouse') this.warehouse,
       @JsonKey(name: 'role') required this.role});
   factory _UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
@@ -692,7 +692,7 @@ class _UserModel implements UserModel {
   final bool isEnabled;
   @override
   @JsonKey(name: 'warehouse')
-  final String warehouse;
+  final String? warehouse;
   @override
   @JsonKey(name: 'role')
   final String role;
@@ -752,7 +752,7 @@ abstract mixin class _$UserModelCopyWith<$Res>
       @JsonKey(name: 'email') String email,
       @JsonKey(name: 'fullName') String fullName,
       @JsonKey(name: 'isEnabled') bool isEnabled,
-      @JsonKey(name: 'warehouse') String warehouse,
+      @JsonKey(name: 'warehouse') String? warehouse,
       @JsonKey(name: 'role') String role});
 }
 
@@ -772,7 +772,7 @@ class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
     Object? email = null,
     Object? fullName = null,
     Object? isEnabled = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? role = null,
   }) {
     return _then(_UserModel(
@@ -792,10 +792,10 @@ class __$UserModelCopyWithImpl<$Res> implements _$UserModelCopyWith<$Res> {
           ? _self.isEnabled
           : isEnabled // ignore: cast_nullable_to_non_nullable
               as bool,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       role: null == role
           ? _self.role
           : role // ignore: cast_nullable_to_non_nullable

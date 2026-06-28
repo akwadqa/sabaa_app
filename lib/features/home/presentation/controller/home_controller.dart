@@ -58,13 +58,14 @@ class HomeController extends _$HomeController {
             iconColor: AppColors.metricGreenIcon,
             icon: Icons.trending_up_rounded,
           ),
-          PerformanceMetric(
-            label: 'skip_visit',
-            value:  data.dailyPerformance.totalVisitsSkipped.toString(),
-            icon: Icons.block_flipped,
-            iconColor: AppColors.metricOrangeIcon,
-            subtitle: "today_skips",
+              PerformanceMetric(
+            label: 'sales_volume',
+            value: data.dailyPerformance.totalPaymentsCollected.toString(),
+            icon: Icons.inventory_2_outlined,
+            iconColor: AppColors.metricPurpleIcon,
+            // subtitle: 'mtd_total',
           ),
+       
           PerformanceMetric(
             label: 'todays_visits',
             value: '$completed / $total',
@@ -79,12 +80,12 @@ class HomeController extends _$HomeController {
                 ? AppColors.metricGreenIcon
                 : AppColors.textSecondary,
           ),
-          PerformanceMetric(
-            label: 'sales_volume',
-            value: data.dailyPerformance.totalSales.toString(),
-            icon: Icons.inventory_2_outlined,
-            iconColor: AppColors.metricPurpleIcon,
-            subtitle: 'mtd_total',
+         PerformanceMetric(
+            label: 'skip_visit',
+            value:  data.dailyPerformance.totalVisitsSkipped.toString(),
+            icon: Icons.block_flipped,
+            iconColor: AppColors.metricOrangeIcon,
+            subtitle: "today_skips",
           ),
         ],
         quickActions: [

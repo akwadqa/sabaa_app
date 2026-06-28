@@ -60,7 +60,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ),
     NavDestination(
       label: 'nav_customers',
-      icon: Icons.people_outline,
+      icon: Icons.people_alt_outlined,
       page: CustomersPage(),
     ),
     NavDestination(

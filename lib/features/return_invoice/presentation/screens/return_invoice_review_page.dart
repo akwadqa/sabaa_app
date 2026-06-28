@@ -23,11 +23,17 @@ import 'package:slider_button/slider_button.dart';
 
 import '../../../../src/core/shared_widgets/custom_button_widget.dart';
 
-class ReturnInvoiceReviewPage extends ConsumerWidget {
-  const ReturnInvoiceReviewPage({super.key});
-
+class ReturnInvoiceReviewPage extends ConsumerStatefulWidget {
+  final bool isReturn;
+  const ReturnInvoiceReviewPage({super.key, required this.isReturn});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReturnInvoiceReviewPage> createState() => _ReturnInvoiceReviewPageState();
+}
+
+class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPage> {
+  
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(returnOrderControllerProvider).value!;
     final controller = ref.read(returnOrderControllerProvider.notifier);
 

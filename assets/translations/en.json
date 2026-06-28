@@ -38,7 +38,7 @@
     "stock": "Stock",
     "total_sku": "Total SKU",
     "low_stock": "Low Stock",
-    "stock_value": "Value",
+    "stock_value": "Stock Quantity",
     "category_all": "All Items",
     "category_beverages": "Beverages",
     "category_snacks": "Snacks",
@@ -174,7 +174,26 @@
     "enter_delivery_fee": "Enter delivery fee",
     "confirm_order": "Confirm order",
     "confirm_return": "Confirm return",
-    "press_again_to_exit": "Press again to exit"
+    "press_again_to_exit": "Press again to exit",
+    "customer": "Customer",
+    "date": "Date",
+    "status": "Status",
+    "processing": "Processing...",
+    "invoice_details": "Invoice Details",
+    "item_name": "Item Name",
+    "qty": "Qty",
+    "unit": "Unit",
+    "price": "Price",
+    "thank_you_for_your_business": "Thank you for your business",
+    "failed_to_generate_pdf": "Failed to generate PDF",
+    "failed_to_share_pdf": "Failed to share PDF",
+    "invoice_id": "Invoice ID",
+    "share": "Share",
+    "print": "Print",
+    "pdf_preview": "PDF Preview",
+    "discard": "Discard",
+    "download": "Download",
 
+    "failed_to_load_invoice": "Failed to load invoice"
 
 }

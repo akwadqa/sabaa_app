@@ -85,15 +85,15 @@ class StockItemCard extends StatelessWidget {
 
                 // Stock qty + price
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      item.price.toCurrency(),
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        fontSize: 12,
-                        color: AppColors.paidText,
-                      ),
-                    ),
+                    // Text(
+                    //   item.price.toCurrency(),
+                    //   style: AppTextStyle.interSemiBold14.copyWith(
+                    //     fontSize: 12,
+                    //     color: AppColors.paidText,
+                    //   ),
+                    // ),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 6),

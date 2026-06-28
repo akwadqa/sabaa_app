@@ -92,9 +92,17 @@ class _RouteBody extends ConsumerWidget {
                             onTap: () =>
                                 stop.status != RouteStopStatus.pending
                                     ? context.push(AppRoutes.orderSummaryScreen,
-                                        extra: CustomerModel(
+                                         extra: {
+                      'customer': CustomerModel(
                                             customerId: stop.customerId,
-                                            name: stop.customerName))
+                                            name: stop.customerName),
+                      'invoice': null,
+                      'openPayment': false,
+                    },
+                                        // extra: CustomerModel(
+                                        //     customerId: stop.customerId,
+                                        //     name: stop.customerName)
+                                            )
                                     : null,
                           ),
                         ),

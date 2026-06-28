@@ -31,7 +31,7 @@ class StockSummaryRow extends StatelessWidget {
         // const SizedBox(width: 12),
         _SummaryCard(
           labelKey: summary.valueKey,
-          value: summary.valueAmount.toCurrency(),
+          value: summary.valueAmount.toString(),
           valueColor: AppColors.textPrimary,
         ),
       ],

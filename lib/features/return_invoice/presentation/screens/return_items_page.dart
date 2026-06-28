@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_category_filter.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_search_bar.dart';
+import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_dialogs.dart';
 import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
@@ -83,7 +84,10 @@ class _ReturnItemsPageState extends ConsumerState<ReturnItemsPage> {
                     ref
                         .read(returnOrderControllerProvider.notifier)
                         .addCustomer(widget.customer);
-                    context.push(AppRoutes.returnInvoiceReviewScreen);
+                    context.push(AppRoutes.invoiceReviewScreen, extra: {
+                      'mode': InvoiceReviewMode.returnOrder,
+                    });
+                    // context.push(AppRoutes.returnInvoiceReviewScreen,extra: {"isReturn":true});
                   }
                 : null,
             isFiled: true,

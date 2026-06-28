@@ -38,7 +38,7 @@
     "stock": "المخزون",
     "total_sku": "إجمالي SKU",
     "low_stock": "مخزون منخفض",
-    "stock_value": "القيمة",
+    "stock_value": "المخزون الكلي",
     "category_all": "جميع المنتجات",
     "category_beverages": "المشروبات",
     "category_snacks": "الوجبات الخفيفة",
@@ -168,7 +168,26 @@
     "enter_delivery_fee": "أدخل رسوم التوصيل",
     "confirm_order": "تأكيد الطلب",
     "confirm_return": "تأكيد الإرجاع",
-    "press_again_to_exit": "اضغط مرة أخرى للخروج"
-
+    "press_again_to_exit": "اضغط مرة أخرى للخروج",
+    "customer": "العميل",
+  "date": "التاريخ",
+  "status": "الحالة",
+  "processing": "جاري المعالجة...",
+  "invoice_details": "تفاصيل الفاتورة",
+  "item_name": "اسم المنتج",
+  "qty": "الكمية",
+  "unit": "الوحدة",
+  "price": "السعر",
+  "thank_you_for_your_business": "شكراً لتعاملكم معنا",
+  "failed_to_generate_pdf": "فشل في إنشاء ملف PDF",
+  "failed_to_share_pdf": "فشل في مشاركة ملف PDF",
+  "invoice_id": "رقم الفاتورة",
+  "share": "مشاركة",
+  "print": "طباعة",
+  "pdf_preview": "معاينة PDF",
+  "discard": "تجاهل",
+  "download": "تحميل",
+ 
+  "failed_to_load_invoice": "فشل في تحميل الفاتورة"
 
 }

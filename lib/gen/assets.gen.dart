@@ -124,6 +124,10 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/app_logo.png
+  AssetGenImage get appLogo =>
+      const AssetGenImage('assets/images/app_logo.png');
+
   /// File path: assets/images/auth_background.png
   AssetGenImage get authBackground =>
       const AssetGenImage('assets/images/auth_background.png');
@@ -150,6 +154,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<dynamic> get values => [
+        appLogo,
         authBackground,
         emptyData,
         imEmptyScreen,

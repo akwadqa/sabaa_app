@@ -178,7 +178,7 @@ class NewOrderController extends _$NewOrderController {
       showLoading: false,
     );
   }
-// email=saba@akwad.qa&password= 
+// email=saba@akwad.qa&password=
   // ── Selection ──────────────────────────
 
   void toggleItem(ProductModel item) {
