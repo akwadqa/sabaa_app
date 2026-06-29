@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/data_source/order_remote_data_source.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/exception/dio_exceptions.dart';
 import 'package:sabaa/src/infrastructure/network/services/dio_client.dart';
@@ -45,6 +48,24 @@ Future<ApiResponse<PaymentResponseModel>> createPayment({
   );
 
   if (response.hasSucceeded) {
+    return response;
+  }
+
+  throw AppException(response.message);
+}
+
+ Future<ApiResponse<UploadCaptureResponse>> upladCapture({
+    required String visitId,
+    required List<File> images,
+    required String captureNote,
+  }) async  {
+  final response = await _remoteDataSource.upladCapture(
+    visitId: visitId,
+    images: images,
+    captureNote: captureNote,
+  );
+
+  if (response.status == 200) {
     return response;
   }
 

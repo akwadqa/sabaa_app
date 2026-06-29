@@ -15,6 +15,7 @@ import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_pa
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/presentation/pages/display_capture_page.dart';
 import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
@@ -201,7 +202,6 @@ class AppRouter {
             return CustomTransitionPage(
               child: ReturnInvoiceReviewPage(
                 isReturn: extra?['isReturn'] as bool,
-
               ),
               key: state.pageKey,
               transitionsBuilder:
@@ -325,18 +325,18 @@ class AppRouter {
           },
         ),
         // In your router configuration
-GoRoute(
-  name: AppRoutes.invoiceReviewScreen,
-  path: AppRoutes.invoiceReviewScreen,
-  // path: '/invoice-review',
-  builder: (context, state) {
-    final extra = state.extra as Map<String, dynamic>;
-    return UnifiedInvoiceReviewPage(
-      mode: extra['mode'] as InvoiceReviewMode,
-      invoiceId: extra['invoiceId'] as String?,
-    );
-  },
-),
+        GoRoute(
+          name: AppRoutes.invoiceReviewScreen,
+          path: AppRoutes.invoiceReviewScreen,
+          // path: '/invoice-review',
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>;
+            return UnifiedInvoiceReviewPage(
+              mode: extra['mode'] as InvoiceReviewMode,
+              invoiceId: extra['invoiceId'] as String?,
+            );
+          },
+        ),
         GoRoute(
           path: AppRoutes.barcodeScreen,
           name: AppRoutes.barcodeScreen,
@@ -345,6 +345,22 @@ GoRoute(
             return CustomTransitionPage(
               child: BarcodeScannerPage(
                 fromNewOrder: state.extra as bool,
+              ),
+              key: state.pageKey,
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.displayCaptureScreen,
+          name: AppRoutes.displayCaptureScreen,
+          parentNavigatorKey: rootKey,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return CustomTransitionPage(
+              child: DisplayCapturePage(
               ),
               key: state.pageKey,
               transitionsBuilder:

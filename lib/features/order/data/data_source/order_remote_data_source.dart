@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
@@ -15,7 +18,7 @@ class OrderRemoteDataSource {
   OrderRemoteDataSource(this._networkService);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status ,required int page}) async {
+      {required String customerId, String? status, required int page}) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.orderSummary,
@@ -66,6 +69,43 @@ class OrderRemoteDataSource {
       );
     } catch (e) {
       debugPrint('Error in createPayment: $e');
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse<UploadCaptureResponse>> upladCapture({
+    required String visitId,
+    required List<File> images,
+    required String captureNote,
+  }) async {
+    try {
+      final data = FormData.fromMap({
+        'visit_id': visitId,
+        'note': captureNote,
+        'images': await Future.wait(
+          images.map(
+            (file) => MultipartFile.fromFile(
+              file.path,
+              filename: file.path.split('/').last,
+            ),
+          ),
+        ),
+      });
+      final response = await _networkService.post(
+        ApiEndPoints.uploadCapture,
+        data: data,
+      );
+
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Request failed');
+      }
+
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => UploadCaptureResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      Dev.logLine('Error in submitData: $e');
       rethrow;
     }
   }

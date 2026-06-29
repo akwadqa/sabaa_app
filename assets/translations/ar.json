@@ -187,7 +187,12 @@
   "pdf_preview": "معاينة PDF",
   "discard": "تجاهل",
   "download": "تحميل",
- 
-  "failed_to_load_invoice": "فشل في تحميل الفاتورة"
-
+  "display_capture": "التقاط العرض",
+  "failed_to_load_invoice": "فشل في تحميل الفاتورة",
+  "display_photo": "عرض الصورة",
+  "take_photo" : "التقط صورة للعرض على الرف.",
+  "add_photo" : "إضافة صورة",
+  "display_notes" :  "ملاحظات العرض"  ,
+  "display_notes_hint" : "ملاحظات اختيارية عن المنافس أو حالة الرف...",
+  "continue": "متابعة"
 }

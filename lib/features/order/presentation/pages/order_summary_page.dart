@@ -13,6 +13,7 @@ import 'package:sabaa/features/order/presentation/widgets/order_summary_filter_c
 import 'package:sabaa/features/order/presentation/widgets/order_summary_filters_list.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_invoice_card.dart';
 import 'package:sabaa/features/order/presentation/widgets/order_summary_stat_card.dart';
+import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
@@ -73,7 +74,30 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomDeafultAppbar(title: 'order_summary'.tr()),
+      appBar: CustomDeafultAppbar(
+        title: 'order_summary'.tr(),
+        actionButton: GestureDetector(
+          onTap: () {
+            context.push(AppRoutes.displayCaptureScreen);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              border: Border.all(color: AppColors.navBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.darkShadow,
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Assets.icons.cameraIc.svg(),
+          ),
+        ),
+      ),
       body: _OrderSummaryPageContent(customer: widget.customer),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

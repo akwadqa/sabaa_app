@@ -12,6 +12,7 @@ class ApiEndPoints {
   //? --- Orders ---
   static const String orderSummary = '$domain.orders.get_order_summary';
   static const String getInvoiceDetails = '$domain.orders.get_invoice_details';
+  static const String uploadCapture = '$domain.capture.upload_capture';
 
 
 

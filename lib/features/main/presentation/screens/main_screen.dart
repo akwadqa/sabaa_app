@@ -8,6 +8,7 @@ import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
 import 'package:sabaa/features/my_trips/presentation/screens/my_route_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
+import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
@@ -35,19 +36,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final now = DateTime.now();
 
     if (_lastBackPressed == null ||
-        now.difference(_lastBackPressed!) >
-            const Duration(seconds: 2)) {
+        now.difference(_lastBackPressed!) > const Duration(seconds: 2)) {
       _lastBackPressed = now;
 
-        AppToast.infoToast('press_again_to_exit'.tr());
-
+      AppToast.infoToast('press_again_to_exit'.tr());
 
       return false;
     }
 
     return true;
   }
-  static const List<NavDestination> _destinations = [
+
+  List<NavDestination> _destinations = [
     NavDestination(
       label: 'nav_home',
       icon: Icons.home_outlined,
@@ -75,20 +75,24 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final currentIndex = ref.watch(bottomNavIndexProvider);
 
     return PopScope(
-  canPop: false,
-  onPopInvokedWithResult: (didPop, result) async {
-    if (didPop) return;
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
 
-    final shouldPop = await _onWillPop();
+        final shouldPop = await _onWillPop();
 
-    if (shouldPop && mounted) {
-      Navigator.of(context).maybePop();
-    }
-  },
+        if (shouldPop && mounted) {
+          Navigator.of(context).maybePop();
+        }
+      },
       child: Scaffold(
         backgroundColor: AppColors.background,
         bottomNavigationBar: _BottomNavBar(
-          destinations: _destinations,
+          destinations: checkRole(ref,
+              vanSales: _destinations,
+              salesMan: List<NavDestination>.from(
+                  _destinations.where((item) => item.label != 'nav_stock'))),
+          // destinations: _destinations,
           currentIndex: currentIndex,
           onTap: (index) {
             ref.read(bottomNavIndexProvider.notifier).state = index;
