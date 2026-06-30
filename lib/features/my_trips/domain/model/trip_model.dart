@@ -15,7 +15,7 @@ abstract class TripModel with _$TripModel {
     required String tripType,
     required String status,
     required String salesPerson,
-    required String warehouse,
+    required String? warehouse,
     required VisitSummaryModel visitSummary,
 
     @Default([]) List<CustomerStopModel> customerStops,

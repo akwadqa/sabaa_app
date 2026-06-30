@@ -19,7 +19,7 @@ mixin _$TripModel {
   String get tripType;
   String get status;
   String get salesPerson;
-  String get warehouse;
+  String? get warehouse;
   VisitSummaryModel get visitSummary;
   List<CustomerStopModel> get customerStops;
   List<VisitModel> get visits;
@@ -101,7 +101,7 @@ abstract mixin class $TripModelCopyWith<$Res> {
       String tripType,
       String status,
       String salesPerson,
-      String warehouse,
+      String? warehouse,
       VisitSummaryModel visitSummary,
       List<CustomerStopModel> customerStops,
       List<VisitModel> visits,
@@ -130,7 +130,7 @@ class _$TripModelCopyWithImpl<$Res> implements $TripModelCopyWith<$Res> {
     Object? tripType = null,
     Object? status = null,
     Object? salesPerson = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? visitSummary = null,
     Object? customerStops = null,
     Object? visits = null,
@@ -160,10 +160,10 @@ class _$TripModelCopyWithImpl<$Res> implements $TripModelCopyWith<$Res> {
           ? _self.salesPerson
           : salesPerson // ignore: cast_nullable_to_non_nullable
               as String,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       visitSummary: null == visitSummary
           ? _self.visitSummary
           : visitSummary // ignore: cast_nullable_to_non_nullable
@@ -305,7 +305,7 @@ extension TripModelPatterns on TripModel {
             String tripType,
             String status,
             String salesPerson,
-            String warehouse,
+            String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
             List<VisitModel> visits,
@@ -359,7 +359,7 @@ extension TripModelPatterns on TripModel {
             String tripType,
             String status,
             String salesPerson,
-            String warehouse,
+            String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
             List<VisitModel> visits,
@@ -411,7 +411,7 @@ extension TripModelPatterns on TripModel {
             String tripType,
             String status,
             String salesPerson,
-            String warehouse,
+            String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
             List<VisitModel> visits,
@@ -477,7 +477,7 @@ class _TripModel implements TripModel {
   @override
   final String salesPerson;
   @override
-  final String warehouse;
+  final String? warehouse;
   @override
   final VisitSummaryModel visitSummary;
   final List<CustomerStopModel> _customerStops;
@@ -588,7 +588,7 @@ abstract mixin class _$TripModelCopyWith<$Res>
       String tripType,
       String status,
       String salesPerson,
-      String warehouse,
+      String? warehouse,
       VisitSummaryModel visitSummary,
       List<CustomerStopModel> customerStops,
       List<VisitModel> visits,
@@ -618,7 +618,7 @@ class __$TripModelCopyWithImpl<$Res> implements _$TripModelCopyWith<$Res> {
     Object? tripType = null,
     Object? status = null,
     Object? salesPerson = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
     Object? visitSummary = null,
     Object? customerStops = null,
     Object? visits = null,
@@ -648,10 +648,10 @@ class __$TripModelCopyWithImpl<$Res> implements _$TripModelCopyWith<$Res> {
           ? _self.salesPerson
           : salesPerson // ignore: cast_nullable_to_non_nullable
               as String,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       visitSummary: null == visitSummary
           ? _self.visitSummary
           : visitSummary // ignore: cast_nullable_to_non_nullable

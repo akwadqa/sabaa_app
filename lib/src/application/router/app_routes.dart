@@ -20,5 +20,6 @@ abstract class AppRoutes {
   static const String returnInvoiceScreen = '/return_invoice';
   static const String returnInvoiceReviewScreen = '/return_invoice_review';
   static const String barcodeScreen = '/barcode';
+  static const String displayCaptureScreen = '/display_capture';
 
 }

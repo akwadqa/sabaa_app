@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/repository/order_repository.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/features/order/presentation/controller/order_state.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 
@@ -9,6 +13,8 @@ part 'order_controller.g.dart';
 
 @riverpod
 class OrderController extends _$OrderController {
+  final _picker = ImagePicker();
+
   @override
   FutureOr<OrderState> build() {
     return OrderState.init();
@@ -18,7 +24,7 @@ class OrderController extends _$OrderController {
   int _currentPage = 1;
   int _totalPages = 1;
   bool _isLoadingPage = false;
-String? _customerId;
+  String? _customerId;
   Future<void> changeSelectedType(
       {required String type, required String customerId}) async {
     _invoices.clear();
@@ -40,7 +46,6 @@ String? _customerId;
       {required String customerId,
       required int page,
       bool showLoading = true}) async {
-
     try {
       _isLoadingPage = true;
       if (showLoading) {
@@ -74,7 +79,7 @@ String? _customerId;
           invoices: [..._invoices]);
       state = AsyncData(
           state.value!.copyWith(orderSummary: AsyncData(updatedSummary)));
-_customerId=customerId;
+      _customerId = customerId;
       return updatedSummary;
     } catch (e, st) {
       state = AsyncData(state.value!.copyWith(orderSummary: AsyncError(e, st)));
@@ -97,7 +102,7 @@ _customerId=customerId;
     _invoices.clear();
     _currentPage = 0;
     _totalPages = 0;
-    await getOrderSummary(customerId: customerId??_customerId!, page: 1);
+    await getOrderSummary(customerId: customerId ?? _customerId!, page: 1);
     return true;
   }
 
@@ -117,19 +122,89 @@ _customerId=customerId;
             paymentMethod: paymentMethod,
           );
 
-    state = AsyncData(
-      current.copyWith(
-        isPaying: false,
-        paymentData: response.data,
-      ),
-    );
+      state = AsyncData(
+        current.copyWith(
+          isPaying: false,
+          paymentData: response.data,
+        ),
+      );
 
-    return true;
-  } catch (e) {
-    state = AsyncData(current.copyWith(isPaying: false));
-    AppToast.errorToast(e.toString());
-    
-    return false;
+      return true;
+    } catch (e) {
+      state = AsyncData(current.copyWith(isPaying: false));
+      AppToast.errorToast(e.toString());
+
+      return false;
+    }
   }
-}
+
+  Future<UploadCaptureResponse?> uploadCapture({
+    required String visitId,
+    required String captureNote,
+  }) async {
+    final current = state.value!;
+
+    state = AsyncData(
+        current.copyWith(uploadCaptureResponse: const AsyncLoading()));
+
+    try {
+      final imageFiles = current.images!.map((path) => File(path)).toList();
+
+      final response = await ref.read(orderRepositoryProvider).upladCapture(
+            visitId: visitId,
+            images: imageFiles,
+            captureNote: captureNote,
+          );
+
+      state = AsyncData(
+        current.copyWith(
+          uploadCaptureResponse: AsyncData(response.data!),
+        ),
+      );
+
+      return response.data;
+    } catch (e, st) {
+      state =
+          AsyncData(current.copyWith(uploadCaptureResponse: AsyncError(e, st)));
+
+      return null;
+    }
+  }
+
+  Future<void> pickImage() async {
+    final current = state.value!;
+    // if (current.images?.length >= 5) return;
+
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image == null) return;
+
+    final updated = List<String>.from(current.images as Iterable<dynamic>)
+      ..add(image.path);
+
+    state = AsyncData(
+      current.copyWith(images: updated),
+    );
+  }
+
+  /// Remove image
+  void removeImage(int index) {
+    final current = state.value!;
+    final updated = List<String>.from(current.images as Iterable<dynamic>)
+      ..removeAt(index);
+
+    state = AsyncData(
+      current.copyWith(images: updated),
+    );
+  }
+
+  void addImage(String path) {
+    final current = state.value!;
+    final updated = List<String>.from(current.images as Iterable<dynamic>)
+      ..add(path);
+
+    state = AsyncData(
+      current.copyWith(images: updated),
+    );
+  }
 }

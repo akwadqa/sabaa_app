@@ -37,6 +37,9 @@ class $AssetsIconsGen {
   SvgGenImage get barcodeIcon =>
       const SvgGenImage('assets/icons/barcode_icon.svg');
 
+  /// File path: assets/icons/camera_ic.svg
+  SvgGenImage get cameraIc => const SvgGenImage('assets/icons/camera_ic.svg');
+
   /// File path: assets/icons/home.svg
   SvgGenImage get home => const SvgGenImage('assets/icons/home.svg');
 
@@ -114,6 +117,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
         barcodeIcon,
+        cameraIc,
         home,
         icSettingsLocale,
         icSettingsLogout,
