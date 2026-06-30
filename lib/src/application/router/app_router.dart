@@ -316,6 +316,7 @@ class AppRouter {
                 customer: extra?['customer'] as CustomerModel,
                 invoice: extra?['invoice'] as InvoiceModel?,
                 openPayment: extra?['openPayment'] ?? false,
+                visitId: extra?['visitId'] as String?,
               ),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
@@ -361,6 +362,7 @@ class AppRouter {
           pageBuilder: (BuildContext context, GoRouterState state) {
             return CustomTransitionPage(
               child: DisplayCapturePage(
+                visitId: state.extra as String,
               ),
               key: state.pageKey,
               transitionsBuilder:

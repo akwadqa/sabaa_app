@@ -89,21 +89,22 @@ class _RouteBody extends ConsumerWidget {
                             onContact: () =>
                                 openPhoneDialer(stop.customerPhone),
                             onViewSummary: () => _onViewSummary(stop),
-                            onTap: () =>
-                                stop.status != RouteStopStatus.pending
-                                    ? context.push(AppRoutes.orderSummaryScreen,
-                                         extra: {
-                      'customer': CustomerModel(
-                                            customerId: stop.customerId,
-                                            name: stop.customerName),
-                      'invoice': null,
-                      'openPayment': false,
-                    },
-                                        // extra: CustomerModel(
-                                        //     customerId: stop.customerId,
-                                        //     name: stop.customerName)
-                                            )
-                                    : null,
+                            onTap: () => stop.status != RouteStopStatus.pending
+                                ? context.push(
+                                    AppRoutes.orderSummaryScreen,
+                                    extra: {
+                                      'customer': CustomerModel(
+                                          customerId: stop.customerId,
+                                          name: stop.customerName),
+                                      'invoice': null,
+                                      'openPayment': false,
+                                      'visitId': stop.id,
+                                    },
+                                    // extra: CustomerModel(
+                                    //     customerId: stop.customerId,
+                                    //     name: stop.customerName)
+                                  )
+                                : null,
                           ),
                         ),
                       ),

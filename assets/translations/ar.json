@@ -194,5 +194,7 @@
   "add_photo" : "إضافة صورة",
   "display_notes" :  "ملاحظات العرض"  ,
   "display_notes_hint" : "ملاحظات اختيارية عن المنافس أو حالة الرف...",
-  "continue": "متابعة"
+  "continue": "متابعة",
+  "photo_uploaded_successfully": "تم رفع الصورة بنجاح",
+  "photo_uploaded_successfully_desc" : "تم حفظ صورة الترويج الخاصة بك بنجاح في النظام."
 }

@@ -12,7 +12,7 @@ _TripModel _$TripModelFromJson(Map<String, dynamic> json) => _TripModel(
       tripType: json['tripType'] as String,
       status: json['status'] as String,
       salesPerson: json['salesPerson'] as String,
-      warehouse: json['warehouse'] as String,
+      warehouse: json['warehouse'] as String?,
       visitSummary: VisitSummaryModel.fromJson(
           json['visitSummary'] as Map<String, dynamic>),
       customerStops: (json['customerStops'] as List<dynamic>?)

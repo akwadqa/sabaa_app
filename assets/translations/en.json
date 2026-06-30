@@ -201,6 +201,8 @@
     "add_photo": "Add Photo",
     "display_notes": "Display Notes",
     "display_notes_hint": "Optional competitor or shelf status notes..."    ,
-    "continue": "Continue"
+    "continue": "Continue",
+    "photo_uploaded_successfully": "Photo Uploaded Successfully!",
+    "photo_uploaded_successfully_desc": "Your merchandising photo has been saved "
 
 }

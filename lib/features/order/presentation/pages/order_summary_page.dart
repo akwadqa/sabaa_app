@@ -30,11 +30,13 @@ class OrderSummaryPage extends ConsumerStatefulWidget {
     required this.customer,
     this.invoice,
     this.openPayment = false,
+    required this.visitId,
   });
 
   final CustomerModel customer;
   final InvoiceModel? invoice;
   final bool openPayment;
+  final String? visitId;
 
   @override
   ConsumerState<OrderSummaryPage> createState() => _OrderSummaryPageState();
@@ -76,27 +78,30 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
       backgroundColor: AppColors.background,
       appBar: CustomDeafultAppbar(
         title: 'order_summary'.tr(),
-        actionButton: GestureDetector(
-          onTap: () {
-            context.push(AppRoutes.displayCaptureScreen);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              border: Border.all(color: AppColors.navBorder),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.darkShadow,
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
+        actionButton: widget.visitId != null
+            ? GestureDetector(
+                onTap: () {
+                  context.push(AppRoutes.displayCaptureScreen, extra: widget.visitId);
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    border: Border.all(color: AppColors.navBorder),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.darkShadow,
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Assets.icons.cameraIc.svg(),
                 ),
-              ],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Assets.icons.cameraIc.svg(),
-          ),
-        ),
+              )
+            : null,
       ),
       body: _OrderSummaryPageContent(customer: widget.customer),
       floatingActionButton: FloatingActionButton(
