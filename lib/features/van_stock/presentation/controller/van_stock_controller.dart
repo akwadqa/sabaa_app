@@ -180,7 +180,7 @@ class VanStockController extends _$VanStockController {
       return StockItem(
         name: p.productName,
         sku: p.itemCode,
-        stockLabel: '${p.availableStock.toStringAsFixed(0)}',
+        stockLabel: '${p.availableStock}',
         // stockLevel: p.stockLevel,
         price: p.price,
         imageUrl: p.productImage ?? 'https://placehold.co/64x64',
