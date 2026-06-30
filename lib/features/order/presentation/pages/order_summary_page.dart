@@ -21,6 +21,7 @@ import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_app_bar.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
+import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
@@ -78,30 +79,33 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
       backgroundColor: AppColors.background,
       appBar: CustomDeafultAppbar(
         title: 'order_summary'.tr(),
-        actionButton: widget.visitId != null
-            ? GestureDetector(
-                onTap: () {
-                  context.push(AppRoutes.displayCaptureScreen, extra: widget.visitId);
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    border: Border.all(color: AppColors.navBorder),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.darkShadow,
-                        blurRadius: 2,
-                        offset: const Offset(0, 1),
+        actionButton: checkRole(ref,
+            salesMan: widget.visitId != null
+                ? GestureDetector(
+                    onTap: () {
+                      context.push(AppRoutes.displayCaptureScreen,
+                          extra: widget.visitId);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        border: Border.all(color: AppColors.navBorder),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.darkShadow,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    ],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Assets.icons.cameraIc.svg(),
-                ),
-              )
-            : null,
+                      child: Assets.icons.cameraIc.svg(),
+                    ),
+                  )
+                : null,
+            vanSales: null),
       ),
       body: _OrderSummaryPageContent(customer: widget.customer),
       floatingActionButton: FloatingActionButton(
