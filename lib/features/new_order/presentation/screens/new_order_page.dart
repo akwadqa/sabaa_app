@@ -25,6 +25,7 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 import '../controller/new_order_controller.dart';
 import '../controller/new_order_state.dart';
+import '../widgets/order_tab_switcher.dart';
 
 class NewOrderPage extends ConsumerStatefulWidget {
   const NewOrderPage({super.key, required this.customer});
@@ -45,7 +46,17 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
       ref.read(newOrderControllerProvider.notifier).search(query);
     });
   }
-
+@override
+void initState() {
+  super.initState();
+  // ✅ Sync initial mode
+  Future.microtask(() {
+    final mode = ref.read(orderModeControllerProvider);
+    ref
+        .read(newOrderControllerProvider.notifier)
+        .setIsReturn(mode == OrderMode.returnItems);
+  });
+}
   @override
   void dispose() {
     _searchController.dispose();
@@ -67,6 +78,11 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
       data: (s) => s.hasSelection,
       orElse: () => false,
     );
+     // ✅ Listen to mode changes and sync into NewOrderController state
+  ref.listen<OrderMode>(orderModeControllerProvider, (previous, next) {
+    final isReturnMode = next == OrderMode.returnItems;
+    ref.read(newOrderControllerProvider.notifier).setIsReturn(isReturnMode);
+  });
     return Scaffold(
         backgroundColor: AppColors.background,
         appBar: _buildAppBar(isReturn),
@@ -86,8 +102,9 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
               isFiled: true,
               height: 48,
               width: double.infinity,
-              backgroundColor: hasItems ? AppColors.primary : AppColors.gray,
-              radius: 8,
+     backgroundColor: hasItems
+              ? (isReturn ? AppColors.accent : AppColors.primary) // ✅
+              : AppColors.gray,              radius: 8,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 10,
@@ -95,7 +112,8 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
                   Icon(Icons.check_circle_outline,
                       color: AppColors.white, size: 25),
                   // Text('add_to_order'.tr()),
-                  Text('add_to_order'.tr(),
+                  Text(
+                isReturn ? 'add_to_return'.tr() : 'add_to_order'.tr(), // ✅
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displaySmall!.copyWith(
                           fontSize: 16,
@@ -113,6 +131,8 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
                   state: state,
                   searchController: _searchController,
                   onSearchChanged: _onSearchChanged,
+                          isReturn: isReturn,
+
                 )));
   }
 
@@ -171,11 +191,14 @@ class _OrderBody extends ConsumerWidget {
     required this.state,
     required this.searchController,
     required this.onSearchChanged,
+        required this.isReturn, // ✅ NEW
+
   });
 
   final NewOrderState state;
   final TextEditingController searchController;
   final ValueChanged<String> onSearchChanged;
+  final bool isReturn;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -185,7 +208,7 @@ class _OrderBody extends ConsumerWidget {
         spacing: 18,
         children: [
           16.verticalSpace,
-          // const OrderTabSwitcher(),
+          const OrderTabSwitcher(),
           OrderSearchBar(
             controller: searchController,
             hintKey: 'search_items_barcode',
@@ -204,9 +227,9 @@ class _OrderBody extends ConsumerWidget {
                 ref.read(newOrderControllerProvider.notifier).selectCategory(i),
           ),
           NewOrderSectionHeaderWidget(
-            titleKey: 'items',
+                  titleKey: isReturn ? 'return_items' : 'items', // ✅
             count: state.allItems.length,
-            isReturn: false,
+            isReturn: isReturn, // ✅
           ),
           Expanded(
             child: AppPaginationWidget(
@@ -225,7 +248,7 @@ class _OrderBody extends ConsumerWidget {
                         backgroundColor: AppColors.white,
                       ),
                     ),
-                if (state.filteredItems.isEmpty) AppEmptyDataWidget(),
+                if (state.filteredItems.isEmpty && state.listState is !AsyncLoading) AppEmptyDataWidget(),
 
                   ...state.filteredItems.map((item) {
                     final isSelected =

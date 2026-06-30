@@ -24,7 +24,7 @@ abstract class OrderProductModel with _$OrderProductModel {
     String? productImage,
     required String category,
     required double price,
-    required double availableStock,
+    required String availableStock,
     required List<UomModel> uoms,
   }) = _OrderProductModel;
 

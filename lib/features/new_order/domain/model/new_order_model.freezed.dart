@@ -366,7 +366,7 @@ mixin _$OrderProductModel {
   String? get productImage;
   String get category;
   double get price;
-  double get availableStock;
+  String get availableStock;
   List<UomModel> get uoms;
 
   /// Create a copy of OrderProductModel
@@ -429,7 +429,7 @@ abstract mixin class $OrderProductModelCopyWith<$Res> {
       String? productImage,
       String category,
       double price,
-      double availableStock,
+      String availableStock,
       List<UomModel> uoms});
 }
 
@@ -478,7 +478,7 @@ class _$OrderProductModelCopyWithImpl<$Res>
       availableStock: null == availableStock
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
       uoms: null == uoms
           ? _self.uoms
           : uoms // ignore: cast_nullable_to_non_nullable
@@ -586,7 +586,7 @@ extension OrderProductModelPatterns on OrderProductModel {
             String? productImage,
             String category,
             double price,
-            double availableStock,
+            String availableStock,
             List<UomModel> uoms)?
         $default, {
     required TResult orElse(),
@@ -622,7 +622,7 @@ extension OrderProductModelPatterns on OrderProductModel {
             String? productImage,
             String category,
             double price,
-            double availableStock,
+            String availableStock,
             List<UomModel> uoms)
         $default,
   ) {
@@ -656,7 +656,7 @@ extension OrderProductModelPatterns on OrderProductModel {
             String? productImage,
             String category,
             double price,
-            double availableStock,
+            String availableStock,
             List<UomModel> uoms)?
         $default,
   ) {
@@ -697,7 +697,7 @@ class _OrderProductModel implements OrderProductModel {
   @override
   final double price;
   @override
-  final double availableStock;
+  final String availableStock;
   final List<UomModel> _uoms;
   @override
   List<UomModel> get uoms {
@@ -772,7 +772,7 @@ abstract mixin class _$OrderProductModelCopyWith<$Res>
       String? productImage,
       String category,
       double price,
-      double availableStock,
+      String availableStock,
       List<UomModel> uoms});
 }
 
@@ -821,7 +821,7 @@ class __$OrderProductModelCopyWithImpl<$Res>
       availableStock: null == availableStock
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
-              as double,
+              as String,
       uoms: null == uoms
           ? _self._uoms
           : uoms // ignore: cast_nullable_to_non_nullable

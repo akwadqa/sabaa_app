@@ -29,7 +29,7 @@ _OrderProductModel _$OrderProductModelFromJson(Map<String, dynamic> json) =>
       productImage: json['productImage'] as String?,
       category: json['category'] as String,
       price: (json['price'] as num).toDouble(),
-      availableStock: (json['availableStock'] as num).toDouble(),
+      availableStock: json['availableStock'] as String,
       uoms: (json['uoms'] as List<dynamic>)
           .map((e) => UomModel.fromJson(e as Map<String, dynamic>))
           .toList(),

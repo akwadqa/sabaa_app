@@ -30,13 +30,14 @@ Map<String, dynamic> _$OrderSummaryModelToJson(_OrderSummaryModel instance) =>
 
 _InvoiceModel _$InvoiceModelFromJson(Map<String, dynamic> json) =>
     _InvoiceModel(
-      invoiceId: json['invoiceId'] as String,
-      postingDate: json['postingDate'] as String,
-      status: json['status'] as String,
-      grandTotal: (json['grandTotal'] as num).toDouble(),
-      outstandingAmount: (json['outstandingAmount'] as num).toDouble(),
-      paidAmount: (json['paidAmount'] as num).toDouble(),
-      isReturn: json['isReturn'] as bool,
+      invoiceId: _readInvoiceId(json, 'invoiceId') as String,
+      postingDate: json['postingDate'] as String? ?? '',
+      status: json['status'] as String? ?? '',
+      grandTotal:
+          (_readGrandTotal(json, 'grandTotal') as num?)?.toDouble() ?? 0.0,
+      outstandingAmount: (json['outstandingAmount'] as num?)?.toDouble() ?? 0.0,
+      paidAmount: (json['paidAmount'] as num?)?.toDouble() ?? 0.0,
+      isReturn: json['isReturn'] as bool? ?? false,
       returnAgainst: json['returnAgainst'] as String?,
     );
 

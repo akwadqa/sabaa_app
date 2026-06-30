@@ -10,8 +10,8 @@ abstract class ProductModel with _$ProductModel {
     String? productImage,
     required String category,
     required double price,
-    required double availableStock,
-    // required String stockLevel,
+    required String availableStock,
+    required String defaultUom,
     required List<UomModel> uoms,
 
   }) = _ProductModel;

@@ -153,6 +153,7 @@
     "invoice_summary": "ملخص الفاتورة",
     "invoice_review": "مراجعة الفاتورة",
     "add_to_order": "إضافة إلى الطلب",
+    "add_to_return": "إضافة إلى الإرجاع",
     "confirm_invoice": "تأكيد الفاتوره",
     "swipe_to_confirm": "اسحب للتأكيد",
     "transaction_successful": "تمت العملية بنجاح",
@@ -187,7 +188,19 @@
   "pdf_preview": "معاينة PDF",
   "discard": "تجاهل",
   "download": "تحميل",
- 
-  "failed_to_load_invoice": "فشل في تحميل الفاتورة"
+  "add_remark": "إضافة ملاحظة",
+  "remark_hint": "اكتب ملاحظاتك هنا...",
+  "clear": "مسح",
+  "failed_to_load_invoice": "فشل في تحميل الفاتورة",
+  "payment_receipt": "إيصال دفع",
+  "payment_successful": "تم الدفع بنجاح",
+  "amount_paid": "المبلغ المدفوع",
+  "payment_type": "نوع الدفع",
+  "print_receipt": "طباعة الإيصال",
+  "return_items": "المنتجات المرتجعة",
+  "return_summary": "ملخص الإرجاع",
+  "return_invoice_review": "مراجعة فاتورة الإرجاع",
+  "swipe_to_confirm_return": "اسحب لتأكيد الإرجاع",
+  "return_invoice_created_successfully": "تم إنشاء فاتورة الإرجاع بنجاح"
 
 }

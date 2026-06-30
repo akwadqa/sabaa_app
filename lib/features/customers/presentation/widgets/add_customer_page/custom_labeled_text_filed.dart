@@ -45,6 +45,7 @@ class CustomLabeledTextField extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           decoration: InputDecoration(
+            
             hintText: hint.tr(),
             hintStyle: AppTextStyle.rubikRegular16
                 .copyWith(color: AppColors.textSecondary),

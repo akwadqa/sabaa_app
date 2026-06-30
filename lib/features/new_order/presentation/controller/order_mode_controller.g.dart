@@ -42,7 +42,7 @@ final class OrderModeControllerProvider
 }
 
 String _$orderModeControllerHash() =>
-    r'763c168293371d0b494db3d4217905d41511b5ee';
+    r'e7d3d24b653d25b55ae85e32170be8869c3ed86f';
 
 abstract class _$OrderModeController extends $Notifier<OrderMode> {
   OrderMode build();

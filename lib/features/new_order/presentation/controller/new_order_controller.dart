@@ -188,13 +188,16 @@ class NewOrderController extends _$NewOrderController {
     if (map.containsKey(item.itemCode)) {
       map.remove(item.itemCode);
     } else {
-      map[item.itemCode] = SelectedItem(
-        product: item,
+     final defaultUnit = item.uoms.isNotEmpty
+        ? item.uoms.first.uom
+        : (item.defaultUom ?? 'Box');
 
-        quantity: 1,
-        unit: 'Box', // default
-      );
-    }
+    map[item.itemCode] = SelectedItem(
+      product: item,
+      quantity: 1,
+      unit: defaultUnit,
+    );
+  }
 
     state = AsyncData(current.copyWith(selectedItems: map));
   }
@@ -223,7 +226,7 @@ class NewOrderController extends _$NewOrderController {
 
     if (existing == null) return;
 
-    if (existing.quantity >= item.availableStock) return;
+    if (existing.quantity >= int.parse(item.availableStock.split(" ").first)) return;
     map[item.itemCode] = existing.copyWith(
       quantity: existing.quantity + 1,
     );
@@ -250,7 +253,7 @@ class NewOrderController extends _$NewOrderController {
   }
 
   void setQuantity(ProductModel item, int qty) {
-    if (qty > item.availableStock) {
+    if (qty >  int.parse(item.availableStock.split(" ").first)) {
       AppToast.errorToast('Not enough stock');
       return;
     }
@@ -271,76 +274,100 @@ Future<InvoiceModel?> createInvoice() async {
 
   try {
     final repo = ref.read(newOrderRepositoryProvider);
+final items = current.selectedItems.values.map((e) {
+      final map = <String, dynamic>{
+        "itemCode": e.product.itemCode,
+        "qty": e.quantity,
+        "uom": e.unit,
+      };
 
-    final response = await repo.createInvoice(
-      customerId: current.customer!.customerId!,
-      items: current.selectedItems.values.map((e) {
-        return {
-          "itemCode": e.product.itemCode,
-          "qty": e.quantity,
-          "uom": e.unit,
-        };
-      }).toList(),
-      deliveryFee: current.deliveryFee!,
-    );
+      // ✅ Send rate ONLY for returns when custom rate is set
+      if (current.isReturn && e.customRate != null) {
+        map["rate"] = e.customRate;
+      }
 
-    final latest = state.value!;
-    state = AsyncData(latest.copyWith(
-      selectedItems: {},
-      isSubmitting: false,
-    ));
+      return map;
+    }).toList();
 
-    return response.data; // 🔥 RETURN INVOICE
+    // final response = await repo.createInvoice(
+    //   customerId: current.customer!.customerId!,
+    //   items: current.selectedItems.values.map((e) {
+    //     return {
+    //       "itemCode": e.product.itemCode,
+    //       "qty": e.quantity,
+    //       "uom": e.unit,
+    //     };
+    //   }).toList(),
+    //   deliveryFee: current.deliveryFee!,
+    //    remark: current.remark, 
+    // );
+    if (current.isReturn) {
+      // ✅ Use dedicated return API
+      final response = await repo.createReturnInvoice(
+        customerId: current.customer!.customerId!,
+        items: items,
+        deliveryFee: current.deliveryFee ?? "0",
+        remark: current.remark,
+      );
+
+      final latest = state.value!;
+      state = AsyncData(latest.copyWith(
+        selectedItems: {},
+        isSubmitting: false,
+      ));
+
+      return response.data; 
+    } else {
+      // existing create invoice
+      final response = await repo.createInvoice(
+        customerId: current.customer!.customerId!,
+        items: items,
+        deliveryFee: current.deliveryFee ?? "0",
+        remark: current.remark,
+      );
+
+      final latest = state.value!;
+      state = AsyncData(latest.copyWith(
+        selectedItems: {},
+        isSubmitting: false,
+      ));
+
+      // Convert InvoiceModel to ReturnOrderResponse for unified return type
+      // OR keep two methods — better to keep separate for clean type safety
+      // But since _showSuccessDialog expects InvoiceModel?, we'll cast/wrap
+      return response.data; 
+    }
+    // final response = current.isReturn
+    //     ? await repo.createReturnInvoice(  // ✅ return invoice API
+    //         customerId: current.customer!.customerId!,
+    //         items: items,
+    //         deliveryFee: current.deliveryFee ?? "0",
+    //         remark: current.remark,
+    //       )
+    //     : await repo.createInvoice(  // existing create invoice API
+    //         customerId: current.customer!.customerId!,
+    //         items: items,
+    //         deliveryFee: current.deliveryFee ?? "0",
+    //         remark: current.remark,
+    //       );
+    // final latest = state.value!;
+    // state = AsyncData(latest.copyWith(
+    //   selectedItems: {},
+    //   isSubmitting: false,
+    // ));
+
+    // return response.data; // 🔥 RETURN INVOICE
 
   } catch (e) {
     final latest = state.value!;
     state = AsyncData(latest.copyWith(isSubmitting: false));
-    AppToast.errorToast('Failed to create invoice');
-    return null;
+    AppToast.errorToast(
+      current.isReturn
+          ? 'Failed to create return'
+          : 'Failed to create invoice',
+    );    return null;
   }
 }
-  // Future<bool> createInvoice() async {
-  //   final current = state.value!;
-  //   state = AsyncData(current.copyWith(isSubmitting: true));
-
-  //   try {
-  //     final customerId = current.customer?.customerId;
-  //     final deliveryFee = current.deliveryFee;
-  //     final repo = ref.read(newOrderRepositoryProvider);
-
-  //     final items = current.selectedItems.values.map((e) {
-  //       return {
-  //         "itemCode": e.product.itemCode,
-  //         "qty": e.quantity,
-  //         "uom": e.unit,
-  //       };
-  //     }).toList();
-
-  //     if (customerId == null) {
-  //       Dev.logError('customer?.id==null');
-
-  //       return false;
-  //     }
-  //     await repo.createInvoice(
-  //       customerId: customerId,
-  //       items: items,
-  //       deliveryFee: deliveryFee!,
-  //     );
-  //   final latest = state.value!;
-
-  //     state =
-  //         AsyncData(latest.copyWith(selectedItems: {}, isSubmitting: false));
-
-  //     return true;
-  //   } catch (e) {
-  //   final latest = state.value!;
-
-  //     state = AsyncData(latest.copyWith(isSubmitting: false));
-  //     AppToast.errorToast('Failed to create invoice');
-  //     return false;
-  //   }
-  // }
-
   void clearOrder() {
     final current = state.value!;
 
@@ -353,6 +380,36 @@ Future<InvoiceModel?> createInvoice() async {
       ),
     );
   }
+  void setIsReturn(bool value) {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(isReturn: value));
+}
+void updateRate(String itemCode, double? rate) {
+  final current = state.value!;
+  final map = Map<String, SelectedItem>.from(current.selectedItems);
+
+  final existing = map[itemCode];
+  if (existing == null) return;
+
+  map[itemCode] = existing.copyWith(
+    customRate: rate,
+    clearCustomRate: rate == null,
+  );
+
+  state = AsyncData(current.copyWith(selectedItems: map));
+}
+void editRemark(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    // ✅ Use clearRemark flag to force null
+    state = AsyncData(
+      state.value!.copyWith(clearRemark: true),
+    );
+  } else {
+    state = AsyncData(
+      state.value!.copyWith(remark: value.trim()),
+    );
+  }
+}
 
   void editDeliveryFee(String value) {
     final current = state.value!;

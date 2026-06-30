@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -27,6 +28,9 @@ class OrderItemCard extends ConsumerStatefulWidget {
     // required this.availableStock,
     required this.onUnitChanged,
     required this.selectedUnit,
+    this.allowEditPrice = false,
+    this.customRate,
+    this.onRateChanged,
   });
 
   final bool isSelected;
@@ -38,7 +42,9 @@ class OrderItemCard extends ConsumerStatefulWidget {
   final VoidCallback onDelete;
   final Function(String) onUnitChanged;
   final String selectedUnit;
-
+  final bool allowEditPrice;
+  final double? customRate;
+  final ValueChanged<double?>? onRateChanged;
   @override
   ConsumerState<OrderItemCard> createState() => _OrderItemCardState();
 }
@@ -52,6 +58,15 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
     _quantityController =
         TextEditingController(text: widget.quantity.toString());
     // Default to 'Box'
+  }
+
+  double _defaultPriceForSelectedUnit() {
+    final uoms = _effectiveUoms();
+    final uom = uoms.firstWhere(
+      (u) => u.uom == widget.selectedUnit,
+      orElse: () => uoms.first,
+    );
+    return uom.price;
   }
 
   @override
@@ -68,43 +83,44 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
     super.dispose();
   }
 
-  void _handleQuantityInput(String value) {
-    if (value.isEmpty) {
-      _quantityController.clear();
-      return;
-    }
+  // void _handleQuantityInput(String value) {
+  //   if (value.isEmpty) {
+  //     _quantityController.clear();
+  //     return;
+  //   }
 
-    final parsed = int.tryParse(value);
-    if (parsed == null) {
-      // Reset to previous value
-      _quantityController.text = widget.quantity.toString();
-      return;
-    }
+  //   final parsed = int.tryParse(value);
+  //   if (parsed == null) {
+  //     // Reset to previous value
+  //     _quantityController.text = widget.quantity.toString();
+  //     return;
+  //   }
 
-    // Validate against available stock
-    if (parsed > widget.item.availableStock) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              'Cannot exceed available stock: ${widget.item.availableStock}'),
-          backgroundColor: AppColors.accent,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      _quantityController.text = widget.item.availableStock.toString();
-      return;
-    }
+  //   // Validate against available stock
+  //   if (parsed > widget.item.availableStock) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //             'Cannot exceed available stock: ${widget.item.availableStock}'),
+  //         backgroundColor: AppColors.accent,
+  //         duration: const Duration(seconds: 2),
+  //       ),
+  //     );
+  //     _quantityController.text = widget.item.availableStock.toString();
+  //     return;
+  //   }
 
-    if (parsed < 1) {
-      _quantityController.text = '1';
-      return;
-    }
+  //   if (parsed < 1) {
+  //     _quantityController.text = '1';
+  //     return;
+  //   }
 
-    // Update the quantity via controller
-    // You'll need to dispatch this to the controller
-    // For now, we update the text field
-    _quantityController.text = parsed.toString();
-  }
+  //   // Update the quantity via controller
+  //   // You'll need to dispatch this to the controller
+  //   // For now, we update the text field
+  //   _quantityController.text = parsed.toString();
+  // }
+
   // ── Style helpers ────────────────────────────────────────────────────────────
 
   // Color get _imageBg    => widget.item.isReturn ? const Color(0xFFFFEDE0) : const Color(0xFFF3F4F6);
@@ -112,28 +128,49 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
   // Color get _borderColor => widget.item.isReturn ? AppColors.primary : const Color(0xFFF3F4F6);
 
   double getPriceByUom(OrderProductModel product, String selectedUom) {
+    if (product.uoms.isEmpty) return 0.0; // ✅ Guard
+
     final uom = product.uoms.firstWhere(
       (e) => e.uom == selectedUom,
       orElse: () => product.uoms.first,
     );
-
     return uom.price;
+  }
+
+  List<UomModel> _effectiveUoms() {
+    if (widget.item.uoms.isNotEmpty) return widget.item.uoms;
+
+    // ✅ Fallback: create one UOM from defaultUom + price
+    return [
+      UomModel(
+        uom: widget.item.defaultUom ?? 'Pcs',
+        price: widget.item.price,
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final units = widget.item.uoms.map((e) => e.uom).toList();
+    // ✅ Guard against empty uoms list
+    if (widget.item.uoms.isEmpty) {
+      return _buildErrorCard('Item has no units');
+    }
+    final uoms = _effectiveUoms();
+    final units = uoms.map((e) => e.uom).toList();
+
+    // final units = widget.item.uoms.map((e) => e.uom).toList();
     final safeUnit =
         units.contains(widget.selectedUnit) ? widget.selectedUnit : units.first;
-    final selectedPrice = widget.item.uoms
+    final defaultPrice = uoms
         .firstWhere(
           (e) => e.uom == widget.selectedUnit,
-          orElse: () => widget.item.uoms.first,
+          orElse: () => uoms.first, // safe now — checked above
         )
         .price;
-    final qty = widget.quantity;
 
-    final total = selectedPrice * qty;
+    final effectivePrice = widget.customRate ?? defaultPrice;
+    final qty = widget.quantity;
+    final total = effectivePrice * qty;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -171,7 +208,6 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                   children: [
                     Row(
                       mainAxisSize: MainAxisSize.min,
-                      
                       children: [
                         Flexible(
                           child: Text(
@@ -185,15 +221,15 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                           ),
                         ),
                         12.horizontalSpace,
-              if (widget.isSelected)
-                GestureDetector(
-                  onTap: widget.onDelete,
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: AppColors.red,
-                    size: 25,
-                  ),
-                ),
+                        if (widget.isSelected)
+                          GestureDetector(
+                            onTap: widget.onDelete,
+                            child: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppColors.red,
+                              size: 25,
+                            ),
+                          ),
                       ],
                     ),
                     8.verticalSpace,
@@ -208,13 +244,32 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                             ),
                           ),
                         ),
-                        // 20.horizontalSpace,
-                        Text(
-                          selectedPrice.toCurrency(),
-                          style: AppTextStyle.interSemiBold14.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        20.horizontalSpace,
+                        // ✅ Show effective price (custom OR default)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // If there's a custom rate, show old price with strike-through
+                            if (widget.customRate != null &&
+                                widget.customRate != defaultPrice)
+                              Text(
+                                defaultPrice.toCurrency(),
+                                style: AppTextStyle.interRegular12.copyWith(
+                                  color: AppColors.blueGrey,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            Text(
+                              effectivePrice
+                                  .toCurrency(), // ✅ uses custom or default
+                              style: AppTextStyle.interSemiBold14.copyWith(
+                                color: widget.customRate != null
+                                    ? AppColors.accent
+                                    : AppColors.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -227,7 +282,6 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
               //     color: AppColors.primary,
               //     size: 22,
               //   ),
-              
             ],
           ),
           12.verticalSpace,
@@ -251,11 +305,137 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                         .read(newOrderControllerProvider.notifier)
                         .setQuantity(widget.item, value);
                   },
-                  maxStock: widget.item.availableStock.toInt(),
+                  maxStock: int.tryParse(
+                        (widget.item.availableStock).split(" ").firstOrNull ??
+                            '0',
+                      ) ??
+                      999,
                 ),
               ],
             ),
           // ── Bottom row: stepper + delete ──────────────────────────
+          if (widget.allowEditPrice && widget.isSelected) ...[
+            const SizedBox(height: 8),
+            _EditableRateField(
+              itemCode: widget.item.itemCode,
+              defaultRate: defaultPrice,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorCard(String message) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.errorRed),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: AppColors.errorRed),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '${widget.item.productName}: $message',
+              style: AppTextStyle.interRegular14
+                  .copyWith(color: AppColors.errorRed),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+// at the bottom of order_item_card.dart OR as a separate file
+
+// Inside order_item_card.dart (or wherever _EditableRateField is)
+
+class _EditableRateField extends ConsumerStatefulWidget {
+  const _EditableRateField({
+    required this.itemCode,
+    required this.defaultRate,
+  });
+
+  final String itemCode;
+  final double defaultRate;
+
+  @override
+  ConsumerState<_EditableRateField> createState() => _EditableRateFieldState();
+}
+
+class _EditableRateFieldState extends ConsumerState<_EditableRateField> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = ref.read(newOrderControllerProvider).value;
+    final selected = state?.selectedItems[widget.itemCode];
+    final initial = selected?.customRate ?? widget.defaultRate;
+    _controller = TextEditingController(text: initial.toStringAsFixed(2));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.navBorder),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.edit_outlined,
+            color: AppColors.accent,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'rate'.tr(),
+            style: AppTextStyle.interMedium14.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              textAlign: TextAlign.end,
+              style: AppTextStyle.interSemiBold14.copyWith(
+                color: AppColors.textPrimary,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                suffixText: 'QAR',
+                suffixStyle: AppTextStyle.interRegular12.copyWith(
+                  color: AppColors.blueGrey,
+                ),
+              ),
+              onChanged: (value) {
+                final parsed = double.tryParse(value);
+                // ✅ Update controller state directly
+                ref
+                    .read(newOrderControllerProvider.notifier)
+                    .updateRate(widget.itemCode, parsed);
+              },
+            ),
+          ),
         ],
       ),
     );

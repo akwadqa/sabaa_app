@@ -1,6 +1,6 @@
 import '../../../van_stock/domain/model/product_model.dart';
 
-enum OrderMode { newSale, returnItems }
+enum OrderMode { newOrder, returnItems }
 class OrderItem {
   const OrderItem({
     required this.id,
@@ -22,22 +22,27 @@ class SelectedItem {
   final ProductModel product;
   final int quantity;
   final String unit;
+  final double? customRate;  // ✅ NEW — null = use default price
 
   const SelectedItem({
     required this.product,
     required this.quantity,
     required this.unit,
+    this.customRate,  // ✅ NEW
   });
 
-  SelectedItem copyWith({
+ SelectedItem copyWith({
     ProductModel? product,
     int? quantity,
     String? unit,
+    double? customRate,
+    bool clearCustomRate = false,  // ✅ allow null reset
   }) {
     return SelectedItem(
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,
+      customRate: clearCustomRate ? null : (customRate ?? this.customRate),
     );
   }
 }

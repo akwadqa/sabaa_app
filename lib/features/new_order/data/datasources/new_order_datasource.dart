@@ -41,6 +41,7 @@ class NewOrderDatasource {
 
 Future<ApiResponse<InvoiceModel>> createInvoice({
   required String customerId,
+   String? remark,
   required String deliveryFee,
   required List<Map<String, dynamic>> items,
 }) async {
@@ -51,6 +52,8 @@ Future<ApiResponse<InvoiceModel>> createInvoice({
         "customer_id": customerId,
         "items": items,
         "delivery_charge": deliveryFee,
+                if (remark != null && remark.isNotEmpty) "remarks": remark,
+
       },
     );
 
@@ -65,5 +68,43 @@ Future<ApiResponse<InvoiceModel>> createInvoice({
     rethrow;
   }
 }
+
+
+  Future<ApiResponse<InvoiceModel>> createReturnOrder({
+    // required String invoiceId,
+    required List<Map<String, dynamic>> items,
+    
+  required String customerId,
+   String? remark,
+  required String deliveryFee,
+    String? returnReason,
+  }) async {
+    try {
+      final response = await _networkService.post(
+        ApiEndPoints.createReturnOrder, // Assuming endpoint exists
+        data: {
+          // "invoice_id": invoiceId,
+        if (remark != null && remark.isNotEmpty) "remarks": remark,
+
+        "delivery_charge": deliveryFee,
+        "customer_id": customerId,
+
+          "items": items,
+          // if (returnReason != null) "return_reason": returnReason,
+          "is_return": true,
+        },
+      );
+
+      if (response.statusCode != 201) {
+        Dev.logError("Create return order failed in datasource");
+        throw Exception('Create return order failed');
+      }
+
+    return ApiResponse.fromJson(response.data, (json) =>InvoiceModel.fromJson(json as Map<String,dynamic>));
+    } catch (e) {
+      Dev.logError('Error in createReturnOrder: $e');
+      rethrow;
+    }
+  }
 
 }

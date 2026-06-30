@@ -14,6 +14,22 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart' as _svg;
 import 'package:vector_graphics/vector_graphics.dart' as _vg;
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/Cairo-Bold.ttf
+  String get cairoBold => 'assets/fonts/Cairo-Bold.ttf';
+
+  /// File path: assets/fonts/Cairo-Medium.ttf
+  String get cairoMedium => 'assets/fonts/Cairo-Medium.ttf';
+
+  /// File path: assets/fonts/Cairo-Regular.ttf
+  String get cairoRegular => 'assets/fonts/Cairo-Regular.ttf';
+
+  /// List of all assets
+  List<String> get values => [cairoBold, cairoMedium, cairoRegular];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -204,6 +220,7 @@ class Assets {
   const Assets._();
 
   static const String aEnv = '.env';
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLottieGen lottie = $AssetsLottieGen();

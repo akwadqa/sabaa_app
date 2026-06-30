@@ -477,9 +477,12 @@ class __$OrderSummaryModelCopyWithImpl<$Res>
 
 /// @nodoc
 mixin _$InvoiceModel {
+// ✅ Accept either invoiceId or returnId
+  @JsonKey(readValue: _readInvoiceId)
   String get invoiceId;
   String get postingDate;
-  String get status;
+  String get status; // ✅ Accept either grandTotal or total
+  @JsonKey(readValue: _readGrandTotal)
   double get grandTotal;
   double get outstandingAmount;
   double get paidAmount;
@@ -537,10 +540,10 @@ abstract mixin class $InvoiceModelCopyWith<$Res> {
       _$InvoiceModelCopyWithImpl;
   @useResult
   $Res call(
-      {String invoiceId,
+      {@JsonKey(readValue: _readInvoiceId) String invoiceId,
       String postingDate,
       String status,
-      double grandTotal,
+      @JsonKey(readValue: _readGrandTotal) double grandTotal,
       double outstandingAmount,
       double paidAmount,
       bool isReturn,
@@ -699,10 +702,10 @@ extension InvoiceModelPatterns on InvoiceModel {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            String invoiceId,
+            @JsonKey(readValue: _readInvoiceId) String invoiceId,
             String postingDate,
             String status,
-            double grandTotal,
+            @JsonKey(readValue: _readGrandTotal) double grandTotal,
             double outstandingAmount,
             double paidAmount,
             bool isReturn,
@@ -743,10 +746,10 @@ extension InvoiceModelPatterns on InvoiceModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            String invoiceId,
+            @JsonKey(readValue: _readInvoiceId) String invoiceId,
             String postingDate,
             String status,
-            double grandTotal,
+            @JsonKey(readValue: _readGrandTotal) double grandTotal,
             double outstandingAmount,
             double paidAmount,
             bool isReturn,
@@ -785,10 +788,10 @@ extension InvoiceModelPatterns on InvoiceModel {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            String invoiceId,
+            @JsonKey(readValue: _readInvoiceId) String invoiceId,
             String postingDate,
             String status,
-            double grandTotal,
+            @JsonKey(readValue: _readGrandTotal) double grandTotal,
             double outstandingAmount,
             double paidAmount,
             bool isReturn,
@@ -817,30 +820,39 @@ extension InvoiceModelPatterns on InvoiceModel {
 @JsonSerializable()
 class _InvoiceModel implements InvoiceModel {
   const _InvoiceModel(
-      {required this.invoiceId,
-      required this.postingDate,
-      required this.status,
-      required this.grandTotal,
-      required this.outstandingAmount,
-      required this.paidAmount,
-      required this.isReturn,
+      {@JsonKey(readValue: _readInvoiceId) required this.invoiceId,
+      this.postingDate = '',
+      this.status = '',
+      @JsonKey(readValue: _readGrandTotal) this.grandTotal = 0.0,
+      this.outstandingAmount = 0.0,
+      this.paidAmount = 0.0,
+      this.isReturn = false,
       this.returnAgainst});
   factory _InvoiceModel.fromJson(Map<String, dynamic> json) =>
       _$InvoiceModelFromJson(json);
 
+// ✅ Accept either invoiceId or returnId
   @override
+  @JsonKey(readValue: _readInvoiceId)
   final String invoiceId;
   @override
+  @JsonKey()
   final String postingDate;
   @override
+  @JsonKey()
   final String status;
+// ✅ Accept either grandTotal or total
   @override
+  @JsonKey(readValue: _readGrandTotal)
   final double grandTotal;
   @override
+  @JsonKey()
   final double outstandingAmount;
   @override
+  @JsonKey()
   final double paidAmount;
   @override
+  @JsonKey()
   final bool isReturn;
   @override
   final String? returnAgainst;
@@ -902,10 +914,10 @@ abstract mixin class _$InvoiceModelCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String invoiceId,
+      {@JsonKey(readValue: _readInvoiceId) String invoiceId,
       String postingDate,
       String status,
-      double grandTotal,
+      @JsonKey(readValue: _readGrandTotal) double grandTotal,
       double outstandingAmount,
       double paidAmount,
       bool isReturn,

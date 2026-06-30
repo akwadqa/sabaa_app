@@ -159,6 +159,7 @@
     "invoice_summary": "Invoice summary",
     "invoice_review": "Invoice review",
     "add_to_order": "Add to order",
+    "add_to_return": "Add to return",
     "confirm_invoice": "Confirm invoice",
     "swipe_to_confirm": "Swipe to confirm",
     "transaction_successful": "Transaction Successful",
@@ -184,8 +185,6 @@
     "qty": "Qty",
     "unit": "Unit",
     "price": "Price",
-    "thank_you_for_your_business": "Thank you for your business",
-    "failed_to_generate_pdf": "Failed to generate PDF",
     "failed_to_share_pdf": "Failed to share PDF",
     "invoice_id": "Invoice ID",
     "share": "Share",
@@ -193,7 +192,18 @@
     "pdf_preview": "PDF Preview",
     "discard": "Discard",
     "download": "Download",
-
+    "add_remark": "Add Remark",
+    "remark_hint": "Write your notes here...",
+    "clear": "Clear",
+    "payment_receipt": "Payment Receipt",
+    "payment_type": "Payment Type",
+    "print_receipt": "Print Receipt",
+    "thank_you_for_your_business": "Thank you for your business",
+    "failed_to_generate_pdf": "Failed to generate PDF",
+    "return_items": "Return Items",
+    "return_summary": "Return Summary",
+    "return_invoice_review": "Return Invoice Review",
+    "swipe_to_confirm_return": "Swipe to confirm return",
+    "return_invoice_created_successfully": "Return invoice created successfully",
     "failed_to_load_invoice": "Failed to load invoice"
-
 }

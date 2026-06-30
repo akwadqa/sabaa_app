@@ -1,4 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
 import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
@@ -17,20 +19,23 @@ class NewOrderState {
     this.selectedItems = const {}, // 🔥 important
     this.listState,
     this.customer,
+    this.isReturn = false,
     this.isSubmitting = false,
      this.deliveryFee,
+         this.remark,
+
   });
 
   final List<ProductModel> allItems;
   final List<ProductModel> filteredItems;
   final List<StockCategoryModel> categories;
-
+  final String? remark;
   final String searchQuery;
   final String? selectedCategory;
   final int selectedCategoryIndex;
   final CustomerModel? customer;
   final bool isSubmitting;
-
+  final bool isReturn;
   /// 🔥 key = itemCode
   final Map<String, SelectedItem> selectedItems;
 
@@ -42,27 +47,32 @@ class NewOrderState {
     List<ProductModel>? allItems,
     List<ProductModel>? filteredItems,
     List<StockCategoryModel>? categories,
+    String? remark,
     String? searchQuery,
     String? selectedCategory,
-    CustomerModel? customer,
     int? selectedCategoryIndex,
+    CustomerModel? customer,
+    bool? isSubmitting,
+    bool? isReturn,
     Map<String, SelectedItem>? selectedItems,
     AsyncValue<void>? listState,
-    bool? isSubmitting,
     String? deliveryFee,
+     bool clearRemark = false,
+
   }) {
     return NewOrderState(
       allItems: allItems ?? this.allItems,
       filteredItems: filteredItems ?? this.filteredItems,
       categories: categories ?? this.categories,
+      remark: clearRemark ? null : (remark ?? this.remark),      
       searchQuery: searchQuery ?? this.searchQuery,
       selectedCategory: selectedCategory ?? this.selectedCategory,
-      selectedCategoryIndex:
-          selectedCategoryIndex ?? this.selectedCategoryIndex,
-      selectedItems: selectedItems ?? this.selectedItems,
-      listState: listState ?? this.listState,
+      selectedCategoryIndex: selectedCategoryIndex ?? this.selectedCategoryIndex,
       customer: customer ?? this.customer,
       isSubmitting: isSubmitting ?? this.isSubmitting,
+      isReturn: isReturn ?? this.isReturn,
+      selectedItems: selectedItems ?? this.selectedItems,
+      listState: listState ?? this.listState,
       deliveryFee: deliveryFee ?? this.deliveryFee,
     );
   }

@@ -9,6 +9,7 @@ import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import '../datasources/new_order_datasource.dart';
 
 part 'new_order_repository.g.dart';
+
 @Riverpod(keepAlive: true)
 NewOrderRepository newOrderRepository(Ref ref) {
   final network = ref.watch(networkServiceProvider());
@@ -35,22 +36,44 @@ class NewOrderRepository {
 
     throw AppException(message: response.message);
   }
-  Future<ApiResponse<InvoiceModel>> createInvoice({
-  required String customerId,
-  required String deliveryFee,
-  required List<Map<String, dynamic>> items,
-}) async {
-    final response = await _datasource.createInvoice(
-     customerId:customerId, items: items,deliveryFee:deliveryFee
-    );
 
-  if (response.hasSucceeded ) {
+  Future<ApiResponse<InvoiceModel>> createInvoice({
+    required String customerId,
+    required String deliveryFee,
+    String? remark,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final response = await _datasource.createInvoice(
+        customerId: customerId,
+        items: items,
+        deliveryFee: deliveryFee,
+        remark: remark);
+
+    if (response.hasSucceeded) {
       return response;
     }
-      Dev.logError("Create invoice failed in repo");
-    
+    Dev.logError("Create invoice failed in repo");
+
     throw AppException(message: response.message);
   }
 
+  Future<ApiResponse<InvoiceModel>> createReturnInvoice({
+    required String customerId,
+    required String deliveryFee,
+    String? remark,
+    required List<Map<String, dynamic>> items,
+  }) async {
+    final response = await _datasource.createReturnOrder(
+      customerId: customerId,
+      items: items,
+      deliveryFee: deliveryFee,
+      remark: remark,
+    );
 
+    if (response.hasSucceeded) {
+      return response;
+    }
+    Dev.logError("Create return invoice failed in repo");
+    throw AppException(message: response.message);
+  }
 }

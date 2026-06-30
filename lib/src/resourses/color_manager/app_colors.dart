@@ -111,6 +111,12 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
     white,
 
   ];
+  static const List<Color> accentGradient = [
+    accent,
+    avatarOrangeText,
+    white,
+
+  ];
         // AppColors.avatarPurpleBg,
         //                     AppColors.secondPrimary,
         //                     AppColors.avatarPurpleBg,

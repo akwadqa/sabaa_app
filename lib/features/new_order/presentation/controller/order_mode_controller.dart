@@ -6,7 +6,7 @@ part 'order_mode_controller.g.dart';
 @riverpod
 class OrderModeController extends _$OrderModeController {
   @override
-  OrderMode build() => OrderMode.newSale;
+  OrderMode build() => OrderMode.newOrder;
 
   void setMode(OrderMode mode) => state = mode;
 }
