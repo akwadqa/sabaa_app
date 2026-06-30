@@ -80,6 +80,7 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
       appBar: CustomDeafultAppbar(
         title: 'order_summary'.tr(),
         actionButton: checkRole(ref,
+            defaultWidget: null,
             salesMan: widget.visitId != null
                 ? GestureDetector(
                     onTap: () {

@@ -5,16 +5,24 @@ import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 dynamic checkRole(
   // String role, {
   WidgetRef ref, {
-  required dynamic salesMan,
-  required dynamic vanSales,
+  dynamic salesMan,
+  dynamic vanSales,
+  dynamic delivery,
+  dynamic hyperMarket,
+  required dynamic defaultWidget,
 }) {
   final role = ref.watch(localStorageServiceProvider).userInfo.role;
   switch (role) {
     case 'Pre-Order':
-      return salesMan;
+      return salesMan ?? defaultWidget;
     case 'Van Sales':
-      return vanSales;
+      return vanSales ?? defaultWidget;
+    case 'Delivery':
+      return delivery ?? defaultWidget;
+
+    case 'Hyper-Market':
+      return hyperMarket ?? defaultWidget;
     default:
-      return const SizedBox.shrink();
+      return defaultWidget;
   }
 }

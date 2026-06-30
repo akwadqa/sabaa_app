@@ -90,7 +90,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         bottomNavigationBar: _BottomNavBar(
           destinations: checkRole(ref,
               vanSales: _destinations,
-              salesMan: List<NavDestination>.from(
+              defaultWidget: List<NavDestination>.from(
                   _destinations.where((item) => item.label != 'nav_stock'))),
           // destinations: _destinations,
           currentIndex: currentIndex,
