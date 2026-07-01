@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/data_source/order_remote_data_source.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
+import 'package:sabaa/features/order/domain/hyper_market_order_summary/hyper_market_order_summary_model.dart';
+import 'package:sabaa/features/order/domain/hyper_market_order_summary_params.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
@@ -25,7 +27,7 @@ class OrderRepository {
   OrderRepository(this._remoteDataSource);
 
   Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status , required int page}) async {
+      {required String customerId, String? status, required int page}) async {
     final response = await _remoteDataSource.getOrderSummary(
         customerId: customerId, status: status, page: page);
 
@@ -36,39 +38,50 @@ class OrderRepository {
     throw AppException(response.message);
   }
 
-Future<ApiResponse<PaymentResponseModel>> createPayment({
-  required String invoiceId,
-  required String amount,
-  required String paymentMethod,
-}) async {
-  final response = await _remoteDataSource.createPayment(
-    invoiceId: invoiceId,
-    amount: amount,
-    paymentMethod: paymentMethod,
-  );
+  Future<ApiResponse<PaymentResponseModel>> createPayment({
+    required String invoiceId,
+    required String amount,
+    required String paymentMethod,
+  }) async {
+    final response = await _remoteDataSource.createPayment(
+      invoiceId: invoiceId,
+      amount: amount,
+      paymentMethod: paymentMethod,
+    );
 
-  if (response.hasSucceeded) {
-    return response;
+    if (response.hasSucceeded) {
+      return response;
+    }
+
+    throw AppException(response.message);
   }
 
-  throw AppException(response.message);
-}
-
- Future<ApiResponse<UploadCaptureResponse>> upladCapture({
+  Future<ApiResponse<UploadCaptureResponse>> upladCapture({
     required String visitId,
     required List<File> images,
     required String captureNote,
-  }) async  {
-  final response = await _remoteDataSource.upladCapture(
-    visitId: visitId,
-    images: images,
-    captureNote: captureNote,
-  );
+  }) async {
+    final response = await _remoteDataSource.upladCapture(
+      visitId: visitId,
+      images: images,
+      captureNote: captureNote,
+    );
 
-  if (response.status == 200) {
-    return response;
+    if (response.status == 200) {
+      return response;
+    }
+
+    throw AppException(response.message);
   }
 
-  throw AppException(response.message);
-}
+  Future<ApiResponse<HyperMarketOrdersSummaryResponse>> hyperMarketOrderSummary(
+      HyperMarketOrderSummaryParams params) async {
+    final response = await _remoteDataSource.hyperMarketOrderSummary(params);
+
+    if (response.status == 200) {
+      return response;
+    }
+
+    throw AppException(response.message);
+  }
 }

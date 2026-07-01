@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
+import 'package:sabaa/features/order/domain/hyper_market_order_summary/hyper_market_order_summary_model.dart';
+import 'package:sabaa/features/order/domain/hyper_market_order_summary_params.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
@@ -106,6 +108,32 @@ class OrderRemoteDataSource {
       );
     } catch (e) {
       Dev.logLine('Error in submitData: $e');
+      rethrow;
+    }
+  }
+
+  Future<ApiResponse<HyperMarketOrdersSummaryResponse>> hyperMarketOrderSummary(HyperMarketOrderSummaryParams params) async {
+    try {
+      final response = await _networkService.get(
+        ApiEndPoints.hyperMarketOrderSummary,
+        queryParameters: {
+          'item': params.item,
+          'customer': params.customer,
+          'from_date': params.from_date,
+          'to_date': params.to_date,
+        },
+      );
+  
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to load data');
+      }
+  
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => HyperMarketOrdersSummaryResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      debugPrint('Error in getData: $e');
       rethrow;
     }
   }

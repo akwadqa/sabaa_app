@@ -16,10 +16,12 @@ import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dar
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/pages/display_capture_page.dart';
+import 'package:sabaa/features/order/presentation/pages/hyper_market_orders_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
+import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 
 import '../../../features/barcode_scanner/presentation/screen/barcode_scanner_page.dart';
 import '../../../features/return_invoice/presentation/screens/return_invoice_review_page.dart';
@@ -309,15 +311,23 @@ class AppRouter {
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
             final extra = state.extra as Map<String, dynamic>?;
+            final role = ref.read(localStorageServiceProvider).userInfo.role;
 
             return CustomTransitionPage(
               key: state.pageKey,
-              child: OrderSummaryPage(
-                customer: extra?['customer'] as CustomerModel,
-                invoice: extra?['invoice'] as InvoiceModel?,
-                openPayment: extra?['openPayment'] ?? false,
-                visitId: extra?['visitId'] as String?,
-              ),
+              child: role == 'Hypermarket'
+                  ? HyperMarketOrdersSummaryScreen(
+                      customer: extra?['customer'] as CustomerModel,
+                      invoice: extra?['invoice'] as InvoiceModel?,
+                      openPayment: extra?['openPayment'] ?? false,
+                      visitId: extra?['visitId'] as String?,
+                    )
+                  : OrderSummaryPage(
+                      customer: extra?['customer'] as CustomerModel,
+                      invoice: extra?['invoice'] as InvoiceModel?,
+                      openPayment: extra?['openPayment'] ?? false,
+                      visitId: extra?['visitId'] as String?,
+                    ),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
