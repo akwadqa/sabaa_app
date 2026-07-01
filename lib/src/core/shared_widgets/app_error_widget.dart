@@ -14,28 +14,37 @@ class AppErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Assets.images.imErrorScreen.image(),
-          30.verticalSpace,
-          Text(
-            context.tr(errorMsg ?? "Unkown error occured"),
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
-          if (onTap != null)
-            Expanded(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.images.imErrorScreen.image(width: 180),
+            30.verticalSpace,
+            Text(
+              errorMsg?.tr() ?? "unknown_error_occurred".tr(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            if (onTap != null) ...[
+              24.verticalSpace,
+              SizedBox(
+                width: 200,
                 child: CustomButtonWidget(
-              text: "retry".tr(),
-              onTap: onTap!,
-              isFiled: true,
-              backgroundColor: AppColors.primary,
-              radius: 8,
-              height: 45,
-              width: double.infinity,
-            )),
-        ],
+                  text: "retry".tr(),
+                  onTap: onTap!,
+                  isFiled: true,
+                  backgroundColor: AppColors.primary,
+                  radius: 8,
+                  height: 45,
+                  width: double.infinity,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

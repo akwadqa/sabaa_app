@@ -18,6 +18,7 @@ abstract class VisitModel with _$VisitModel {
     String? checkOutTime,
     double? duration,
     String? remark,
+     String? deliveryNote,
   }) = _VisitModel;
 
   factory VisitModel.fromJson(Map<String, dynamic> json) =>

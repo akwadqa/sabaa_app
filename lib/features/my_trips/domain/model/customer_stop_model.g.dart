@@ -10,10 +10,12 @@ _CustomerStopModel _$CustomerStopModelFromJson(Map<String, dynamic> json) =>
     _CustomerStopModel(
       customerId: json['customerId'] as String,
       customerName: json['customerName'] as String,
+      deliveryNote: json['deliveryNote'] as String?,
     );
 
 Map<String, dynamic> _$CustomerStopModelToJson(_CustomerStopModel instance) =>
     <String, dynamic>{
       'customerId': instance.customerId,
       'customerName': instance.customerName,
+      'deliveryNote': instance.deliveryNote,
     };

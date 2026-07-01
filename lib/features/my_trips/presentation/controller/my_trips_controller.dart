@@ -216,7 +216,7 @@ class MyTripsController extends _$MyTripsController {
   RouteStopStatus _mapStatus(RouteStopStatus apiStatus) {
     switch (apiStatus) {
       case RouteStopStatus.completed:
-        return RouteStopStatus.visited;
+        return RouteStopStatus.completed;
       case RouteStopStatus.inProgress:
         return RouteStopStatus.inProgress;
       case RouteStopStatus.skipped:
@@ -227,8 +227,8 @@ class MyTripsController extends _$MyTripsController {
 
       case RouteStopStatus.pending:
         return RouteStopStatus.pending;
-      case RouteStopStatus.visited:
-        return RouteStopStatus.visited;
+      // case RouteStopStatus.visited:
+      //   return RouteStopStatus.visited;
     }
   }
 
@@ -329,8 +329,8 @@ class MyTripsController extends _$MyTripsController {
     switch (status) {
       case RouteStopStatus.inProgress:
         return 'In Progress'; // ✅ FIXED
-      case RouteStopStatus.visited:
-        return 'Completed'; // ✅
+      // case RouteStopStatus.visited:
+      //   return 'Completed'; // ✅
       case RouteStopStatus.pending:
         return 'Pending'; // ✅
       case RouteStopStatus.skipped:

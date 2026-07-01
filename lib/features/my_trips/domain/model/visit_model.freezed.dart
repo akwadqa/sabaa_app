@@ -25,6 +25,7 @@ mixin _$VisitModel {
   String? get checkOutTime;
   double? get duration;
   String? get remark;
+  String? get deliveryNote;
 
   /// Create a copy of VisitModel
   /// with the given fields replaced by the non-null parameter values.
@@ -59,7 +60,9 @@ mixin _$VisitModel {
                 other.checkOutTime == checkOutTime) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
-            (identical(other.remark, remark) || other.remark == remark));
+            (identical(other.remark, remark) || other.remark == remark) &&
+            (identical(other.deliveryNote, deliveryNote) ||
+                other.deliveryNote == deliveryNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -76,11 +79,12 @@ mixin _$VisitModel {
       checkInTime,
       checkOutTime,
       duration,
-      remark);
+      remark,
+      deliveryNote);
 
   @override
   String toString() {
-    return 'VisitModel(name: $name, customerId: $customerId, customerName: $customerName, customerPhone: $customerPhone, location: $location, visitDate: $visitDate, status: $status, checkInTime: $checkInTime, checkOutTime: $checkOutTime, duration: $duration, remark: $remark)';
+    return 'VisitModel(name: $name, customerId: $customerId, customerName: $customerName, customerPhone: $customerPhone, location: $location, visitDate: $visitDate, status: $status, checkInTime: $checkInTime, checkOutTime: $checkOutTime, duration: $duration, remark: $remark, deliveryNote: $deliveryNote)';
   }
 }
 
@@ -101,7 +105,8 @@ abstract mixin class $VisitModelCopyWith<$Res> {
       String? checkInTime,
       String? checkOutTime,
       double? duration,
-      String? remark});
+      String? remark,
+      String? deliveryNote});
 }
 
 /// @nodoc
@@ -127,6 +132,7 @@ class _$VisitModelCopyWithImpl<$Res> implements $VisitModelCopyWith<$Res> {
     Object? checkOutTime = freezed,
     Object? duration = freezed,
     Object? remark = freezed,
+    Object? deliveryNote = freezed,
   }) {
     return _then(_self.copyWith(
       name: null == name
@@ -172,6 +178,10 @@ class _$VisitModelCopyWithImpl<$Res> implements $VisitModelCopyWith<$Res> {
       remark: freezed == remark
           ? _self.remark
           : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deliveryNote: freezed == deliveryNote
+          ? _self.deliveryNote
+          : deliveryNote // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -281,7 +291,8 @@ extension VisitModelPatterns on VisitModel {
             String? checkInTime,
             String? checkOutTime,
             double? duration,
-            String? remark)?
+            String? remark,
+            String? deliveryNote)?
         $default, {
     required TResult orElse(),
   }) {
@@ -299,7 +310,8 @@ extension VisitModelPatterns on VisitModel {
             _that.checkInTime,
             _that.checkOutTime,
             _that.duration,
-            _that.remark);
+            _that.remark,
+            _that.deliveryNote);
       case _:
         return orElse();
     }
@@ -331,7 +343,8 @@ extension VisitModelPatterns on VisitModel {
             String? checkInTime,
             String? checkOutTime,
             double? duration,
-            String? remark)
+            String? remark,
+            String? deliveryNote)
         $default,
   ) {
     final _that = this;
@@ -348,7 +361,8 @@ extension VisitModelPatterns on VisitModel {
             _that.checkInTime,
             _that.checkOutTime,
             _that.duration,
-            _that.remark);
+            _that.remark,
+            _that.deliveryNote);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -379,7 +393,8 @@ extension VisitModelPatterns on VisitModel {
             String? checkInTime,
             String? checkOutTime,
             double? duration,
-            String? remark)?
+            String? remark,
+            String? deliveryNote)?
         $default,
   ) {
     final _that = this;
@@ -396,7 +411,8 @@ extension VisitModelPatterns on VisitModel {
             _that.checkInTime,
             _that.checkOutTime,
             _that.duration,
-            _that.remark);
+            _that.remark,
+            _that.deliveryNote);
       case _:
         return null;
     }
@@ -417,7 +433,8 @@ class _VisitModel implements VisitModel {
       this.checkInTime,
       this.checkOutTime,
       this.duration,
-      this.remark});
+      this.remark,
+      this.deliveryNote});
   factory _VisitModel.fromJson(Map<String, dynamic> json) =>
       _$VisitModelFromJson(json);
 
@@ -443,6 +460,8 @@ class _VisitModel implements VisitModel {
   final double? duration;
   @override
   final String? remark;
+  @override
+  final String? deliveryNote;
 
   /// Create a copy of VisitModel
   /// with the given fields replaced by the non-null parameter values.
@@ -482,7 +501,9 @@ class _VisitModel implements VisitModel {
                 other.checkOutTime == checkOutTime) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
-            (identical(other.remark, remark) || other.remark == remark));
+            (identical(other.remark, remark) || other.remark == remark) &&
+            (identical(other.deliveryNote, deliveryNote) ||
+                other.deliveryNote == deliveryNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -499,11 +520,12 @@ class _VisitModel implements VisitModel {
       checkInTime,
       checkOutTime,
       duration,
-      remark);
+      remark,
+      deliveryNote);
 
   @override
   String toString() {
-    return 'VisitModel(name: $name, customerId: $customerId, customerName: $customerName, customerPhone: $customerPhone, location: $location, visitDate: $visitDate, status: $status, checkInTime: $checkInTime, checkOutTime: $checkOutTime, duration: $duration, remark: $remark)';
+    return 'VisitModel(name: $name, customerId: $customerId, customerName: $customerName, customerPhone: $customerPhone, location: $location, visitDate: $visitDate, status: $status, checkInTime: $checkInTime, checkOutTime: $checkOutTime, duration: $duration, remark: $remark, deliveryNote: $deliveryNote)';
   }
 }
 
@@ -526,7 +548,8 @@ abstract mixin class _$VisitModelCopyWith<$Res>
       String? checkInTime,
       String? checkOutTime,
       double? duration,
-      String? remark});
+      String? remark,
+      String? deliveryNote});
 }
 
 /// @nodoc
@@ -552,6 +575,7 @@ class __$VisitModelCopyWithImpl<$Res> implements _$VisitModelCopyWith<$Res> {
     Object? checkOutTime = freezed,
     Object? duration = freezed,
     Object? remark = freezed,
+    Object? deliveryNote = freezed,
   }) {
     return _then(_VisitModel(
       name: null == name
@@ -597,6 +621,10 @@ class __$VisitModelCopyWithImpl<$Res> implements _$VisitModelCopyWith<$Res> {
       remark: freezed == remark
           ? _self.remark
           : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deliveryNote: freezed == deliveryNote
+          ? _self.deliveryNote
+          : deliveryNote // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }

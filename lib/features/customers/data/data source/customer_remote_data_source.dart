@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_params.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
+import 'package:sabaa/src/logger/failure/exceptions/app_exception.dart';
 
 class CustomerRemoteDataSource {
   final NetworkService _networkService;
@@ -50,8 +52,13 @@ class CustomerRemoteDataSource {
             .toList(),
       );
     } catch (e) {
-      return ApiResponse.error(message: e.toString());
+    // ✅ If it's a DioException with response, extract the API message
+    if (e is DioException && e.response?.data is Map) {
+      final data = e.response!.data as Map<String, dynamic>;
+      final message = data['message'] as String? ?? 'Failed to fetch data';
+      throw AppException(message:  message);
     }
+    throw AppException(message: e.toString());    }
   }
 
   // Future<ApiResponse<List<CustomerModel>>> searchCustomers(

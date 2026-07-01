@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
@@ -251,5 +252,68 @@ class _ActionButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+
+//////////////
+// lib/src/core/utils/functions/html_to_pdf_service.dart
+
+
+
+// class HtmlToPdfService {
+//   static Future<Uint8List> generateFromHtml(String html) async {
+//     debugPrint('🖨 Starting HTML → PDF conversion');
+//     debugPrint('🖨 HTML input length: ${html.length}');
+
+//     if (html.trim().isEmpty) {
+//       throw Exception('HTML content is empty');
+//     }
+
+//     try {
+//       final pdfBytes = await Printing.convertHtml(
+//         html: html,
+//         format: PdfPageFormat.a4,
+//       );
+
+//       debugPrint('✅ PDF generated. Bytes: ${pdfBytes.length}');
+//       return pdfBytes;
+//     } catch (e, st) {
+//       debugPrint('❌ HTML → PDF conversion failed: $e');
+//       debugPrint('❌ Stack: $st');
+//       rethrow;
+//     }
+//   }
+// }
+
+
+class HtmlToPdfService {
+  static Future<Uint8List> generateFromHtml(String html) async {
+    debugPrint('🖨 Starting HTML → PDF conversion');
+    debugPrint('🖨 HTML input length: ${html.length}');
+
+    if (html.trim().isEmpty) {
+      throw Exception('HTML content is empty');
+    }
+
+    try {
+      // ✅ Add timeout so it doesn't hang forever
+      final pdfBytes = await Printing.convertHtml(
+        html: html,
+        format: PdfPageFormat.a4,
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('PDF conversion timed out after 30s');
+        },
+      );
+
+      debugPrint('✅ PDF generated. Bytes: ${pdfBytes.length}');
+      return pdfBytes;
+    } catch (e, st) {
+      debugPrint('❌ HTML → PDF conversion failed: $e');
+      debugPrint('❌ Stack: $st');
+      rethrow;
+    }
   }
 }

@@ -18,7 +18,8 @@ mixin _$TripModel {
   String get tripDate;
   String get tripType;
   String get status;
-  String get salesPerson;
+  String? get salesPerson;
+  String? get driver;
   String? get warehouse;
   VisitSummaryModel get visitSummary;
   List<CustomerStopModel> get customerStops;
@@ -51,6 +52,7 @@ mixin _$TripModel {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.salesPerson, salesPerson) ||
                 other.salesPerson == salesPerson) &&
+            (identical(other.driver, driver) || other.driver == driver) &&
             (identical(other.warehouse, warehouse) ||
                 other.warehouse == warehouse) &&
             (identical(other.visitSummary, visitSummary) ||
@@ -75,6 +77,7 @@ mixin _$TripModel {
       tripType,
       status,
       salesPerson,
+      driver,
       warehouse,
       visitSummary,
       const DeepCollectionEquality().hash(customerStops),
@@ -86,7 +89,7 @@ mixin _$TripModel {
 
   @override
   String toString() {
-    return 'TripModel(name: $name, tripDate: $tripDate, tripType: $tripType, status: $status, salesPerson: $salesPerson, warehouse: $warehouse, visitSummary: $visitSummary, customerStops: $customerStops, visits: $visits, vehicle: $vehicle, startTime: $startTime, endTime: $endTime, duration: $duration)';
+    return 'TripModel(name: $name, tripDate: $tripDate, tripType: $tripType, status: $status, salesPerson: $salesPerson, driver: $driver, warehouse: $warehouse, visitSummary: $visitSummary, customerStops: $customerStops, visits: $visits, vehicle: $vehicle, startTime: $startTime, endTime: $endTime, duration: $duration)';
   }
 }
 
@@ -100,7 +103,8 @@ abstract mixin class $TripModelCopyWith<$Res> {
       String tripDate,
       String tripType,
       String status,
-      String salesPerson,
+      String? salesPerson,
+      String? driver,
       String? warehouse,
       VisitSummaryModel visitSummary,
       List<CustomerStopModel> customerStops,
@@ -129,7 +133,8 @@ class _$TripModelCopyWithImpl<$Res> implements $TripModelCopyWith<$Res> {
     Object? tripDate = null,
     Object? tripType = null,
     Object? status = null,
-    Object? salesPerson = null,
+    Object? salesPerson = freezed,
+    Object? driver = freezed,
     Object? warehouse = freezed,
     Object? visitSummary = null,
     Object? customerStops = null,
@@ -156,10 +161,14 @@ class _$TripModelCopyWithImpl<$Res> implements $TripModelCopyWith<$Res> {
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      salesPerson: null == salesPerson
+      salesPerson: freezed == salesPerson
           ? _self.salesPerson
           : salesPerson // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      driver: freezed == driver
+          ? _self.driver
+          : driver // ignore: cast_nullable_to_non_nullable
+              as String?,
       warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
@@ -304,7 +313,8 @@ extension TripModelPatterns on TripModel {
             String tripDate,
             String tripType,
             String status,
-            String salesPerson,
+            String? salesPerson,
+            String? driver,
             String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
@@ -325,6 +335,7 @@ extension TripModelPatterns on TripModel {
             _that.tripType,
             _that.status,
             _that.salesPerson,
+            _that.driver,
             _that.warehouse,
             _that.visitSummary,
             _that.customerStops,
@@ -358,7 +369,8 @@ extension TripModelPatterns on TripModel {
             String tripDate,
             String tripType,
             String status,
-            String salesPerson,
+            String? salesPerson,
+            String? driver,
             String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
@@ -378,6 +390,7 @@ extension TripModelPatterns on TripModel {
             _that.tripType,
             _that.status,
             _that.salesPerson,
+            _that.driver,
             _that.warehouse,
             _that.visitSummary,
             _that.customerStops,
@@ -410,7 +423,8 @@ extension TripModelPatterns on TripModel {
             String tripDate,
             String tripType,
             String status,
-            String salesPerson,
+            String? salesPerson,
+            String? driver,
             String? warehouse,
             VisitSummaryModel visitSummary,
             List<CustomerStopModel> customerStops,
@@ -430,6 +444,7 @@ extension TripModelPatterns on TripModel {
             _that.tripType,
             _that.status,
             _that.salesPerson,
+            _that.driver,
             _that.warehouse,
             _that.visitSummary,
             _that.customerStops,
@@ -453,6 +468,7 @@ class _TripModel implements TripModel {
       required this.tripType,
       required this.status,
       required this.salesPerson,
+      required this.driver,
       required this.warehouse,
       required this.visitSummary,
       final List<CustomerStopModel> customerStops = const [],
@@ -475,7 +491,9 @@ class _TripModel implements TripModel {
   @override
   final String status;
   @override
-  final String salesPerson;
+  final String? salesPerson;
+  @override
+  final String? driver;
   @override
   final String? warehouse;
   @override
@@ -535,6 +553,7 @@ class _TripModel implements TripModel {
             (identical(other.status, status) || other.status == status) &&
             (identical(other.salesPerson, salesPerson) ||
                 other.salesPerson == salesPerson) &&
+            (identical(other.driver, driver) || other.driver == driver) &&
             (identical(other.warehouse, warehouse) ||
                 other.warehouse == warehouse) &&
             (identical(other.visitSummary, visitSummary) ||
@@ -559,6 +578,7 @@ class _TripModel implements TripModel {
       tripType,
       status,
       salesPerson,
+      driver,
       warehouse,
       visitSummary,
       const DeepCollectionEquality().hash(_customerStops),
@@ -570,7 +590,7 @@ class _TripModel implements TripModel {
 
   @override
   String toString() {
-    return 'TripModel(name: $name, tripDate: $tripDate, tripType: $tripType, status: $status, salesPerson: $salesPerson, warehouse: $warehouse, visitSummary: $visitSummary, customerStops: $customerStops, visits: $visits, vehicle: $vehicle, startTime: $startTime, endTime: $endTime, duration: $duration)';
+    return 'TripModel(name: $name, tripDate: $tripDate, tripType: $tripType, status: $status, salesPerson: $salesPerson, driver: $driver, warehouse: $warehouse, visitSummary: $visitSummary, customerStops: $customerStops, visits: $visits, vehicle: $vehicle, startTime: $startTime, endTime: $endTime, duration: $duration)';
   }
 }
 
@@ -587,7 +607,8 @@ abstract mixin class _$TripModelCopyWith<$Res>
       String tripDate,
       String tripType,
       String status,
-      String salesPerson,
+      String? salesPerson,
+      String? driver,
       String? warehouse,
       VisitSummaryModel visitSummary,
       List<CustomerStopModel> customerStops,
@@ -617,7 +638,8 @@ class __$TripModelCopyWithImpl<$Res> implements _$TripModelCopyWith<$Res> {
     Object? tripDate = null,
     Object? tripType = null,
     Object? status = null,
-    Object? salesPerson = null,
+    Object? salesPerson = freezed,
+    Object? driver = freezed,
     Object? warehouse = freezed,
     Object? visitSummary = null,
     Object? customerStops = null,
@@ -644,10 +666,14 @@ class __$TripModelCopyWithImpl<$Res> implements _$TripModelCopyWith<$Res> {
           ? _self.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
-      salesPerson: null == salesPerson
+      salesPerson: freezed == salesPerson
           ? _self.salesPerson
           : salesPerson // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      driver: freezed == driver
+          ? _self.driver
+          : driver // ignore: cast_nullable_to_non_nullable
+              as String?,
       warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable

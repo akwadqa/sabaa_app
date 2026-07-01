@@ -8,6 +8,7 @@ abstract class CustomerStopModel with _$CustomerStopModel {
   const factory CustomerStopModel({
     required String customerId,
     required String customerName,
+    required String? deliveryNote,
   }) = _CustomerStopModel;
 
   factory CustomerStopModel.fromJson(Map<String, dynamic> json) =>

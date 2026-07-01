@@ -76,48 +76,52 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: CustomDeafultAppbar(
-        title: 'order_summary'.tr(),
-        actionButton: checkRole(ref,
-            defaultWidget: null,
-            salesMan: widget.visitId != null
-                ? GestureDetector(
-                    onTap: () {
-                      context.push(AppRoutes.displayCaptureScreen,
-                          extra: widget.visitId);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        border: Border.all(color: AppColors.navBorder),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.darkShadow,
-                            blurRadius: 2,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(12),
+        backgroundColor: AppColors.background,
+        appBar: CustomDeafultAppbar(
+          title: 'order_summary'.tr(),
+          actionButton: checkRole(ref,
+              salesMan: widget.visitId != null
+                  ? GestureDetector(
+                      onTap: () {
+                        context.push(AppRoutes.displayCaptureScreen,
+                            extra: widget.visitId);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          border: Border.all(color: AppColors.navBorder),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.darkShadow,
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Assets.icons.cameraIc.svg(),
                       ),
-                      child: Assets.icons.cameraIc.svg(),
-                    ),
-                  )
-                : null,
-            vanSales: null),
-      ),
-      body: _OrderSummaryPageContent(customer: widget.customer),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push(AppRoutes.newOrderScreen, extra: widget.customer);
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.white),
-      ),
-    );
+                    )
+                  : null,
+              vanSales: null,
+              defaultWidget: null),
+        ),
+        body: _OrderSummaryPageContent(customer: widget.customer),
+        floatingActionButton: checkRole(
+          ref,
+          delivery: SizedBox(),
+          defaultWidget: FloatingActionButton(
+            onPressed: () {
+              context.push(AppRoutes.newOrderScreen, extra: widget.customer);
+            },
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            backgroundColor: AppColors.primary,
+            child: const Icon(Icons.add, color: AppColors.white),
+          ),
+        ));
   }
 }
 
@@ -193,7 +197,7 @@ class _OrderSummaryPageContentState
               spacing: 20,
               children: [
                 OrderSummaryStatCard(
-                  label: 'total_sales',
+                  label:checkRole(ref, defaultWidget: 'total_sales',delivery: "payment_collected") ,
                   value: orderSummary.totalSales.formatNumbers(),
                   color: AppColors.successGreen,
                   iconPath: Icons.trending_up,

@@ -18,6 +18,7 @@ _VisitModel _$VisitModelFromJson(Map<String, dynamic> json) => _VisitModel(
       checkOutTime: json['checkOutTime'] as String?,
       duration: (json['duration'] as num?)?.toDouble(),
       remark: json['remark'] as String?,
+      deliveryNote: json['deliveryNote'] as String?,
     );
 
 Map<String, dynamic> _$VisitModelToJson(_VisitModel instance) =>
@@ -33,12 +34,12 @@ Map<String, dynamic> _$VisitModelToJson(_VisitModel instance) =>
       'checkOutTime': instance.checkOutTime,
       'duration': instance.duration,
       'remark': instance.remark,
+      'deliveryNote': instance.deliveryNote,
     };
 
 const _$RouteStopStatusEnumMap = {
   RouteStopStatus.inProgress: 'In Progress',
   RouteStopStatus.pending: 'Pending',
-  RouteStopStatus.visited: 'visited',
   RouteStopStatus.completed: 'Completed',
   RouteStopStatus.skipped: 'Skipped',
   RouteStopStatus.failed: 'Failed',

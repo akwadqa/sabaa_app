@@ -49,7 +49,7 @@ _InvoiceItemModel _$InvoiceItemModelFromJson(Map<String, dynamic> json) =>
       rate: json['rate'] as num,
       amount: json['amount'] as num,
       discountPercentage: json['discountPercentage'] as num,
-      warehouse: json['warehouse'] as String,
+      warehouse: json['warehouse'] as String?,
     );
 
 Map<String, dynamic> _$InvoiceItemModelToJson(_InvoiceItemModel instance) =>

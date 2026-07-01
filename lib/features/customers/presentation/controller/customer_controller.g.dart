@@ -34,7 +34,7 @@ final class CustomersControllerProvider
 }
 
 String _$customersControllerHash() =>
-    r'83f4a24410dda07cb04f19019211b247a3208f77';
+    r'42683be4d03faa96927eda839bf76d7d504338e2';
 
 abstract class _$CustomersController extends $AsyncNotifier<CustomerState> {
   FutureOr<CustomerState> build();

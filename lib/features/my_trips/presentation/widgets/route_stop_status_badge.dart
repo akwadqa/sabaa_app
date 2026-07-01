@@ -29,7 +29,7 @@ class RouteStopStatusBadge extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          if (status == RouteStopStatus.visited) ...[
+          if (status == RouteStopStatus.completed) ...[
             const SizedBox(width: 4),
             Icon(Icons.check, size: 12, color: cfg.textColor),
           ],
@@ -52,12 +52,12 @@ class RouteStopStatusBadge extends StatelessWidget {
           background: Color(0xFFFFEDD5),
           textColor:  Color(0xFFC2410C),
         );
-      case RouteStopStatus.visited:
-        return const _BadgeConfig(
-          labelKey:   'stop_visited',
-          background: Color(0xFFF0FDF4),
-          textColor:  Color(0xFF15803D),
-        );
+      // case RouteStopStatus.visited:
+      //   return const _BadgeConfig(
+      //     labelKey:   'stop_visited',
+      //     background: Color(0xFFF0FDF4),
+      //     textColor:  Color(0xFF15803D),
+      //   );
       case RouteStopStatus.completed:
         return const _BadgeConfig(
           labelKey:   'completed',

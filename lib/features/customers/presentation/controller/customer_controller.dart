@@ -3,6 +3,7 @@ import 'package:sabaa/features/customers/data/repository/customer_repository.dar
 import 'package:sabaa/features/customers/domain/model/create_customer_params.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/customers/presentation/controller/customer_state.dart';
+import 'package:sabaa/src/logger/failure/exceptions/app_exception.dart';
 
 part 'customer_controller.g.dart';
 
@@ -99,21 +100,23 @@ class CustomersController extends _$CustomersController {
       final repo = ref.read(customerRepositoryProvider);
       final response = await repo.getCustomers(page: page, name: search);
 
-      _currentPage = response.pagination!.currentPage;
-      _totalPages = response.pagination!.totalPages;
+      _currentPage = response.pagination?.currentPage ?? 1;
+      _totalPages = response.pagination?.totalPages ?? 1;
 
       if (page == 1) {
-        _customers = List.from(response.data!);
+        _customers = List.from(response.data??[]);
       } else {
-        _customers.addAll(response.data!);
+        _customers.addAll(response.data ??[]);
       }
 
       state = AsyncData(
           state.value!.copyWith(customersList: AsyncData([..._customers])));
       return _customers;
     } catch (e, st) {
-      state = AsyncError(e, st);
-      return [];
+   state = AsyncData(
+      state.value!.copyWith(customersList: AsyncError(e, st)),
+    );
+    return [];  // ✅ Don't throw here — state already has the error
     }
   }
 

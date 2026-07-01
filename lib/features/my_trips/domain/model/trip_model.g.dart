@@ -11,7 +11,8 @@ _TripModel _$TripModelFromJson(Map<String, dynamic> json) => _TripModel(
       tripDate: json['tripDate'] as String,
       tripType: json['tripType'] as String,
       status: json['status'] as String,
-      salesPerson: json['salesPerson'] as String,
+      salesPerson: json['salesPerson'] as String?,
+      driver: json['driver'] as String?,
       warehouse: json['warehouse'] as String?,
       visitSummary: VisitSummaryModel.fromJson(
           json['visitSummary'] as Map<String, dynamic>),
@@ -37,6 +38,7 @@ Map<String, dynamic> _$TripModelToJson(_TripModel instance) =>
       'tripType': instance.tripType,
       'status': instance.status,
       'salesPerson': instance.salesPerson,
+      'driver': instance.driver,
       'warehouse': instance.warehouse,
       'visitSummary': instance.visitSummary,
       'customerStops': instance.customerStops,

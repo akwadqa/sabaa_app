@@ -40,7 +40,7 @@ class CustomerRepository {
 
       return result;
     } catch (e) {
-      throw AppException('Failed to fetch CustomerModel: e');
+      throw AppException('Failed to fetch CustomerModel: $e');
     }
   }
 

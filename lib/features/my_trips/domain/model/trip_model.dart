@@ -14,7 +14,8 @@ abstract class TripModel with _$TripModel {
     required String tripDate,
     required String tripType,
     required String status,
-    required String salesPerson,
+    required String? salesPerson,
+    required String? driver,
     required String? warehouse,
     required VisitSummaryModel visitSummary,
 

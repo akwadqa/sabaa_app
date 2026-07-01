@@ -650,7 +650,7 @@ mixin _$InvoiceItemModel {
   num get rate;
   num get amount;
   num get discountPercentage;
-  String get warehouse;
+  String? get warehouse;
 
   /// Create a copy of InvoiceItemModel
   /// with the given fields replaced by the non-null parameter values.
@@ -707,7 +707,7 @@ abstract mixin class $InvoiceItemModelCopyWith<$Res> {
       num rate,
       num amount,
       num discountPercentage,
-      String warehouse});
+      String? warehouse});
 }
 
 /// @nodoc
@@ -730,7 +730,7 @@ class _$InvoiceItemModelCopyWithImpl<$Res>
     Object? rate = null,
     Object? amount = null,
     Object? discountPercentage = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
   }) {
     return _then(_self.copyWith(
       itemCode: null == itemCode
@@ -761,10 +761,10 @@ class _$InvoiceItemModelCopyWithImpl<$Res>
           ? _self.discountPercentage
           : discountPercentage // ignore: cast_nullable_to_non_nullable
               as num,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -863,7 +863,7 @@ extension InvoiceItemModelPatterns on InvoiceItemModel {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(String itemCode, String itemName, int qty, String uom,
-            num rate, num amount, num discountPercentage, String warehouse)?
+            num rate, num amount, num discountPercentage, String? warehouse)?
         $default, {
     required TResult orElse(),
   }) {
@@ -900,7 +900,7 @@ extension InvoiceItemModelPatterns on InvoiceItemModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(String itemCode, String itemName, int qty, String uom,
-            num rate, num amount, num discountPercentage, String warehouse)
+            num rate, num amount, num discountPercentage, String? warehouse)
         $default,
   ) {
     final _that = this;
@@ -935,7 +935,7 @@ extension InvoiceItemModelPatterns on InvoiceItemModel {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(String itemCode, String itemName, int qty, String uom,
-            num rate, num amount, num discountPercentage, String warehouse)?
+            num rate, num amount, num discountPercentage, String? warehouse)?
         $default,
   ) {
     final _that = this;
@@ -986,7 +986,7 @@ class _InvoiceItemModel implements InvoiceItemModel {
   @override
   final num discountPercentage;
   @override
-  final String warehouse;
+  final String? warehouse;
 
   /// Create a copy of InvoiceItemModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1049,7 +1049,7 @@ abstract mixin class _$InvoiceItemModelCopyWith<$Res>
       num rate,
       num amount,
       num discountPercentage,
-      String warehouse});
+      String? warehouse});
 }
 
 /// @nodoc
@@ -1072,7 +1072,7 @@ class __$InvoiceItemModelCopyWithImpl<$Res>
     Object? rate = null,
     Object? amount = null,
     Object? discountPercentage = null,
-    Object? warehouse = null,
+    Object? warehouse = freezed,
   }) {
     return _then(_InvoiceItemModel(
       itemCode: null == itemCode
@@ -1103,10 +1103,10 @@ class __$InvoiceItemModelCopyWithImpl<$Res>
           ? _self.discountPercentage
           : discountPercentage // ignore: cast_nullable_to_non_nullable
               as num,
-      warehouse: null == warehouse
+      warehouse: freezed == warehouse
           ? _self.warehouse
           : warehouse // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }

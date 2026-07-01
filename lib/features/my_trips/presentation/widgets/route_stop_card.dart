@@ -106,7 +106,7 @@ class _StopHeader extends StatelessWidget {
             stop.customerName,
             style: AppTextStyle.interSemiBold16.copyWith(
               color: AppColors.textPrimary,
-              decoration: stop.status == RouteStopStatus.visited
+              decoration: stop.status == RouteStopStatus.completed
                   ? TextDecoration.lineThrough
                   : null,
             ),
@@ -191,11 +191,11 @@ class _StopFooter extends ConsumerWidget {
           onSkipped: () => _onSkipAction(ref, stop),
 
         );
-      case RouteStopStatus.visited:
-        return _VisitedFooter(
-          checkedOutAt: stop.checkedOutAt ?? '',
-          onViewSummary: onViewSummary,
-        );
+      // case RouteStopStatus.completed:
+      //   return _VisitedFooter(
+      //     checkedOutAt: stop.checkedOutAt ?? '',
+      //     onViewSummary: onViewSummary,
+      //   );
       case RouteStopStatus.completed:
         return _VisitedFooter(
           checkedOutAt: stop.checkedOutAt ?? '',

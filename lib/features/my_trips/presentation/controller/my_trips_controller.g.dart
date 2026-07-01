@@ -33,7 +33,7 @@ final class MyTripsControllerProvider
   MyTripsController create() => MyTripsController();
 }
 
-String _$myTripsControllerHash() => r'5ef50b7d565f700f1c21e9e0c8faa0affce314e8';
+String _$myTripsControllerHash() => r'efefe3987315ecc6ee0b1ac1c8372c5a666a34f2';
 
 abstract class _$MyTripsController extends $AsyncNotifier<MyTripsState> {
   FutureOr<MyTripsState> build();

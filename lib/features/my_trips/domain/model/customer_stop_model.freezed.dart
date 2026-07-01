@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$CustomerStopModel {
   String get customerId;
   String get customerName;
+  String? get deliveryNote;
 
   /// Create a copy of CustomerStopModel
   /// with the given fields replaced by the non-null parameter values.
@@ -36,16 +37,19 @@ mixin _$CustomerStopModel {
             (identical(other.customerId, customerId) ||
                 other.customerId == customerId) &&
             (identical(other.customerName, customerName) ||
-                other.customerName == customerName));
+                other.customerName == customerName) &&
+            (identical(other.deliveryNote, deliveryNote) ||
+                other.deliveryNote == deliveryNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, customerId, customerName);
+  int get hashCode =>
+      Object.hash(runtimeType, customerId, customerName, deliveryNote);
 
   @override
   String toString() {
-    return 'CustomerStopModel(customerId: $customerId, customerName: $customerName)';
+    return 'CustomerStopModel(customerId: $customerId, customerName: $customerName, deliveryNote: $deliveryNote)';
   }
 }
 
@@ -55,7 +59,7 @@ abstract mixin class $CustomerStopModelCopyWith<$Res> {
           CustomerStopModel value, $Res Function(CustomerStopModel) _then) =
       _$CustomerStopModelCopyWithImpl;
   @useResult
-  $Res call({String customerId, String customerName});
+  $Res call({String customerId, String customerName, String? deliveryNote});
 }
 
 /// @nodoc
@@ -73,6 +77,7 @@ class _$CustomerStopModelCopyWithImpl<$Res>
   $Res call({
     Object? customerId = null,
     Object? customerName = null,
+    Object? deliveryNote = freezed,
   }) {
     return _then(_self.copyWith(
       customerId: null == customerId
@@ -83,6 +88,10 @@ class _$CustomerStopModelCopyWithImpl<$Res>
           ? _self.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
               as String,
+      deliveryNote: freezed == deliveryNote
+          ? _self.deliveryNote
+          : deliveryNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -180,13 +189,16 @@ extension CustomerStopModelPatterns on CustomerStopModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String customerId, String customerName)? $default, {
+    TResult Function(
+            String customerId, String customerName, String? deliveryNote)?
+        $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _CustomerStopModel() when $default != null:
-        return $default(_that.customerId, _that.customerName);
+        return $default(
+            _that.customerId, _that.customerName, _that.deliveryNote);
       case _:
         return orElse();
     }
@@ -207,12 +219,15 @@ extension CustomerStopModelPatterns on CustomerStopModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String customerId, String customerName) $default,
+    TResult Function(
+            String customerId, String customerName, String? deliveryNote)
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _CustomerStopModel():
-        return $default(_that.customerId, _that.customerName);
+        return $default(
+            _that.customerId, _that.customerName, _that.deliveryNote);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -232,12 +247,15 @@ extension CustomerStopModelPatterns on CustomerStopModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String customerId, String customerName)? $default,
+    TResult? Function(
+            String customerId, String customerName, String? deliveryNote)?
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _CustomerStopModel() when $default != null:
-        return $default(_that.customerId, _that.customerName);
+        return $default(
+            _that.customerId, _that.customerName, _that.deliveryNote);
       case _:
         return null;
     }
@@ -248,7 +266,9 @@ extension CustomerStopModelPatterns on CustomerStopModel {
 @JsonSerializable()
 class _CustomerStopModel implements CustomerStopModel {
   const _CustomerStopModel(
-      {required this.customerId, required this.customerName});
+      {required this.customerId,
+      required this.customerName,
+      required this.deliveryNote});
   factory _CustomerStopModel.fromJson(Map<String, dynamic> json) =>
       _$CustomerStopModelFromJson(json);
 
@@ -256,6 +276,8 @@ class _CustomerStopModel implements CustomerStopModel {
   final String customerId;
   @override
   final String customerName;
+  @override
+  final String? deliveryNote;
 
   /// Create a copy of CustomerStopModel
   /// with the given fields replaced by the non-null parameter values.
@@ -280,16 +302,19 @@ class _CustomerStopModel implements CustomerStopModel {
             (identical(other.customerId, customerId) ||
                 other.customerId == customerId) &&
             (identical(other.customerName, customerName) ||
-                other.customerName == customerName));
+                other.customerName == customerName) &&
+            (identical(other.deliveryNote, deliveryNote) ||
+                other.deliveryNote == deliveryNote));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, customerId, customerName);
+  int get hashCode =>
+      Object.hash(runtimeType, customerId, customerName, deliveryNote);
 
   @override
   String toString() {
-    return 'CustomerStopModel(customerId: $customerId, customerName: $customerName)';
+    return 'CustomerStopModel(customerId: $customerId, customerName: $customerName, deliveryNote: $deliveryNote)';
   }
 }
 
@@ -301,7 +326,7 @@ abstract mixin class _$CustomerStopModelCopyWith<$Res>
       __$CustomerStopModelCopyWithImpl;
   @override
   @useResult
-  $Res call({String customerId, String customerName});
+  $Res call({String customerId, String customerName, String? deliveryNote});
 }
 
 /// @nodoc
@@ -319,6 +344,7 @@ class __$CustomerStopModelCopyWithImpl<$Res>
   $Res call({
     Object? customerId = null,
     Object? customerName = null,
+    Object? deliveryNote = freezed,
   }) {
     return _then(_CustomerStopModel(
       customerId: null == customerId
@@ -329,6 +355,10 @@ class __$CustomerStopModelCopyWithImpl<$Res>
           ? _self.customerName
           : customerName // ignore: cast_nullable_to_non_nullable
               as String,
+      deliveryNote: freezed == deliveryNote
+          ? _self.deliveryNote
+          : deliveryNote // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }

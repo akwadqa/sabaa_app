@@ -34,7 +34,7 @@ abstract class InvoiceItemModel with _$InvoiceItemModel {
     required num rate,
     required num amount,
     required num discountPercentage,
-    required String warehouse,
+    required String? warehouse,
   }) = _InvoiceItemModel;
 
   factory InvoiceItemModel.fromJson(Map<String, dynamic> json) =>

@@ -26,7 +26,7 @@ class VanStockController extends _$VanStockController {
   @override
   FutureOr<VanStockState> build() async {
     final role = ref.read(localStorageServiceProvider).userInfo.role;
-    if (role != 'Pre-Order') {
+    if (role != 'Pre-Order'&&role!='Delivery') {
       ref.keepAlive();
     return await fetchStock(page: 1);
     }

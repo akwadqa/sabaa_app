@@ -109,4 +109,46 @@ class OrderRemoteDataSource {
       rethrow;
     }
   }
+
+// order_remote_data_source.dart
+
+Future<ApiResponse<String>> getDocumentHtml({
+  required String docName,
+  String docType = 'Sales Invoice',
+}) async {
+  try {
+    final response = await _networkService.get(
+      ApiEndPoints.getDocumentHtml,
+      queryParameters: {
+        'doctype': docType,
+        'doc_name': docName,
+      },
+    );
+
+    Dev.logLine('📄 HTML response status: ${response.statusCode}');
+    Dev.logLine('📄 HTML response data keys: ${(response.data as Map).keys}');
+    Dev.logLine('📄 Data.data type: ${response.data['data'].runtimeType}');
+
+    if (response.data == null || response.statusCode != 200) {
+      throw Exception('Failed to get document HTML');
+    }
+
+    return ApiResponse.fromJson(
+      response.data as Map<String, dynamic>,
+      (json) {
+        // ✅ Handle both flat and nested response shapes
+        if (json is Map<String, dynamic>) {
+          final html = json['html'] as String?;
+          Dev.logLine('📄 HTML length: ${html?.length ?? 0}');
+          return html ?? '';
+        }
+        return '';
+      },
+    );
+  } catch (e, st) {
+    Dev.logError('❌ getDocumentHtml error: $e');
+    Dev.logError('❌ Stack: $st');
+    rethrow;
+  }
+}
 }

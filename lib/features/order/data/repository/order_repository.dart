@@ -71,4 +71,20 @@ Future<ApiResponse<PaymentResponseModel>> createPayment({
 
   throw AppException(response.message);
 }
+
+Future<String> getDocumentHtml({
+  required String docName,
+  String docType = 'Sales Invoice',
+}) async {
+  final response = await _remoteDataSource.getDocumentHtml(
+    docName: docName,
+    docType: docType,
+  );
+
+  if (response.hasSucceeded && response.data != null) {
+    return response.data!;
+  }
+
+  throw AppException(response.message ?? 'Failed to fetch document HTML');
+}
 }

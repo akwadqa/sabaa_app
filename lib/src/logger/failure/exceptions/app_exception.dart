@@ -25,7 +25,7 @@ class AppException implements Exception {
 
   @override
   String toString() {
-    return message ?? '';
+    return message ?? 'Unknown error occurred';
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/home/data/repositories/home_repository.dart';
 import 'package:sabaa/features/home/presentation/controller/home_state.dart';
 import 'package:sabaa/features/home/presentation/widgets/performance_card.dart';
+import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
@@ -52,21 +53,7 @@ class HomeController extends _$HomeController {
         tripStarted: tripStarted,
         pageState: const AsyncData(null),
         metrics: [
-          PerformanceMetric(
-            label: 'total_sales',
-            value: data.dailyPerformance.totalSales.toString(),
-            iconColor: AppColors.metricGreenIcon,
-            icon: Icons.trending_up_rounded,
-          ),
-              PerformanceMetric(
-            label: 'sales_volume',
-            value: data.dailyPerformance.totalPaymentsCollected.toString(),
-            icon: Icons.inventory_2_outlined,
-            iconColor: AppColors.metricPurpleIcon,
-            // subtitle: 'mtd_total',
-          ),
-       
-          PerformanceMetric(
+             PerformanceMetric(
             label: 'todays_visits',
             value: '$completed / $total',
             icon: Icons.route_outlined,
@@ -87,6 +74,21 @@ class HomeController extends _$HomeController {
             iconColor: AppColors.metricOrangeIcon,
             subtitle: "today_skips",
           ),
+          PerformanceMetric(
+            label:checkRole(ref, defaultWidget: 'total_sales',delivery: "payment_collected") ,
+            value: data.dailyPerformance.totalSales.toString(),
+            iconColor: AppColors.metricGreenIcon,
+            icon: Icons.trending_up_rounded,
+          ),
+              PerformanceMetric(
+            label: 'sales_volume',
+            value: data.dailyPerformance.totalPaymentsCollected.toString(),
+            icon: Icons.inventory_2_outlined,
+            iconColor: AppColors.metricPurpleIcon,
+            // subtitle: 'mtd_total',
+          ),
+       
+       
         ],
         quickActions: [
           QuickAction(

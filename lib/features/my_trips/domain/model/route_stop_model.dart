@@ -6,8 +6,7 @@ enum RouteStopStatus {
   inProgress,
   @JsonValue('Pending')
   pending,
-  @JsonValue('visited')
-  visited,
+
   @JsonValue('Completed')
   completed,
   @JsonValue('Skipped')

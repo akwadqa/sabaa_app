@@ -34,7 +34,7 @@ final class InvoiceDetailsControllerProvider extends $AsyncNotifierProvider<
 }
 
 String _$invoiceDetailsControllerHash() =>
-    r'36143a5d5e2797ed005d9f7441f15d8c46acab99';
+    r'5e9785d30ce0a5dcc09b673db6593874aaba970d';
 
 abstract class _$InvoiceDetailsController
     extends $AsyncNotifier<InvoiceDetailsState> {

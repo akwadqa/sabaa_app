@@ -47,11 +47,11 @@ class RouteStopOrderBadge extends StatelessWidget {
           background: Color(0xFFEFF6FF),
           textColor:  AppColors.primary,
         );
-      case RouteStopStatus.visited:
-        return const _BadgeConfig(
-          background: Color(0xFFF4F5F7),
-          textColor:  AppColors.textSecondary,
-        );
+      // case RouteStopStatus.visited:
+      //   return const _BadgeConfig(
+      //     background: Color(0xFFF4F5F7),
+      //     textColor:  AppColors.textSecondary,
+      //   );
       case RouteStopStatus.completed:
         return const _BadgeConfig(
           background: Color(0xFFF4F5F7),

@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:sabaa/features/customers/presentation/widgets/add_customer_page/custom_labeled_text_filed.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
@@ -24,6 +25,7 @@ import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
+import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/core/utils/functions/helper_methods.dart';
 import 'package:sabaa/src/core/utils/functions/pdf_preview_screen.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
@@ -160,20 +162,27 @@ class _UnifiedInvoiceReviewPageState
 
   // ─── BOTTOM BAR ───────────────────────────────────────────────────────────
 
-  Widget? _buildBottomBar() {
-    switch (widget.mode) {
-      case InvoiceReviewMode.newOrder:
-        return _NewOrderBottomBar();
-      case InvoiceReviewMode.returnOrder:
-        return _ReturnOrderBottomBar();
-      case InvoiceReviewMode.viewOnly:
-        return _ViewOnlyBottomBar(
-          onShare: _shareInvoiceAsPdf,
-          onPrint: _printInvoice,
-          isLoading: _isGeneratingPdf,
-        );
-    }
+Widget? _buildBottomBar() {
+  switch (widget.mode) {
+    case InvoiceReviewMode.newOrder:
+      return _NewOrderBottomBar();
+    case InvoiceReviewMode.returnOrder:
+      return _ReturnOrderBottomBar();
+    case InvoiceReviewMode.viewOnly:
+      // ✅ Get invoice ID from state
+      final state = ref.watch(invoiceDetailsControllerProvider).value;
+      return _ViewOnlyBottomBar(
+          onShare: _shareInvoiceFromHtml,
+        onPrint: _printInvoiceFromHtml,
+
+        // ── OPTION B: Local PDF generator (ORIGINAL) ──
+        // onShare: _shareInvoiceAsPdf,
+        // onPrint: _printInvoice,
+        isLoading: _isGeneratingPdf,
+        invoiceId: state?.invoiceId ?? widget.invoiceId ?? '',
+      );
   }
+}
 // ─── SHARE AS TEXT (WhatsApp friendly) ───────────────────────────────────
 
   void _shareInvoiceAsText() {
@@ -209,6 +218,103 @@ class _UnifiedInvoiceReviewPageState
       Share.share(buffer.toString());
     });
   }
+
+// Add these NEW functions to _UnifiedInvoiceReviewPageState
+// (keep the original _printInvoice and _shareInvoiceAsPdf untouched)
+
+// ─── PRINT INVOICE FROM HTML (NEW) ───────────────────────────────────────
+
+
+Future<void> _printInvoiceFromHtml() async {
+  final detailsState = ref.read(invoiceDetailsControllerProvider);
+  if (detailsState is! AsyncData<InvoiceDetailsState>) return;
+
+  final state = detailsState.value;
+
+  setState(() => _isGeneratingPdf = true);
+
+  try {
+    final html = await ref
+        .read(invoiceDetailsControllerProvider.notifier)
+        .fetchInvoiceHtml(state.invoiceId);
+
+    debugPrint('📄 HTML received, length: ${html.length}');
+
+    if (!mounted) return;
+    setState(() => _isGeneratingPdf = false);
+
+    // ✅ Direct print — Printing package handles HTML → PDF internally
+    //    Shows native print/save dialog
+    await Printing.layoutPdf(
+      onLayout: (format) async {
+        debugPrint('🖨 Converting HTML with format: ${format.width}x${format.height}');
+        return await Printing.convertHtml(
+          html: html,
+          format: format,
+        );
+      },
+      name: 'invoice_${state.invoiceId}.pdf',
+    );
+
+    debugPrint('✅ Print dialog closed');
+    _testHtmlSupport();
+  } catch (e, st) {
+    debugPrint('❌ Print HTML error: $e');
+    debugPrint('❌ Stack: $st');
+    if (mounted) {
+      setState(() => _isGeneratingPdf = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('failed_to_generate_pdf'.tr()),
+          backgroundColor: AppColors.errorRed,
+        ),
+      );
+    }
+  }
+}
+// ─── SHARE INVOICE FROM HTML (NEW) ───────────────────────────────────────
+Future<void> _testHtmlSupport() async {
+  final isSupported = await Printing.info();
+  debugPrint('🖨 Printing info: canPrint=${isSupported.canPrint}, '
+      'canConvertHtml=${isSupported.canConvertHtml}');
+}
+
+
+Future<void> _shareInvoiceFromHtml() async {
+  final detailsState = ref.read(invoiceDetailsControllerProvider);
+  if (detailsState is! AsyncData<InvoiceDetailsState>) return;
+
+  final state = detailsState.value!;
+
+  setState(() => _isGeneratingPdf = true);
+
+  try {
+    final html = await ref
+        .read(invoiceDetailsControllerProvider.notifier)
+        .fetchInvoiceHtml(state.invoiceId);
+
+    // ✅ Use Printing.sharePdf directly — no manual conversion
+    await Printing.sharePdf(
+      bytes: await Printing.convertHtml(
+        html: html,
+        format: PdfPageFormat.a4,
+      ),
+      filename: 'invoice_${_sanitizeFileName(state.invoiceId)}.pdf',
+    );
+  } catch (e) {
+    debugPrint('❌ Share HTML error: $e');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('failed_to_share_pdf'.tr()),
+          backgroundColor: AppColors.errorRed,
+        ),
+      );
+    }
+  } finally {
+    if (mounted) setState(() => _isGeneratingPdf = false);
+  }
+}
 
 // Inside _UnifiedInvoiceReviewPageState
 
@@ -938,19 +1044,27 @@ class _ViewOnlyBody extends ConsumerWidget {
 
 // ── ViewOnly Bottom Bar ────────────────────────────────────────────────────
 
-class _ViewOnlyBottomBar extends StatelessWidget {
+class _ViewOnlyBottomBar extends ConsumerWidget {
   const _ViewOnlyBottomBar({
     required this.onShare,
     required this.onPrint,
     required this.isLoading,
+    required this.invoiceId,
   });
 
   final VoidCallback onShare;
   final VoidCallback onPrint;
   final bool isLoading;
+  final String invoiceId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+        // ✅ Check if delivery role
+    final isDelivery = checkRole(
+      ref,
+      delivery: true,
+      defaultWidget: false,
+    ) as bool;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -990,7 +1104,13 @@ class _ViewOnlyBottomBar extends StatelessWidget {
 
                   // ── Print / PDF ────────────────────────────────────────
                   Expanded(
-                    child: CustomButtonWidget(
+                    child: 
+                     isDelivery
+                        // ✅ Delivery role → Delivered button
+                        ? _DeliveredButton(invoiceId: invoiceId)
+                        // ✅ Other roles → Print button
+                        :
+                    CustomButtonWidget(
                       text: "",
                       onTap: onPrint,
                       width: double.infinity,
@@ -1021,8 +1141,53 @@ class _ViewOnlyBottomBar extends StatelessWidget {
       ),
     );
   }
+  
+  
 }
 
+class _DeliveredButton extends ConsumerWidget {
+  const _DeliveredButton({required this.invoiceId});
+
+  final String invoiceId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return CustomButtonWidget(
+      text: "",
+      onTap: () async {
+        // TODO: Call your mark-as-delivered API here
+        // final success = await ref
+        //     .read(invoiceDetailsControllerProvider.notifier)
+        //     .markAsDelivered(invoiceId);
+        //
+        // if (success && context.mounted) {
+        //   AppToast.successToast('delivered_successfully'.tr());
+        //   Navigator.of(context).pop();
+        // }
+      },
+      width: double.infinity,
+      isFiled: true,
+      height: 48,
+      backgroundColor: AppColors.successGreen,
+      radius: 12,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 8,
+        children: [
+          const Icon(
+            Icons.check_circle_outline_rounded,
+            color: AppColors.white,
+            size: 25,
+          ),
+          Text(
+            'delivered'.tr(),
+            style: AppTextStyle.interSemiBold16
+                .copyWith(color: AppColors.white),
+          ),
+        ],
+      ),
+    );
+  }}
 class _InvoiceInfoHeader extends StatelessWidget {
   const _InvoiceInfoHeader({
     required this.invoiceId,
@@ -1085,22 +1250,27 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: AppTextStyle.interRegular14.copyWith(
-            color: AppColors.textSecondary,
+    return FittedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+
+        children: [
+          Text(
+            label,
+            style: AppTextStyle.interRegular14.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
-        ),
-        Text(
-          value,
-          style: AppTextStyle.interSemiBold14.copyWith(
-            color: valueColor ?? AppColors.textPrimary,
+          8.horizontalSpace,
+          Text(
+            value,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextStyle.interSemiBold14.copyWith(
+              color: valueColor ?? AppColors.textPrimary,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

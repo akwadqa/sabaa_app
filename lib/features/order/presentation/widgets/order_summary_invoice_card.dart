@@ -6,6 +6,7 @@ import 'package:sabaa/features/return_invoice/presentation/controller/return_ord
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
+import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
@@ -28,6 +29,25 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ✅ Check delivery role
+    final isDelivery = checkRole(
+      ref,
+      delivery: true,
+      defaultWidget: false,
+    ) as bool;
+
+    // ✅ Filter actions based on role
+    final effectiveActions = isDelivery
+        // Delivery → only 'pay' (remove 'return')
+        ? actions?.where((a) => a == 'pay').toList()
+        // Other roles → keep original actions
+        : actions;
+
+    // ✅ Hide action bar entirely if invoice is Paid or is a Return
+    final showActions = effectiveActions != null &&
+        effectiveActions.isNotEmpty &&
+        !invoice.isReturn &&
+        invoice.status != 'Paid';
     return Container(
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
@@ -100,13 +120,14 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
               ],
             ),
           ),
-          if (actions != null && actions!.isNotEmpty && !invoice.isReturn) ...[
+          // ── Action Buttons ──────────────────────────────────────
+          if (showActions) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
               child: Row(
                 spacing: 20,
-                children: actions!.map((action) {
-                  final isLast = action == actions!.last;
+                children: effectiveActions.map((action) {
+                  final isLast = action == effectiveActions.last;
                   return Expanded(
                     child: Padding(
                       padding: EdgeInsetsDirectional.only(end: isLast ? 0 : 22),
@@ -169,6 +190,7 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
 
   Widget _buildActionButton(BuildContext context, String type, WidgetRef ref) {
     final isPay = type == 'pay';
+
     return GestureDetector(
       onTap: isPay
           ? () {
@@ -183,7 +205,6 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
               );
             }
           : () {
-            
               context.push(
                 AppRoutes.returnInvoiceScreen,
                 extra: {
@@ -204,7 +225,7 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           spacing: 8,
           children: [
-            isPay
+            (isPay)
                 ? Assets.icons.invoicePayIc.svg()
                 : Assets.icons.invoiceReturnIc.svg(),
             Text(

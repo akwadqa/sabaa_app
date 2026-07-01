@@ -4,15 +4,22 @@ import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 
 dynamic checkRole(
   // String role, {
-  WidgetRef ref, {
+  Object ref, {
   dynamic salesMan,
   dynamic vanSales,
   dynamic delivery,
   dynamic hyperMarket,
   required dynamic defaultWidget,
 }) {
-  final role = ref.watch(localStorageServiceProvider).userInfo.role;
-  switch (role) {
+  final String role;
+
+  if (ref is Ref) {
+    role = ref.read(localStorageServiceProvider).userInfo.role;
+  } else if (ref is WidgetRef) {
+    role = ref.read(localStorageServiceProvider).userInfo.role;
+  } else {
+    throw ArgumentError('ref must be Ref or WidgetRef');
+  }  switch (role) {
     case 'Pre-Order':
       return salesMan ?? defaultWidget;
     case 'Van Sales':

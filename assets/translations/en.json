@@ -208,12 +208,14 @@
     "failed_to_load_invoice": "Failed to load invoice",
     "display_capture": "Display Capture",
     "display_photo": "Display Photo",
-    "take_photo" : "Take a shelf display photo.",
+    "take_photo": "Take a shelf display photo.",
     "add_photo": "Add Photo",
     "display_notes": "Display Notes",
-    "display_notes_hint": "Optional competitor or shelf status notes..."    ,
+    "display_notes_hint": "Optional competitor or shelf status notes...",
     "continue": "Continue",
     "photo_uploaded_successfully": "Photo Uploaded Successfully!",
+    "delivered": "Delivered",
+    "payment_collected": "Payment collected",
+    "delivered_successfully": "Marked as delivered successfully",
     "photo_uploaded_successfully_desc": "Your merchandising photo has been saved "
-
 }

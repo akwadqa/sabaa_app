@@ -10,6 +10,7 @@ import 'package:sabaa/features/customers/presentation/controller/customer_contro
 import 'package:sabaa/features/customers/presentation/widgets/customer_card.dart';
 import 'package:sabaa/features/van_stock/presentation/widgets/filter_search_bar.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/app_pagination_widget.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
@@ -76,9 +77,19 @@ class _CustomersPageState extends ConsumerState<CustomersPage> {
             ),
             Expanded(
               child: controller.when(
-                data: (customers) => _buildBody(context, customers).symmetricPadding(horizontal: 20),
+                data: (customers) => _buildBody(context, customers)
+                    .symmetricPadding(horizontal: 20),
                 loading: () => const AppLoader(),
-                error: (e, __) => Center(child: Text('Error: $e')),
+                error: (e, __) => AppErrorWidget(
+                  errorMsg: e
+                      .toString(), // ✅ "No Sales Person is linked to your account."
+                  onTap: () {
+                    // ✅ Retry button
+                    ref
+                        .read(customersControllerProvider.notifier)
+                        .getCustomers(page: 1);
+                  },
+                ),
               ),
             ),
           ],

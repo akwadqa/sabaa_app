@@ -1,5 +1,6 @@
 // lib/features/order/presentation/controller/invoice_details_provider.dart
 
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/repository/order_repository.dart';
 import 'package:sabaa/features/return_invoice/data/repositories/return_order_repository.dart';
@@ -35,6 +36,21 @@ class InvoiceDetailsController extends _$InvoiceDetailsController {
       state = AsyncError(e, st);
     }
   }
+
+// invoice_details_controller.dart
+
+Future<String> fetchInvoiceHtml(String invoiceId) async {
+  final repo = ref.read(orderRepositoryProvider);
+  final html = await repo.getDocumentHtml(
+    docName: invoiceId,
+    docType: 'Sales Invoice',
+  );
+
+  debugPrint('✅ Fetched HTML length: ${html.length}');
+  debugPrint('✅ First 200 chars: ${html.substring(0, html.length > 200 ? 200 : html.length)}');
+
+  return html;
+}
 }
 
 class InvoiceDetailsState {
