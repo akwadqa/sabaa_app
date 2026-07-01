@@ -14,6 +14,8 @@ class ApiEndPoints {
   static const String getInvoiceDetails = '$domain.orders.get_invoice_details';
   static const String uploadCapture = '$domain.capture.upload_capture';
 
+  static const String hyperMarketOrderSummary = '$domain.hypermarket.get_customer_delivered_items';
+
 
 
   //? --- AUTH ---

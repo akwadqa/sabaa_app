@@ -210,6 +210,7 @@
     "return_summary": "ملخص الإرجاع",
     "return_invoice_review": "مراجعة فاتورة الإرجاع",
     "swipe_to_confirm_return": "اسحب لتأكيد الإرجاع",
+    "total_stock": "إجمالي المخزون",
     "delivered": "تم التسليم",
     "payment_collected": "المبلغ المحصل",
     "delivered_successfully": "تم تسليم الفاتورة بنجاح",

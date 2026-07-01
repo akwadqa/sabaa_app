@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/home/data/repositories/home_repository.dart';
@@ -15,7 +14,6 @@ part 'home_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class HomeController extends _$HomeController {
-
   // ──────────────────────────────────────────────────────────────────────────
   // Build
   // ──────────────────────────────────────────────────────────────────────────
@@ -41,11 +39,13 @@ class HomeController extends _$HomeController {
       final tripStarted = data.trip?.status.toLowerCase() == 'in progress';
       final trip = data.trip;
 
-      final completed = trip?.completedVisits??0;
-      final total = trip?.totalVisitsPlanned??0;
+      final completed = trip?.completedVisits ?? 0;
+      final total = trip?.totalVisitsPlanned ?? 0;
 
 // 🔥 always safe calculation (in case backend changes)
       final percent = total == 0 ? 0 : ((completed / total) * 100).round();
+
+      final role = ref.read(localStorageServiceProvider).userInfo.role;
       final stateData = HomeState(
         userName: userInf.fullName,
         todayDate: data.date.formattedDate,
@@ -67,9 +67,9 @@ class HomeController extends _$HomeController {
                 ? AppColors.metricGreenIcon
                 : AppColors.textSecondary,
           ),
-         PerformanceMetric(
+          PerformanceMetric(
             label: 'skip_visit',
-            value:  data.dailyPerformance.totalVisitsSkipped.toString(),
+            value: data.dailyPerformance.totalVisitsSkipped.toString(),
             icon: Icons.block_flipped,
             iconColor: AppColors.metricOrangeIcon,
             subtitle: "today_skips",
@@ -80,22 +80,29 @@ class HomeController extends _$HomeController {
             iconColor: AppColors.metricGreenIcon,
             icon: Icons.trending_up_rounded,
           ),
-              PerformanceMetric(
-            label: 'sales_volume',
-            value: data.dailyPerformance.totalPaymentsCollected.toString(),
-            icon: Icons.inventory_2_outlined,
-            iconColor: AppColors.metricPurpleIcon,
-            // subtitle: 'mtd_total',
-          ),
-       
-       
+          if (role != 'Hypermarket')
+            PerformanceMetric(
+              label:checkRole(ref, defaultWidget: 'total_sales',delivery: "payment_collected") ,
+              value: data.dailyPerformance.totalSales.toString(),
+              iconColor: AppColors.metricGreenIcon,
+              icon: Icons.trending_up_rounded,
+            ),
+          if (role != 'Hypermarket')
+            PerformanceMetric(
+              label: 'sales_volume',
+              value: data.dailyPerformance.totalPaymentsCollected.toString(),
+              icon: Icons.inventory_2_outlined,
+              iconColor: AppColors.metricPurpleIcon,
+              // subtitle: 'mtd_total',
+            ),
+
+
         ],
         quickActions: [
           QuickAction(
             label: 'begin_trip',
             color: AppColors.primary,
-              isBeginTrip: true,
-
+            isBeginTrip: true,
             icon: Icons.local_shipping_outlined,
             onTap: () => ref.read(bottomNavIndexProvider.notifier).state = 1,
           ),

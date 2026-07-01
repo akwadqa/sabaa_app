@@ -27,7 +27,7 @@ dynamic checkRole(
     case 'Delivery':
       return delivery ?? defaultWidget;
 
-    case 'Hyper-Market':
+    case 'Hypermarket':
       return hyperMarket ?? defaultWidget;
     default:
       return defaultWidget;

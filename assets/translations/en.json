@@ -217,5 +217,7 @@
     "delivered": "Delivered",
     "payment_collected": "Payment collected",
     "delivered_successfully": "Marked as delivered successfully",
-    "photo_uploaded_successfully_desc": "Your merchandising photo has been saved "
+    "photo_uploaded_successfully_desc": "Your merchandising photo has been saved ",
+    "total_stock" : "Total Stock"
+
 }
