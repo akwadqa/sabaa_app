@@ -184,10 +184,11 @@ class _DisplayCapturePageBody extends ConsumerWidget {
                         onPressed: () {
                           ref.read(bottomNavIndexProvider.notifier).state = 0;
 
-                          context.goNamed(AppRoutes.mainScreen); // ✅ best
+                          context.pop();
+                          context.pop();
                         },
                         child: Text(
-                          "back_to_home".tr(),
+                          "back_to_stock".tr(),
                           style: AppTextStyle.interSemiBold14.copyWith(
                             color: AppColors.primary,
                           ),
