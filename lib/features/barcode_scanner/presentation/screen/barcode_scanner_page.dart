@@ -9,8 +9,9 @@ import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 
 class BarcodeScannerPage extends ConsumerStatefulWidget {
-  final bool fromNewOrder;
-  const BarcodeScannerPage({super.key, required this.fromNewOrder});
+  final bool? fromNewOrder;
+  final void Function(String)? onScan;
+  const BarcodeScannerPage({super.key, this.fromNewOrder, required this.onScan});
 
   @override
   ConsumerState<BarcodeScannerPage> createState() => _BarcodeScannerPageState();
@@ -58,13 +59,17 @@ class _BarcodeScannerPageState extends ConsumerState<BarcodeScannerPage> {
         Navigator.pop(context);
       }
 
-      widget.fromNewOrder
-          ? await ref
-              .read(newOrderControllerProvider.notifier)
-              .fetchItems(page: 1, search: code)
-          : await ref
-              .read(vanStockControllerProvider.notifier)
-              .fetchStock(page: 1, search: code);
+      (widget.fromNewOrder != null)
+          ? widget.fromNewOrder!
+              ? await ref
+                  .read(newOrderControllerProvider.notifier)
+                  .fetchItems(page: 1, search: code)
+              : await ref
+                  .read(vanStockControllerProvider.notifier)
+                  .fetchStock(page: 1, search: code)
+          : widget.onScan != null
+              ? widget.onScan!(code)
+              : null;
     } catch (e) {
       debugPrint("Scan error: $e");
     } finally {
@@ -87,7 +92,6 @@ class _BarcodeScannerPageState extends ConsumerState<BarcodeScannerPage> {
       // ),
       onDetect: (barcode) async {
         final code = barcode.barcodes.first.rawValue;
-
 
         Dev.logLine("SCANNED: $code");
         if (code != null) {

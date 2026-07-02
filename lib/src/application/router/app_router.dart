@@ -353,9 +353,12 @@ class AppRouter {
           name: AppRoutes.barcodeScreen,
           parentNavigatorKey: rootKey,
           pageBuilder: (BuildContext context, GoRouterState state) {
+
+            final extra = state.extra as Map<String, dynamic>?;
             return CustomTransitionPage(
               child: BarcodeScannerPage(
-                fromNewOrder: state.extra as bool,
+                fromNewOrder: extra?['fromNewOrder'] as bool?,
+                onScan: extra?['onScan'] as void Function(String)?,
               ),
               key: state.pageKey,
               transitionsBuilder:

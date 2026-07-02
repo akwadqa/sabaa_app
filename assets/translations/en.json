@@ -218,6 +218,24 @@
     "payment_collected": "Payment collected",
     "delivered_successfully": "Marked as delivered successfully",
     "photo_uploaded_successfully_desc": "Your merchandising photo has been saved ",
-    "total_stock" : "Total Stock"
+    "total_stock" : "Total Stock",
+    "stock_updated_successfully" : "Stock Updated Successfully",
+    "stock_updated_successfully_desc" : "The stock has been updated across selected Batches.",
+    "back_to_stock" : "Back to Stock",
+    "stock_overview" : "Stock overview",
+    "filter" : "Filter",
+    "clear_all" : "Clear all",
+    "filter_search_hint" : "Search product name or SKU.",
+    "from" : "From",
+    "to" : "To",
+    "select_date" : "Select Date",
+    "apply_filters" : "Apply Filters",
+    "update_stock" : "Update Stock",
+    "select_unit" : "Select Unit",
+    "expiry_date" : "Expiry Date",
+    "current_stock" : "Current Stock",
+    "enter_current_stock" : "Enter stock for this batch",
+    "add_another" : "Add Another",
+    "update" : "Update"
 
 }

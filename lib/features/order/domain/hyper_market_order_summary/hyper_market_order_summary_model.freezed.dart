@@ -452,7 +452,7 @@ class __$HyperMarketOrdersSummaryResponseCopyWithImpl<$Res>
 mixin _$HyperMarketStockItemModel {
   String get itemCode;
   String get itemName;
-  String get itemImage;
+  String? get itemImage;
   String get totalQty;
   List<String> get availableUoms;
 
@@ -504,7 +504,7 @@ abstract mixin class $HyperMarketStockItemModelCopyWith<$Res> {
   $Res call(
       {String itemCode,
       String itemName,
-      String itemImage,
+      String? itemImage,
       String totalQty,
       List<String> availableUoms});
 }
@@ -524,7 +524,7 @@ class _$HyperMarketStockItemModelCopyWithImpl<$Res>
   $Res call({
     Object? itemCode = null,
     Object? itemName = null,
-    Object? itemImage = null,
+    Object? itemImage = freezed,
     Object? totalQty = null,
     Object? availableUoms = null,
   }) {
@@ -537,10 +537,10 @@ class _$HyperMarketStockItemModelCopyWithImpl<$Res>
           ? _self.itemName
           : itemName // ignore: cast_nullable_to_non_nullable
               as String,
-      itemImage: null == itemImage
+      itemImage: freezed == itemImage
           ? _self.itemImage
           : itemImage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       totalQty: null == totalQty
           ? _self.totalQty
           : totalQty // ignore: cast_nullable_to_non_nullable
@@ -646,7 +646,7 @@ extension HyperMarketStockItemModelPatterns on HyperMarketStockItemModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String itemCode, String itemName, String itemImage,
+    TResult Function(String itemCode, String itemName, String? itemImage,
             String totalQty, List<String> availableUoms)?
         $default, {
     required TResult orElse(),
@@ -676,7 +676,7 @@ extension HyperMarketStockItemModelPatterns on HyperMarketStockItemModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String itemCode, String itemName, String itemImage,
+    TResult Function(String itemCode, String itemName, String? itemImage,
             String totalQty, List<String> availableUoms)
         $default,
   ) {
@@ -704,7 +704,7 @@ extension HyperMarketStockItemModelPatterns on HyperMarketStockItemModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String itemCode, String itemName, String itemImage,
+    TResult? Function(String itemCode, String itemName, String? itemImage,
             String totalQty, List<String> availableUoms)?
         $default,
   ) {
@@ -737,7 +737,7 @@ class _HyperMarketStockItemModel implements HyperMarketStockItemModel {
   @override
   final String itemName;
   @override
-  final String itemImage;
+  final String? itemImage;
   @override
   final String totalQty;
   final List<String> _availableUoms;
@@ -804,7 +804,7 @@ abstract mixin class _$HyperMarketStockItemModelCopyWith<$Res>
   $Res call(
       {String itemCode,
       String itemName,
-      String itemImage,
+      String? itemImage,
       String totalQty,
       List<String> availableUoms});
 }
@@ -824,7 +824,7 @@ class __$HyperMarketStockItemModelCopyWithImpl<$Res>
   $Res call({
     Object? itemCode = null,
     Object? itemName = null,
-    Object? itemImage = null,
+    Object? itemImage = freezed,
     Object? totalQty = null,
     Object? availableUoms = null,
   }) {
@@ -837,10 +837,10 @@ class __$HyperMarketStockItemModelCopyWithImpl<$Res>
           ? _self.itemName
           : itemName // ignore: cast_nullable_to_non_nullable
               as String,
-      itemImage: null == itemImage
+      itemImage: freezed == itemImage
           ? _self.itemImage
           : itemImage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       totalQty: null == totalQty
           ? _self.totalQty
           : totalQty // ignore: cast_nullable_to_non_nullable

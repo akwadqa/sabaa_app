@@ -66,17 +66,20 @@ class _HomeBody extends ConsumerWidget {
       );
     });
     final quickActions = checkRole(
-  ref,
-  delivery: state.quickActions.where((a) => a.label != 'new_order').toList(),
-  defaultWidget: state.quickActions,
-);
+      ref,
+      delivery:
+          state.quickActions.where((a) => a.label != 'new_order').toList(),
+      hyperMarket:
+          state.quickActions.where((a) => a.label != 'new_order').toList(),
+      defaultWidget: state.quickActions,
+    );
     final metrics = checkRole(
-  ref,
-  delivery: state.metrics.where((a) => a.label != 'sales_volume').toList(),
-  defaultWidget: state.metrics,
-);
-final pairedCount = metrics.length - (metrics.length.isOdd ? 1 : 0);
-final leftover = metrics.length.isOdd ? metrics.last : null;
+      ref,
+      delivery: state.metrics.where((a) => a.label != 'sales_volume').toList(),
+      defaultWidget: state.metrics,
+    );
+    final pairedCount = metrics.length - (metrics.length.isOdd ? 1 : 0);
+    final leftover = metrics.length.isOdd ? metrics.last : null;
     return Scaffold(
       body: RefreshIndicator(
         color: AppColors.primary,
@@ -96,7 +99,10 @@ final leftover = metrics.length.isOdd ? metrics.last : null;
                         ref.read(localStorageServiceProvider).logout();
                         context.goNamed(AppRoutes.signInScreen);
                       },
-                      child: Icon(Icons.logout,color: Colors.red,)),
+                      child: Icon(
+                        Icons.logout,
+                        color: Colors.red,
+                      )),
                 ),
                 20.verticalSpace,
 
@@ -106,7 +112,7 @@ final leftover = metrics.length.isOdd ? metrics.last : null;
                 // ── Quick Actions ────────────────────────────────────
                 const SectionHeader(title: 'quick_actions'),
                 16.verticalSpace,
-                
+
                 Row(
                   children: (quickActions as List<QuickAction>)
                       .map<Widget>(
@@ -129,28 +135,29 @@ final leftover = metrics.length.isOdd ? metrics.last : null;
                   trailing: DateBadge(label: state.todayDate),
                 ),
                 16.verticalSpace,
-               if (pairedCount > 0)
-      GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: pairedCount,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1.0,
-        ),
-        itemBuilder: (_, i) => PerformanceCard(metric: metrics[i]),
-      ),
+                if (pairedCount > 0)
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: pairedCount,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemBuilder: (_, i) => PerformanceCard(metric: metrics[i]),
+                  ),
 
-    // ── Leftover odd item → full width ────────────
-    if (leftover != null) ...[
-      const SizedBox(height: 16),
-      SizedBox(
-        width: double.infinity,
-        child: PerformanceCard(metric: leftover),
-      ),
-    ],
+                // ── Leftover odd item → full width ────────────
+                if (leftover != null) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: PerformanceCard(metric: leftover),
+                  ),
+                ],
                 24.verticalSpace,
 
                 // ── Loading / Error overlay (non-blocking) ───────────

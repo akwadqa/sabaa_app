@@ -15,6 +15,7 @@ class ApiEndPoints {
   static const String uploadCapture = '$domain.capture.upload_capture';
 
   static const String hyperMarketOrderSummary = '$domain.hypermarket.get_customer_delivered_items';
+  static const String hyperMarketUpdateStock = '$domain.hypermarket.save_visit_items';
 
 
 

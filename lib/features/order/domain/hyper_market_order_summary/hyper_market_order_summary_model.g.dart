@@ -36,7 +36,7 @@ _HyperMarketStockItemModel _$HyperMarketStockItemModelFromJson(
     _HyperMarketStockItemModel(
       itemCode: json['itemCode'] as String,
       itemName: json['itemName'] as String,
-      itemImage: json['itemImage'] as String,
+      itemImage: json['itemImage'] as String?,
       totalQty: json['totalQty'] as String,
       availableUoms: (json['availableUoms'] as List<dynamic>)
           .map((e) => e as String)

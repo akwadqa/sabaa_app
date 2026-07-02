@@ -35,7 +35,7 @@ final class HyperMarketOrderControllerProvider extends $AsyncNotifierProvider<
 }
 
 String _$hyperMarketOrderControllerHash() =>
-    r'123c1e367745d5d8172bf653c8b7dda5585898de';
+    r'a7958d40de671578f54ab533049e720605694bcf';
 
 abstract class _$HyperMarketOrderController
     extends $AsyncNotifier<HyperMarketOrderState> {

@@ -6,6 +6,7 @@ import 'package:sabaa/features/order/domain/create_payment/create_payment_respon
 import 'package:sabaa/features/order/domain/hyper_market_order_summary/hyper_market_order_summary_model.dart';
 import 'package:sabaa/features/order/domain/hyper_market_order_summary_params.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/stock_update_input.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/exception/dio_exceptions.dart';
@@ -99,5 +100,14 @@ Future<String> getDocumentHtml({
   }
 
   throw AppException(response.message ?? 'Failed to fetch document HTML');
+}
+ Future<ApiResponse> hyperMarketUpdateStock(String visitId , List<StockUpdateInput> items) async {
+  final response = await _remoteDataSource.hyperMarketUpdateStock(visitId, items);
+
+  if (response.status == 200) {
+    return response;
+  }
+
+  throw AppException(response.message);
 }
 }

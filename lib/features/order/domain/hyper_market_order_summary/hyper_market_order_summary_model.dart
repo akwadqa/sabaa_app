@@ -23,7 +23,7 @@ abstract class HyperMarketStockItemModel with _$HyperMarketStockItemModel {
   const factory HyperMarketStockItemModel({
     required String itemCode,
     required String itemName,
-    required String itemImage,
+    required String? itemImage,
     required String totalQty,
     required List<String> availableUoms,
   }) = _HyperMarketStockItemModel;

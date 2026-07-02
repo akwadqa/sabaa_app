@@ -214,7 +214,7 @@ class _OrderBody extends ConsumerWidget {
             hintKey: 'search_items_barcode',
             onChanged: onSearchChanged,
             onBarcodeTap: () {
-            context.push(AppRoutes.barcodeScreen,extra: true);
+            context.push(AppRoutes.barcodeScreen,extra: {'fromNewOrder': true});
           },
           ),
 

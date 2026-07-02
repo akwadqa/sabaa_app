@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/order/domain/hyper_market_order_summary/hyper_market_order_summary_model.dart';
@@ -11,6 +14,7 @@ import 'package:sabaa/features/order/presentation/widgets/hyper_market_order_sum
 import 'package:sabaa/features/order/presentation/widgets/hyper_market_order_summary_page/stock_item_card.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/core/shared_widgets/app_dialogs.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_app_bar.dart';
@@ -49,6 +53,19 @@ class _HyperMarketOrdersSummaryScreenState
   Widget build(BuildContext context) {
     final controller = ref.watch(hyperMarketOrderControllerProvider
         .select((val) => val.value!.hyperMarketOrdersSummaryResponse));
+
+    ref.listen(
+        hyperMarketOrderControllerProvider
+            .select((val) => val.value!.updateStock), (previous, next) {
+      if (next is AsyncError) {
+        showErrorDialog(context, next.error.toString());
+      }
+
+      if (next is AsyncData) {
+        context.pop();
+        _showSuccessDialog(context, ref);
+      }
+    });
     return Scaffold(
         backgroundColor: const Color(0xffF7F9FC),
         // تخصيص الـ AppBar ليطابق تفاصيل هيدر التصميم
@@ -124,7 +141,7 @@ class _HyperMarketOrdersSummaryScreenState
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Stock overview', style: AppTextStyle.rubikBold18),
+                Text('stock_overview'.tr(), style: AppTextStyle.rubikBold18),
                 // كبسولة الفلتر (Filter Button)
                 InkWell(
                   onTap: () async {
@@ -165,7 +182,7 @@ class _HyperMarketOrdersSummaryScreenState
                         Icon(Icons.tune_rounded,
                             size: 14, color: Color(0xff005AAB)),
                         SizedBox(width: 4),
-                        Text('Filter',
+                        Text('filter'.tr(),
                             style: AppTextStyle.rubikMedium14
                                 .copyWith(color: AppColors.primary))
                       ],
@@ -184,10 +201,8 @@ class _HyperMarketOrdersSummaryScreenState
                 itemBuilder: (context, index) {
                   final product = orderSummary.items[index];
                   return StockItemCardHyperMarket(
-                    title: product.itemName,
-                    sku: product.itemCode,
-                    stock: product.totalQty,
-                    imageUrl: ServicesUrls.imageUrl + product.itemImage,
+                    stockItem: product,
+                    visitId: widget.visitId,
                   );
                 },
               ),
@@ -195,6 +210,88 @@ class _HyperMarketOrdersSummaryScreenState
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showSuccessDialog(BuildContext context, WidgetRef ref) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Stack(
+          children: [
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(color: Colors.transparent),
+            ),
+            Center(
+              child: Dialog(
+                backgroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "stock_updated_successfully".tr(),
+                        textAlign: TextAlign.center,
+                        style: AppTextStyle.interBold22.copyWith(
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      /// ICON
+                      SvgPicture.asset(
+                        Assets.icons.successCheckIcon.keyName,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(height: 20),
+
+                      Text(
+                        "stock_updated_successfully_desc".tr(),
+                        textAlign: TextAlign.center,
+                        style: AppTextStyle.interRegular14.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      const SizedBox(height: 8),
+
+                      TextButton(
+                        onPressed: () {
+                          // ref.read(bottomNavIndexProvider.notifier).state = 0;
+
+                          context.pop();
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
+                        ),
+                        child: Text(
+                          "back_to_stock".tr(),
+                          style: AppTextStyle.interSemiBold14.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

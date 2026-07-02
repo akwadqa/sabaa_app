@@ -53,7 +53,7 @@ class HomeController extends _$HomeController {
         tripStarted: tripStarted,
         pageState: const AsyncData(null),
         metrics: [
-             PerformanceMetric(
+          PerformanceMetric(
             label: 'todays_visits',
             value: '$completed / $total',
             icon: Icons.route_outlined,
@@ -74,15 +74,18 @@ class HomeController extends _$HomeController {
             iconColor: AppColors.metricOrangeIcon,
             subtitle: "today_skips",
           ),
-          PerformanceMetric(
-            label:checkRole(ref, defaultWidget: 'total_sales',delivery: "payment_collected") ,
-            value: data.dailyPerformance.totalSales.toString(),
-            iconColor: AppColors.metricGreenIcon,
-            icon: Icons.trending_up_rounded,
-          ),
           if (role != 'Hypermarket')
             PerformanceMetric(
-              label:checkRole(ref, defaultWidget: 'total_sales',delivery: "payment_collected") ,
+              label: checkRole(ref,
+                  defaultWidget: 'total_sales', delivery: "payment_collected"),
+              value: data.dailyPerformance.totalSales.toString(),
+              iconColor: AppColors.metricGreenIcon,
+              icon: Icons.trending_up_rounded,
+            ),
+          if (role != 'Hypermarket')
+            PerformanceMetric(
+              label: checkRole(ref,
+                  defaultWidget: 'total_sales', delivery: "payment_collected"),
               value: data.dailyPerformance.totalSales.toString(),
               iconColor: AppColors.metricGreenIcon,
               icon: Icons.trending_up_rounded,
@@ -95,8 +98,6 @@ class HomeController extends _$HomeController {
               iconColor: AppColors.metricPurpleIcon,
               // subtitle: 'mtd_total',
             ),
-
-
         ],
         quickActions: [
           QuickAction(

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/order/presentation/controller/hyper_market_order_controller.dart';
+import 'package:sabaa/src/application/router/app_routes.dart';
+import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
+import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 class HyperMarketFilterBottomSheet extends ConsumerStatefulWidget {
   const HyperMarketFilterBottomSheet({super.key, required this.customerId});
@@ -19,6 +22,8 @@ class _HyperMarketFilterBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    _searchController.text =
+        ref.watch(hyperMarketOrderControllerProvider).value!.productName ?? '';
     final _fromDate =
         ref.watch(hyperMarketOrderControllerProvider).value!.filterFromDate;
     final _toDate =
@@ -44,15 +49,7 @@ class _HyperMarketFilterBottomSheetState
                 icon: const Icon(Icons.close, size: 20, color: Colors.black),
                 onPressed: () => Navigator.pop(context),
               ),
-              const Text(
-                'Filters',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
+              Text('filter'.tr(), style: AppTextStyle.rubikBold20),
               TextButton(
                 onPressed: () {
                   _searchController.clear();
@@ -60,14 +57,10 @@ class _HyperMarketFilterBottomSheetState
                       .read(hyperMarketOrderControllerProvider.notifier)
                       .clearFilters();
                 },
-                child: const Text(
-                  'Clear all',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff005AAB),
-                  ),
+                child: Text(
+                  'clear_all'.tr(),
+                  style: AppTextStyle.rubikSemiBold14
+                      .copyWith(color: AppColors.primary),
                 ),
               ),
             ],
@@ -90,13 +83,10 @@ class _HyperMarketFilterBottomSheetState
                     onChanged: (value) => ref
                         .read(hyperMarketOrderControllerProvider.notifier)
                         .changeProductName(value),
-                    decoration: const InputDecoration(
-                      hintText: 'Search product name or SKU.',
-                      hintStyle: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        color: Color(0xff64748B),
-                      ),
+                    decoration: InputDecoration(
+                      hintText: 'filter_search_hint'.tr(),
+                      hintStyle: AppTextStyle.rubikRegular16
+                          .copyWith(color: AppColors.textSecondary),
                       prefixIcon: Icon(Icons.search,
                           color: Color(0xff64748B), size: 18),
                       border: InputBorder.none,
@@ -116,9 +106,16 @@ class _HyperMarketFilterBottomSheetState
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.qr_code_scanner,
-                      color: Color(0xff005AAB), size: 24),
+                      color: AppColors.primary, size: 24),
                   onPressed: () {
-                    // ويدجت الكاميرا أو مسح الباركود الخاص بك
+                    context.push(AppRoutes.barcodeScreen, extra: {
+                      'onScan': (code) {
+                        ref
+                            .read(hyperMarketOrderControllerProvider.notifier)
+                            .changeProductName(code);
+                        // context.pop();
+                      }
+                    });
                   },
                 ),
               ),
@@ -128,15 +125,10 @@ class _HyperMarketFilterBottomSheetState
 
           // 3. "From" Date Picker Selector
           Align(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'From',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xff111418),
-              ),
+            alignment: AlignmentGeometry.centerStart,
+            child: Text(
+              'from'.tr(),
+              style: AppTextStyle.rubikSemiBold16,
             ),
           ),
           const SizedBox(height: 8),
@@ -166,14 +158,11 @@ class _HyperMarketFilterBottomSheetState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _fromDate == null
-                        ? "Select Date"
-                        : DateFormat('yyyy-MM-dd').format(_fromDate),
-                    style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 16,
-                        color: Color(0xff64748B)),
-                  ),
+                      _fromDate == null
+                          ? "select_date".tr()
+                          : DateFormat('yyyy-MM-dd').format(_fromDate),
+                      style: AppTextStyle.rubikRegular16
+                          .copyWith(color: AppColors.textSecondary)),
                   const Icon(Icons.calendar_today_outlined,
                       size: 18, color: Color(0xff9CA3AF)),
                 ],
@@ -184,15 +173,10 @@ class _HyperMarketFilterBottomSheetState
 
           // 4. "To" Date Picker Selector
           Align(
-            alignment: Alignment.centerLeft,
-            child: const Text(
-              'To',
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xff111418),
-              ),
+            alignment: AlignmentGeometry.centerStart,
+            child: Text(
+              'to'.tr(),
+              style: AppTextStyle.rubikSemiBold16,
             ),
           ),
           const SizedBox(height: 8),
@@ -222,14 +206,11 @@ class _HyperMarketFilterBottomSheetState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _toDate == null
-                        ? "Select Date"
-                        : DateFormat('yyyy-MM-dd').format(_toDate),
-                    style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 16,
-                        color: Color(0xff64748B)),
-                  ),
+                      _toDate == null
+                          ? "select_date".tr()
+                          : DateFormat('yyyy-MM-dd').format(_toDate),
+                      style: AppTextStyle.rubikRegular16
+                          .copyWith(color: AppColors.textSecondary)),
                   const Icon(Icons.calendar_today_outlined,
                       size: 18, color: Color(0xff9CA3AF)),
                 ],
@@ -261,22 +242,19 @@ class _HyperMarketFilterBottomSheetState
                 context.pop();
                 ref
                     .read(hyperMarketOrderControllerProvider.notifier)
-                    .getHyperMarketOderSummary(widget.customerId); 
+                    .getHyperMarketOderSummary(widget.customerId);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff005AAB),
+                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
               ),
-              child: const Text(
-                'Apply Filters',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              child: Text(
+                'apply_filters'.tr(),
+                style:
+                    AppTextStyle.rubikBold16.copyWith(color: AppColors.white),
               ),
             ),
           ),

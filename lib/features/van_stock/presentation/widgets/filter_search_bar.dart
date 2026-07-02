@@ -34,8 +34,8 @@ class FilterSearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDelivery = checkRole(
       ref,
-      delivery: true,
-      defaultWidget: false,
+      vanSales: false,
+      defaultWidget: true,
     ) as bool;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -66,29 +66,30 @@ class FilterSearchBar extends ConsumerWidget {
             )),
         // const SizedBox(width: 8),
         (isCustomer)
-            ?
-            isDelivery?SizedBox():
-            Flexible(
-                child: GestureDetector(
-                  onTap: () {
-                    context.push(AppRoutes.addCustomerScreen);
-                  },
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.navBorder),
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              )
+            ? SizedBox()
+            // ? isDelivery
+            //     ? SizedBox()
+            //     : Flexible(
+            //         child: GestureDetector(
+            //           onTap: () {
+            //             context.push(AppRoutes.addCustomerScreen);
+            //           },
+            //           child: Container(
+            //             width: 44,
+            //             height: 44,
+            //             decoration: BoxDecoration(
+            //               color: AppColors.white,
+            //               borderRadius: BorderRadius.circular(12),
+            //               border: Border.all(color: AppColors.navBorder),
+            //             ),
+            //             child: const Icon(
+            //               Icons.add,
+            //               color: AppColors.primary,
+            //               size: 24,
+            //             ),
+            //           ),
+            //         ),
+            //       )
             : Flexible(
                 child: GestureDetector(
                   onTap: onBarcodeTap,
@@ -107,46 +108,46 @@ class FilterSearchBar extends ConsumerWidget {
                   ),
                 ),
               ),
-        (isCustomer)
-            ? Flexible(
-                child: GestureDetector(
-                  onTap: () {
-                    context.push(AppRoutes.addCustomerScreen);
-                  },
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.navBorder),
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
-                ),
-              )
-            : Flexible(
-                child: GestureDetector(
-                  onTap: onBarcodeTap,
-                  child: Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.qr_code_scanner_rounded,
-                      color: AppColors.primary,
-                      size: 22,
-                    ),
-                  ),
-                ),
-              ),
+        // (isCustomer)
+        //     ? Flexible(
+        //         child: GestureDetector(
+        //           onTap: () {
+        //             context.push(AppRoutes.addCustomerScreen);
+        //           },
+        //           child: Container(
+        //             width: 44,
+        //             height: 44,
+        //             decoration: BoxDecoration(
+        //               color: AppColors.white,
+        //               borderRadius: BorderRadius.circular(12),
+        //               border: Border.all(color: AppColors.navBorder),
+        //             ),
+        //             child: const Icon(
+        //               Icons.add,
+        //               color: AppColors.primary,
+        //               size: 24,
+        //             ),
+        //           ),
+        //         ),
+        //       )
+        //     : Flexible(
+        //         child: GestureDetector(
+        //           onTap: onBarcodeTap,
+        //           child: Container(
+        //             width: 44,
+        //             height: 44,
+        //             decoration: BoxDecoration(
+        //               color: AppColors.white,
+        //               borderRadius: BorderRadius.circular(12),
+        //             ),
+        //             child: Icon(
+        //               Icons.qr_code_scanner_rounded,
+        //               color: AppColors.primary,
+        //               size: 22,
+        //             ),
+        //           ),
+        //         ),
+        //       ),
       ],
     ).symmetricPadding(horizontal: 18);
   }

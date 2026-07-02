@@ -184,7 +184,7 @@ class _StockBody extends ConsumerWidget {
           controller: searchController,
           onChanged: onSearchChanged,
           onBarcodeTap: () {
-            context.push(AppRoutes.barcodeScreen,extra: false);
+            context.push(AppRoutes.barcodeScreen, extra: {'fromNewOrder': false});
           },
         ),
 

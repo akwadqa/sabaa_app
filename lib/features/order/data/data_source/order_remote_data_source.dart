@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -6,6 +7,7 @@ import 'package:sabaa/features/order/domain/create_payment/create_payment_respon
 import 'package:sabaa/features/order/domain/hyper_market_order_summary/hyper_market_order_summary_model.dart';
 import 'package:sabaa/features/order/domain/hyper_market_order_summary_params.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/stock_update_input.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
@@ -131,6 +133,29 @@ class OrderRemoteDataSource {
       return ApiResponse.fromJson(
         response.data as Map<String, dynamic>,
         (json) => HyperMarketOrdersSummaryResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      debugPrint('Error in getData: $e');
+      rethrow;
+    }
+  }
+  Future<ApiResponse> hyperMarketUpdateStock(String visitId , List<StockUpdateInput> items) async {
+    try {
+      final response = await _networkService.get(
+        ApiEndPoints.hyperMarketUpdateStock,
+        queryParameters: {
+         'visit_id' : visitId,
+         'items' : jsonEncode(items.map((item) => item.toJson()).toList()),
+        },
+      );
+
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to load data');
+      }
+
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) {},
       );
     } catch (e) {
       debugPrint('Error in getData: $e');
