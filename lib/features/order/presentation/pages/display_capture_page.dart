@@ -74,7 +74,7 @@ class _DisplayCapturePageBody extends ConsumerWidget {
           15.verticalSpace,
           ImagesGrid(
             images: state.images ?? [],
-            onAdd: controller.pickImage,
+            onAdd: () => controller.pickImage(context),
             onRemove: controller.removeImage,
           ),
           20.verticalSpace,

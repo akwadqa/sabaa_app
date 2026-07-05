@@ -236,6 +236,7 @@
     "current_stock" : "Current Stock",
     "enter_current_stock" : "Enter stock for this batch",
     "add_another" : "Add Another",
-    "update" : "Update"
+    "update" : "Update",
+    "Choose_from_gallery" : "Choose from gallery"
 
 }
