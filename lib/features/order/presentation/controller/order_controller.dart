@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/repository/order_repository.dart';
@@ -8,6 +9,7 @@ import 'package:sabaa/features/order/domain/order_summary/order_summary_model.da
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/features/order/presentation/controller/order_state.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
+import 'package:sabaa/src/core/utils/functions/image_picker_utils.dart';
 
 part 'order_controller.g.dart';
 
@@ -171,11 +173,12 @@ class OrderController extends _$OrderController {
     }
   }
 
-  Future<void> pickImage() async {
+  Future<void> pickImage(BuildContext context) async {
     final current = state.value!;
     // if (current.images?.length >= 5) return;
 
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    // final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    final File? image = await showImageSourcePicker(context);
 
     if (image == null) return;
 
