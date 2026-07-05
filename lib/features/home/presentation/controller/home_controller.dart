@@ -82,14 +82,14 @@ class HomeController extends _$HomeController {
               iconColor: AppColors.metricGreenIcon,
               icon: Icons.trending_up_rounded,
             ),
-          if (role != 'Hypermarket')
-            PerformanceMetric(
-              label: checkRole(ref,
-                  defaultWidget: 'total_sales', delivery: "payment_collected"),
-              value: data.dailyPerformance.totalSales.toString(),
-              iconColor: AppColors.metricGreenIcon,
-              icon: Icons.trending_up_rounded,
-            ),
+          // if (role != 'Hypermarket')
+          //   PerformanceMetric(
+          //     label: checkRole(ref,
+          //         defaultWidget: 'total_sales', delivery: "payment_collected"),
+          //     value: data.dailyPerformance.totalSales.toString(),
+          //     iconColor: AppColors.metricGreenIcon,
+          //     icon: Icons.trending_up_rounded,
+          //   ),
           if (role != 'Hypermarket')
             PerformanceMetric(
               label: 'sales_volume',

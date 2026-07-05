@@ -761,16 +761,18 @@ class _ReturnOrderBody extends ConsumerWidget {
 
         final taxValue = subtotal * 0.15;
         final totalValue = subtotal + taxValue;
-        return Column(
-          children: [
-            20.verticalSpace,
-            InvoiceReviewCard(
-              items: items,
-              subtotal: formatPrice(subtotal),
-              deliveyFee: "0",
-              total: formatPrice(subtotal),
-            ).symmetricPadding(horizontal: 12, vertical: 16),
-          ],
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              20.verticalSpace,
+              InvoiceReviewCard(
+                items: items,
+                subtotal: formatPrice(subtotal),
+                deliveyFee: "0",
+                total: formatPrice(subtotal),
+              ).symmetricPadding(horizontal: 12, vertical: 16),
+            ],
+          ),
         );
       },
     );

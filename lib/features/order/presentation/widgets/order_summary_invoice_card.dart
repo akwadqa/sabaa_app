@@ -46,8 +46,7 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
     // ✅ Hide action bar entirely if invoice is Paid or is a Return
     final showActions = effectiveActions != null &&
         effectiveActions.isNotEmpty &&
-        !invoice.isReturn &&
-        invoice.status != 'Paid';
+        !invoice.isReturn;
     return Container(
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
