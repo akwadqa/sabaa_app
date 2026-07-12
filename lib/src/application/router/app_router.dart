@@ -10,14 +10,12 @@ import 'package:sabaa/features/customers/presentation/screens/create_customer_su
 import 'package:sabaa/features/customers/presentation/screens/customer_details_page.dart';
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
-import 'package:sabaa/features/new_order/presentation/screens/invoice_review_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/invoice_summary_page.dart';
 import 'package:sabaa/features/new_order/presentation/screens/new_order_page.dart';
-import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/pages/display_capture_page.dart';
-import 'package:sabaa/features/order/presentation/pages/hyper_market_orders_summary_page.dart';
-import 'package:sabaa/features/order/presentation/pages/order_summary_page.dart';
+import 'package:sabaa/features/order/presentation/pages/order_summary/hyper_market_orders_summary_page.dart';
+import 'package:sabaa/features/order/presentation/pages/order_summary/order_summary_page.dart';
 import 'package:sabaa/features/order/presentation/pages/success_payment_screen.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/features/splash/splash_screen.dart';
@@ -228,21 +226,21 @@ class AppRouter {
             );
           },
         ),
-        GoRoute(
-          path: AppRoutes.invoiceReviewPage,
-          name: AppRoutes.invoiceReviewPage,
-          parentNavigatorKey: rootKey,
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return CustomTransitionPage(
-              child: InvoiceReviewPage(),
-              key: state.pageKey,
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-            );
-          },
-        ),
+        // GoRoute(
+        //   path: AppRoutes.invoiceReviewPage,
+        //   name: AppRoutes.invoiceReviewPage,
+        //   parentNavigatorKey: rootKey,
+        //   pageBuilder: (BuildContext context, GoRouterState state) {
+        //     return CustomTransitionPage(
+        //       child: InvoiceReviewPage(),
+        //       key: state.pageKey,
+        //       transitionsBuilder:
+        //           (context, animation, secondaryAnimation, child) {
+        //         return FadeTransition(opacity: animation, child: child);
+        //       },
+        //     );
+        //   },
+        // ),
         GoRoute(
           path: AppRoutes.addCustomerScreen,
           name: AppRoutes.addCustomerScreen,

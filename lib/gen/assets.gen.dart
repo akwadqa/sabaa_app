@@ -80,10 +80,6 @@ class $AssetsIconsGen {
   /// File path: assets/icons/lock_ic.svg
   SvgGenImage get lockIc => const SvgGenImage('assets/icons/lock_ic.svg');
 
-  /// File path: assets/icons/out_balance_ic.svg
-  SvgGenImage get outBalanceIc =>
-      const SvgGenImage('assets/icons/out_balance_ic.svg');
-
   /// File path: assets/icons/person_ic.svg
   SvgGenImage get personIc => const SvgGenImage('assets/icons/person_ic.svg');
 
@@ -129,7 +125,6 @@ class $AssetsIconsGen {
         invoicePayIc,
         invoiceReturnIc,
         lockIc,
-        outBalanceIc,
         personIc,
         qatarCountry,
         salesAmountIc,

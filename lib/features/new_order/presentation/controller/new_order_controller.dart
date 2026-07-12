@@ -1,14 +1,10 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/new_order/data/repositories/new_order_repository.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
-import 'package:sabaa/features/van_stock/domain/model/stock_category.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
 import 'package:sabaa/src/logger/log_services/dev_logger.dart';
-
 import '../../../../src/core/shared_widgets/app_toast.dart';
-import '../../../customers/domain/model/customer_model.dart';
 import '../../../van_stock/domain/model/product_model.dart';
 import '../../../van_stock/domain/model/van_stock_model.dart';
 import '../../domain/model/order_item.dart';
@@ -332,31 +328,9 @@ final items = current.selectedItems.values.map((e) {
         isSubmitting: false,
       ));
 
-      // Convert InvoiceModel to ReturnOrderResponse for unified return type
-      // OR keep two methods — better to keep separate for clean type safety
-      // But since _showSuccessDialog expects InvoiceModel?, we'll cast/wrap
       return response.data; 
     }
-    // final response = current.isReturn
-    //     ? await repo.createReturnInvoice(  // ✅ return invoice API
-    //         customerId: current.customer!.customerId!,
-    //         items: items,
-    //         deliveryFee: current.deliveryFee ?? "0",
-    //         remark: current.remark,
-    //       )
-    //     : await repo.createInvoice(  // existing create invoice API
-    //         customerId: current.customer!.customerId!,
-    //         items: items,
-    //         deliveryFee: current.deliveryFee ?? "0",
-    //         remark: current.remark,
-    //       );
-    // final latest = state.value!;
-    // state = AsyncData(latest.copyWith(
-    //   selectedItems: {},
-    //   isSubmitting: false,
-    // ));
-
-    // return response.data; // 🔥 RETURN INVOICE
+ 
 
   } catch (e) {
     final latest = state.value!;

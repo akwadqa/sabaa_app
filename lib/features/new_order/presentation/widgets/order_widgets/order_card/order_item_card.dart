@@ -3,17 +3,14 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/services_urls.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 
-import '../../../van_stock/domain/model/product_model.dart';
-import '../../domain/model/new_order_model.dart';
-import '../../domain/model/order_item.dart';
-import '../controller/new_order_controller.dart';
+import '../../../../../van_stock/domain/model/product_model.dart';
+import '../../../../domain/model/new_order_model.dart';
+import '../../../controller/new_order_controller.dart';
 import 'quantity_stepper.dart';
 
 class OrderItemCard extends ConsumerStatefulWidget {
@@ -60,14 +57,7 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
     // Default to 'Box'
   }
 
-  double _defaultPriceForSelectedUnit() {
-    final uoms = _effectiveUoms();
-    final uom = uoms.firstWhere(
-      (u) => u.uom == widget.selectedUnit,
-      orElse: () => uoms.first,
-    );
-    return uom.price;
-  }
+
 
   @override
   void didUpdateWidget(OrderItemCard oldWidget) {
@@ -83,49 +73,6 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
     super.dispose();
   }
 
-  // void _handleQuantityInput(String value) {
-  //   if (value.isEmpty) {
-  //     _quantityController.clear();
-  //     return;
-  //   }
-
-  //   final parsed = int.tryParse(value);
-  //   if (parsed == null) {
-  //     // Reset to previous value
-  //     _quantityController.text = widget.quantity.toString();
-  //     return;
-  //   }
-
-  //   // Validate against available stock
-  //   if (parsed > widget.item.availableStock) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(
-  //             'Cannot exceed available stock: ${widget.item.availableStock}'),
-  //         backgroundColor: AppColors.accent,
-  //         duration: const Duration(seconds: 2),
-  //       ),
-  //     );
-  //     _quantityController.text = widget.item.availableStock.toString();
-  //     return;
-  //   }
-
-  //   if (parsed < 1) {
-  //     _quantityController.text = '1';
-  //     return;
-  //   }
-
-  //   // Update the quantity via controller
-  //   // You'll need to dispatch this to the controller
-  //   // For now, we update the text field
-  //   _quantityController.text = parsed.toString();
-  // }
-
-  // ── Style helpers ────────────────────────────────────────────────────────────
-
-  // Color get _imageBg    => widget.item.isReturn ? const Color(0xFFFFEDE0) : const Color(0xFFF3F4F6);
-  // Color get _priceColor => widget.item.isReturn ? AppColors.accent : AppColors.primary;
-  // Color get _borderColor => widget.item.isReturn ? AppColors.primary : const Color(0xFFF3F4F6);
 
   double getPriceByUom(OrderProductModel product, String selectedUom) {
     if (product.uoms.isEmpty) return 0.0; // ✅ Guard

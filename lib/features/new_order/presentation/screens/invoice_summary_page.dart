@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/new_order_section_header_widget.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/new_order_section_header_widget.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
@@ -11,7 +11,7 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 import '../controller/new_order_controller.dart';
-import '../widgets/order_item_card.dart';
+import '../widgets/order_widgets/order_card/order_item_card.dart';
 
 class InvoiceSummaryPage extends ConsumerWidget {
   const InvoiceSummaryPage({super.key});

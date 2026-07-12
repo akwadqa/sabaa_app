@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sabaa/features/order/presentation/controller/order_controller.dart';
-import 'package:sabaa/features/order/presentation/widgets/order_summary_filter_chip.dart';
+import 'package:sabaa/features/order/presentation/widgets/order_widgets/order_summary_filter_chip.dart';
 
 class OrderSummaryFiltersList extends ConsumerWidget {
   const OrderSummaryFiltersList({

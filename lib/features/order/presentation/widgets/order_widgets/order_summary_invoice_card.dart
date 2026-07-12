@@ -9,8 +9,8 @@ import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/functions/check_role.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
-import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
-import '../../domain/order_summary/order_summary_model.dart';
+import '../../../../customers/domain/model/create_customer_response/create_customer_response.dart';
+import '../../../domain/order_summary/order_summary_model.dart';
 import 'invoice_payment_bottom_sheet.dart';
 
 class OrderSummaryInvoiceCard extends ConsumerWidget {

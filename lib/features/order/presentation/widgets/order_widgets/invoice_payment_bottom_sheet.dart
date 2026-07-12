@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/presentation/controller/order_controller.dart';
 import 'package:sabaa/gen/assets.gen.dart';
@@ -28,48 +29,160 @@ class InvoicePaymentBottomSheet extends StatefulWidget {
 class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
   final TextEditingController _amountController = TextEditingController();
   String _selectedMethod = 'cash';
+  final FocusNode _amountFocusNode = FocusNode();
+  OverlayEntry? _overlayEntry;
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform:
+          KeyboardActionsPlatform.IOS, // Enable specifically for iOS
+      nextFocus: false, // Turn off if it's the only/last field
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _amountFocusNode,
+          displayDoneButton: true,
+          toolbarButtons: [
+            (node) => GestureDetector(
+                  onTap: () => node.unfocus(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Done",
+                      style: AppTextStyle.interSemiBold14.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+          ],
+          // toolbarButtons: [
+          //   (node) {
+          //     return GestureDetector(
+          //       onTap: () => node.unfocus(), // Dismiss keyboard on tap
+          //       child: const Padding(
+          //         padding: EdgeInsets.symmetric(horizontal: 16.0),
+          //         child: Text(
+          //           "Done",
+          //           style: TextStyle(
+          //             color: Colors.blue,
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 16,
+          //           ),
+          //         ),
+          //       ),
+          //     );
+          //   }
+          // ],
+        ),
+      ],
+    );
+  }
 
   @override
   void dispose() {
+    // _removeOverlay();
+    // _amountFocusNode.removeListener(_onFocusChanged);
+    _amountFocusNode.dispose();
     _amountController.dispose();
     super.dispose();
   }
 
+  // void _onFocusChanged() {
+  //   if (!Platform.isIOS) return;
+  //   if (_amountFocusNode.hasFocus) {
+  //     _showOverlay();
+  //   } else {
+  //     _removeOverlay();
+  //   }
+  // }
+
+  // void _showOverlay() {
+  //   _removeOverlay();
+  //   _overlayEntry = OverlayEntry(
+  //     builder: (context) => Positioned(
+  //       bottom: MediaQuery.of(context).viewInsets.bottom,
+  //       left: 0,
+  //       right: 0,
+  //       child: Material(
+  //         color: Colors.transparent,
+  //         child: Container(
+  //           height: 44,
+  //           color: const Color(0xFFD1D5DB),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.end,
+  //             children: [
+  //               CupertinoButton(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16),
+  //                 onPressed: () => _amountFocusNode.unfocus(),
+  //                 child: Text(
+  //                   'done'.tr(),
+  //                   style: const TextStyle(
+  //                     color: Color(0xFF007AFF),
+  //                     fontWeight: FontWeight.w600,
+  //                     fontSize: 16,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  //   Overlay.of(context).insert(_overlayEntry!);
+  // }
+
+  // void _removeOverlay() {
+  //   _overlayEntry?.remove();
+  //   _overlayEntry?.dispose();
+  //   _overlayEntry = null;
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.sheetBarrier,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.sheetBarrier,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
         ),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  _buildSummaryCards(),
-                  const SizedBox(height: 22),
-                  _buildAmountInput(),
-                  const SizedBox(height: 22),
-                  _buildPaymentMethodSelector(),
-                  const SizedBox(height: 22),
-                ],
+        // padding: EdgeInsets.only(
+        //   bottom: MediaQuery.of(context).viewInsets.bottom,
+        // ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(),
+            Flexible(
+              child: KeyboardActions(
+              config: _buildConfig(context),
+              // isDialog: true,          // 👈 KEY FIX for bottom sheets
+              // tapOutsideBehavior: TapOutsideBehavior.translucentDismiss,
+              disableScroll: true,   
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      _buildSummaryCards(),
+                      const SizedBox(height: 22),
+                      _buildAmountInput(),
+                      const SizedBox(height: 22),
+                      _buildPaymentMethodSelector(),
+                      const SizedBox(height: 22),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-          _buildActionButton(widget.invoice.invoiceId, _amountController.text),
-          const SizedBox(height: 34), // Home indicator space
-        ],
+            _buildActionButton(
+                widget.invoice.invoiceId, _amountController.text),
+            const SizedBox(height: 34), // Home indicator space
+          ],
+        ),
       ),
     );
   }
@@ -179,6 +292,8 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
         TextField(
           controller: _amountController,
           keyboardType: TextInputType.number,
+          focusNode: _amountFocusNode, // 👈 attach focus node
+
           onChanged: (value) => setState(() {}),
           decoration: InputDecoration(
             hintText: 'enter_payment_amount'.tr(),
@@ -292,7 +407,10 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
     required bool isFirst,
   }) {
     return GestureDetector(
-      onTap: () => setState(() => _selectedMethod = id),
+      onTap: () {
+        FocusScope.of(context).unfocus(); // 👈 also dismiss when picking method
+        setState(() => _selectedMethod = id);
+      },
       child: Container(
         padding: EdgeInsetsDirectional.symmetric(vertical: 30),
         decoration: BoxDecoration(
@@ -344,6 +462,7 @@ class _InvoicePaymentBottomSheetState extends State<InvoicePaymentBottomSheet> {
             /// 🔥 disable when loading or no amount
             onTap: (hasAmount && !isLoading)
                 ? () async {
+                    FocusScope.of(context).unfocus();
                     final success = await ref
                         .read(orderControllerProvider.notifier)
                         .createPayment(

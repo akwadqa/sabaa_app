@@ -9,10 +9,10 @@ import 'package:sabaa/features/customers/domain/model/create_customer_response/c
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
 import 'package:sabaa/features/new_order/presentation/controller/order_mode_controller.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/new_order_section_header_widget.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/order_category_filter.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/order_item_card.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/order_search_bar.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/new_order_section_header_widget.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/order_category_filter.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/order_card/order_item_card.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/order_search_bar.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_empty_data_widget.dart';
 import 'package:sabaa/src/core/shared_widgets/app_error_widget.dart';
@@ -25,7 +25,7 @@ import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 import '../controller/new_order_controller.dart';
 import '../controller/new_order_state.dart';
-import '../widgets/order_tab_switcher.dart';
+import '../widgets/order_widgets/order_tab_switcher.dart';
 
 class NewOrderPage extends ConsumerStatefulWidget {
   const NewOrderPage({super.key, required this.customer});
