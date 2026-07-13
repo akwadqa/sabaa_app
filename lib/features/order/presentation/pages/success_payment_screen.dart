@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabaa/features/customers/presentation/screens/create_customer_success_page.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
+import 'package:sabaa/features/order/presentation/widgets/invoice_review/invoice_pdf_actions_service.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
@@ -156,7 +157,7 @@ class PaymentSuccessPage extends ConsumerWidget {
 // PRINT RECEIPT BUTTON
 // ═══════════════════════════════════════════════════════════════════════════════
 
-class _PrintReceiptButton extends StatefulWidget {
+class _PrintReceiptButton extends ConsumerStatefulWidget {
   const _PrintReceiptButton({
     required this.invoiceId,
     required this.customerName,
@@ -172,49 +173,82 @@ class _PrintReceiptButton extends StatefulWidget {
   final num amount;
 
   @override
-  State<_PrintReceiptButton> createState() => _PrintReceiptButtonState();
+  ConsumerState<_PrintReceiptButton> createState() => _PrintReceiptButtonState();
 }
 
-class _PrintReceiptButtonState extends State<_PrintReceiptButton> {
+class _PrintReceiptButtonState extends ConsumerState<_PrintReceiptButton> {
   bool _isLoading = false;
+  late final InvoicePdfActionsService _pdfActions;
+  bool _isGeneratingPdf = false;
+
+ @override
+  void initState() {
+    super.initState();
+
+    _pdfActions = InvoicePdfActionsService(
+      ref: ref,
+      context: () => context,
+      isMounted: () => mounted,
+      onLoadingChange: (loading) {
+        if (mounted) setState(() => _isGeneratingPdf = loading);
+      },
+    );
+
+    // if (widget.mode == InvoiceReviewMode.viewOnly && widget.invoiceId != null) {
+    //   Future.microtask(() {
+    //     ref
+    //         .read(invoiceDetailsControllerProvider.notifier)
+    //         .fetchInvoiceDetails(widget.invoiceId!);
+    //   });
+    // }
+  }
+
 
   Future<void> _printReceipt() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final pdfBytes = await PaymentReceiptPdfGenerator.generate(
-        context: context,
-        invoiceId: widget.invoiceId,
-        customerName: widget.customerName,
-        paymentType: widget.paymentType,
-        paymentMethod: widget.paymentMethod,
-        amount: widget.amount.toDouble(),
-      );
-
-      if (!mounted) return;
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => PdfPreviewScreen(
-            pdfBytes: pdfBytes,
-            invoiceId: widget.invoiceId,
-          ),
-        ),
-      );
-    } catch (e) {
-      debugPrint('Print receipt error: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('failed_to_generate_pdf'.tr()),
-            backgroundColor: AppColors.errorRed,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    // ✅ Use the ID-based method for Payment Entry
+    await _pdfActions.printFromHtmlById(
+      documentId: widget.invoiceId,               // payment.paymentId
+      docType: InvoiceDocType.paymentEntry,       // ✅ Payment Entry
+    );
   }
+// ! Old manual handle pdf Donot delete it maybe need re use it //
+  // Future<void> _printReceipt() async {
+  //   setState(() => _isLoading = true);
+
+  //   try {
+  //     final pdfBytes = await PaymentReceiptPdfGenerator.generate(
+  //       context: context,
+  //       invoiceId: widget.invoiceId,
+  //       customerName: widget.customerName,
+  //       paymentType: widget.paymentType,
+  //       paymentMethod: widget.paymentMethod,
+  //       amount: widget.amount.toDouble(),
+  //     );
+
+  //     if (!mounted) return;
+
+  //     Navigator.of(context).push(
+  //       MaterialPageRoute(
+  //         builder: (_) => PdfPreviewScreen(
+  //           pdfBytes: pdfBytes,
+  //           invoiceId: widget.invoiceId,
+  //         ),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     debugPrint('Print receipt error: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('failed_to_generate_pdf'.tr()),
+  //           backgroundColor: AppColors.errorRed,
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _isLoading = false);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

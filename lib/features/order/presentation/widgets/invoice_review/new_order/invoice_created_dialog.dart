@@ -1,5 +1,3 @@
-// lib/features/order/presentation/widgets/invoice_review/new_order/invoice_created_dialog.dart
-
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

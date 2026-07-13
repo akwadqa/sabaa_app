@@ -1,5 +1,3 @@
-// lib/features/order/presentation/widgets/invoice_review/view_only/view_only_bottom_bar.dart
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

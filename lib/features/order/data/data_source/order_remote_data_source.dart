@@ -167,7 +167,7 @@ class OrderRemoteDataSource {
 
 Future<ApiResponse<String>> getDocumentHtml({
   required String docName,
-  String docType = 'Sales Invoice',
+ required String docType ,
 }) async {
   try {
     final response = await _networkService.get(

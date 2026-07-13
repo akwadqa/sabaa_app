@@ -88,7 +88,7 @@ class OrderRepository {
 
 Future<String> getDocumentHtml({
   required String docName,
-  String docType = 'Sales Invoice',
+ required String docType ,
 }) async {
   final response = await _remoteDataSource.getDocumentHtml(
     docName: docName,
