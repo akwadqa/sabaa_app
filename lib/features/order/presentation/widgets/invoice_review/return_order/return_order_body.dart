@@ -25,6 +25,8 @@ class ReturnOrderBody extends ConsumerWidget {
             .map((e) => InvoiceItemUI(
                   name: e.product.itemName,
                   count: e.quantity,
+                        uom: e.unit, // ✅ unit from SelectedItem
+              pricePerItem: e.product.amount.toCurrency(),
                   total: formatPrice((e.product.amount * e.quantity).toDouble()),
                 ))
             .toList();

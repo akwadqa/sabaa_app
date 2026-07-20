@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:sabaa/features/new_order/presentation/controller/new_order_state.dart';
 import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
@@ -8,11 +9,19 @@ class InvoiceItemUI {
   final String name;
   final int count;
   final String total;
+  final String uom;
+  final String pricePerItem; // price of one item
+  final int freeQuantity; // ✅ NEW
+  final int? paidCount; // ✅ paid only
 
   InvoiceItemUI({
     required this.name,
     required this.count,
     required this.total,
+    required this.uom,
+    required this.pricePerItem,
+    this.freeQuantity = 0, // ✅ default
+    this.paidCount,
   });
 }
 
@@ -23,31 +32,49 @@ class InvoiceReviewCard extends StatelessWidget {
     required this.subtotal,
     required this.deliveyFee,
     required this.total,
+    this.discountType,
+    this.discountValue,
+    this.discountAmount,
   });
 
   final List<InvoiceItemUI> items;
   final String subtotal;
   final String? deliveyFee;
   final String total;
+  final DiscountType? discountType;
+  final double? discountValue;
+  final String? discountAmount;
+
+  bool get _hasDiscount =>
+      discountType != null && discountValue != null && discountValue! > 0;
+
+  String get _discountLabel {
+    if (!_hasDiscount) return '';
+    if (discountType == DiscountType.percentage) {
+      final formatted = discountValue! % 1 == 0
+          ? discountValue!.toInt().toString()
+          : discountValue!.toStringAsFixed(2);
+      return '$formatted%';
+    } else {
+      final formatted = discountValue! % 1 == 0
+          ? discountValue!.toInt().toString()
+          : discountValue!.toStringAsFixed(2);
+      return '$formatted QAR';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.sizeOf(context).height / 3.3;
     return AnimatedContainer(
-      // height:MediaQuery.sizeOf(context).height /1.5 ,
-        constraints: BoxConstraints(
-    maxHeight: MediaQuery.sizeOf(context).height * 0.65, // 🔥 max only
-    minHeight: MediaQuery.sizeOf(context).height * 0.4, // 🔥 max only
-
-  ),
-
-      // padding: const EdgeInsets.all(14),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.65, // 🔥 max only
+        minHeight: MediaQuery.sizeOf(context).height * 0.4, // 🔥 max only
+      ),
       duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-          color: AppColors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: BorderDirectional(
           start: BorderSide(
@@ -62,32 +89,32 @@ class InvoiceReviewCard extends StatelessWidget {
         children: [
           /// ── HEADER ─────────────────────────
           _Header(),
-           12.verticalSpace,
-            
+          12.verticalSpace,
+
           Divider(color: AppColors.background),
-            
-           14.verticalSpace,
-            
+
+          14.verticalSpace,
+
           /// ── TABLE HEADER ───────────────────
           _TableHeader(),
-           16.verticalSpace,
-            
+          16.verticalSpace,
+
           /// ── ITEMS ───────────────────────────
-      Flexible(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+          Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+              ),
+              child: ListView.builder(
+                itemCount: items.length,
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return _InvoiceItemRow(item: items[index]);
+                },
+              ),
+            ),
           ),
-          child: ListView.builder(
-            itemCount: items.length,
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _ItemRow(item: items[index]);
-            },
-          ),
-        ),
-      ),
           // SizedBox(
           //   height: items.length < 5
           //       ? null
@@ -100,44 +127,56 @@ class InvoiceReviewCard extends StatelessWidget {
           //         : const BouncingScrollPhysics(),
           //     itemBuilder: (context, index) {
           //       final item = items[index];
-            
+
           //       return _ItemRow(item: item);
           //     },
           //   ),
           // ),
-           16.verticalSpace,
-            
+          16.verticalSpace,
+
           /// ── DASHED DIVIDER ─────────────────
           _DashedDivider(),
-            
-           16.verticalSpace,
-            
+
+          16.verticalSpace,
+
           /// ── AMOUNT HEADER ──────────────────
           _AmountHeader(),
-            
-           12.verticalSpace,
-            
+
+          12.verticalSpace,
+
           /// ── SUBTOTAL ───────────────────────
           _AmountRow(
             title: 'subtotal',
             value: subtotal,
           ),
-            
-           8.verticalSpace,
-            
+
+          8.verticalSpace,
+
           /// ── deliveyFee ───────────────────────────
-         if(deliveyFee!=null)
-          _AmountRow(
-            title: 'delivery_fee',
-            value: deliveyFee!,
-          ),
-            
-           16.verticalSpace,
-            
+          if (deliveyFee != null)
+            _AmountRow(
+              title: 'delivery_fee',
+              value: deliveyFee!,
+            ),
+
+          16.verticalSpace,
+
           _DashedDivider(),
-            
-           16.verticalSpace,
-            
+
+          16.verticalSpace,
+
+          /// ── DISCOUNT ROW ───────────────────  ✅ NEW
+          if (_hasDiscount) ...[
+            8.verticalSpace,
+            _DiscountRow(
+              label: _discountLabel,
+              amount: discountAmount ?? '0',
+            ),
+            16.verticalSpace,
+            _DashedDivider(),
+            16.verticalSpace,
+          ],
+
           /// ── TOTAL ─────────────────────────
           _TotalRow(total: total),
         ],
@@ -165,34 +204,46 @@ class _TableHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        // Item name
         Expanded(
-          flex: 8,
+          flex: 6,
           child: Text(
             'selected_items'.tr(),
-            style: AppTextStyle.interBold12.copyWith(
-              color: AppColors.primary,
-            ),
-          ),
-        ),
-        Spacer(),
-        Expanded(
-          flex: 3,
-          child: Text(
-            'count'.tr(),
-            style: AppTextStyle.interBold12.copyWith(
-              color: AppColors.primary,
-            ),
+            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
           ),
         ),
 
-        // const SizedBox(width: 24),
+        // UOM
+        SizedBox(
+          width: 38,
+          child: Text(
+            'uom'.tr(),
+            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            textAlign: TextAlign.center,
+          ),
+        ),
+
+        const SizedBox(width: 6),
+
+        // Qty × Price
         Expanded(
-          flex: 2,
+          flex: 4,
+          child: Text(
+            'qty'.tr(), // e.g. "Qty × Price"
+            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            textAlign: TextAlign.center,
+          ),
+        ),
+
+        const SizedBox(width: 6),
+
+        // Total
+        SizedBox(
+          width: 60,
           child: Text(
             'total'.tr(),
-            style: AppTextStyle.interBold12.copyWith(
-              color: AppColors.primary,
-            ),
+            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            // textAlign: TextAlign.end,
           ),
         ),
       ],
@@ -200,46 +251,160 @@ class _TableHeader extends StatelessWidget {
   }
 }
 
-class _ItemRow extends StatelessWidget {
-  const _ItemRow({required this.item});
-
+// ── Item Row ────────────────────────────────────────────────────────────────
+class _InvoiceItemRow extends StatelessWidget {
   final InvoiceItemUI item;
+
+  const _InvoiceItemRow({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+    final hasFree = item.freeQuantity > 0;
+    final paidQty = item.paidCount ?? item.count;
+
+    final allFree = paidQty == 0 && hasFree;
+
+    return Column(
+      children: [
+        // ── Paid row ──────────────────────────────────────
+        if (!allFree)
+          _ItemLine(
+            name: item.name,
+            uom: item.uom,
+            quantity: item.paidCount ?? item.count,
+            pricePerItem: item.pricePerItem, // ✅ real price
+            total: item.total,
+            isFree: false,
+          ),
+
+        // ── Free row ──────────────────────────────────────
+        if (hasFree)
+          _ItemLine(
+            name: item.name,
+            uom: item.uom,
+            quantity: item.freeQuantity,
+            pricePerItem: '0.00', // ✅ zero price for free
+            total: '0.00',
+            isFree: true,
+          ),
+      ],
+    );
+  }
+}
+// ── Single line ───────────────────────────────────────────────────────────────
+
+class _ItemLine extends StatelessWidget {
+  const _ItemLine({
+    required this.name,
+    required this.uom,
+    required this.quantity,
+    required this.pricePerItem,
+    required this.total,
+    required this.isFree,
+  });
+
+  final String name;
+  final String uom;
+  final int quantity;
+  final String pricePerItem; // ✅ always required now
+  final String total;
+  final bool isFree;
+
+  @override
+  Widget build(BuildContext context) {
+    // ── Colors ──────────────────────────────────────────────────────────────
+    final Color nameColor = isFree ? Colors.green[700]! : AppColors.textPrimary;
+    final Color metaColor =
+        isFree ? Colors.green[600]! : AppColors.textSecondary;
+    final Color totalColor =
+        isFree ? Colors.green[700]! : AppColors.textPrimary;
+
+    // ── Text styles ──────────────────────────────────────────────────────────
+    final TextStyle nameStyle = isFree
+        ? AppTextStyle.interMedium12.copyWith(color: nameColor)
+        : AppTextStyle.interSemiBold14.copyWith(color: nameColor);
+
+    final TextStyle metaStyle =
+        AppTextStyle.interRegular12.copyWith(color: metaColor);
+
+    final TextStyle qtyPriceStyle = isFree
+        ? AppTextStyle.interMedium12.copyWith(color: metaColor)
+        : AppTextStyle.interSemiBold12.copyWith(color: metaColor);
+
+    final TextStyle totalStyle = isFree
+        ? AppTextStyle.interMedium12.copyWith(color: totalColor)
+        : AppTextStyle.interSemiBold14.copyWith(color: totalColor);
+
+    return Container(
+      color: isFree ? Colors.green.withOpacity(0.05) : Colors.transparent,
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // ── Name ────────────────────────────────────────────────────────
           Expanded(
-            flex: 10,
+            flex: 6,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (isFree) ...[
+                  Icon(
+                    Icons.card_giftcard_rounded,
+                    size: 12,
+                    color: Colors.green[600],
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                Expanded(
+                  child: Text(
+                    isFree ? '$name (${'free'.tr()})' : name,
+                    style: nameStyle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── UOM ─────────────────────────────────────────────────────────
+          SizedBox(
+            width: 38,
             child: Text(
-              item.name,
-              style: AppTextStyle.interRegular14.copyWith(
-                color: AppColors.textPrimary,
-              ),
+              uom,
+              style: metaStyle,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+
+          const SizedBox(width: 6),
+
+          // ── Qty × Price ──────────────────────────────────────────────────
+          // Uses Expanded so long prices never overflow
+          Expanded(
+            flex: 4,
+            child: Text(
+              '$quantity × $pricePerItem',
+              style: qtyPriceStyle,
+              textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          Spacer(),
-          Expanded(
-            flex: 2,
+
+          const SizedBox(width: 6),
+
+          // ── Total ────────────────────────────────────────────────────────
+          SizedBox(
+            width: 60,
             child: Text(
-              '${item.count}',
-              style: AppTextStyle.interSemiBold14.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              item.total,
-              style: AppTextStyle.interSemiBold14.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              total,
+              style: totalStyle,
+              // textAlign: TextAlign.end,
+              maxLines: 1,
+              // overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -247,6 +412,71 @@ class _ItemRow extends StatelessWidget {
     );
   }
 }
+
+// class _ItemRow extends StatelessWidget {
+//   const _ItemRow({required this.item});
+
+//   final InvoiceItemUI item;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 6),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Expanded(
+//             flex: 7,
+//             child: Text(
+//               item.name,
+//               style: AppTextStyle.interRegular14.copyWith(
+//                 color: AppColors.textPrimary,
+//               ),
+//               maxLines: 2,
+//               overflow: TextOverflow.ellipsis,
+//             ),
+//           ),
+//           Spacer(),
+//           // ── UOM column ──
+//           SizedBox(
+//             width: 30,
+//             child: Text(
+//               item.uom,
+//               style: AppTextStyle.interSemiBold14.copyWith(
+//                 color: AppColors.textSecondary,
+//               ),
+//               maxLines: 2,
+//               overflow: TextOverflow.ellipsis,
+//             ),
+//           ),
+//           Spacer(),
+//           FittedBox(
+//             // flex: 2,
+//             child: SizedBox(
+//               width: 100,
+//               child: Text(
+//                 '${item.count} X ${item.pricePerItem}',
+//                 style: AppTextStyle.interSemiBold12.copyWith(
+//                   color: AppColors.textSecondary,
+//                 ),
+//               ),
+//             ),
+//           ),
+//           Spacer(),
+//           Expanded(
+//             flex: 3,
+//             child: Text(
+//               item.total,
+//               style: AppTextStyle.interSemiBold14.copyWith(
+//                 color: AppColors.textSecondary,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class _AmountHeader extends StatelessWidget {
   @override
@@ -295,6 +525,55 @@ class _AmountRow extends StatelessWidget {
           value,
           style: AppTextStyle.interSemiBold14.copyWith(
             color: AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DiscountRow extends StatelessWidget {
+  const _DiscountRow({
+    required this.label,
+    required this.amount,
+  });
+
+  final String label;
+  final String amount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Text(
+              'discount'.tr(),
+              style: AppTextStyle.interRegular14.copyWith(
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                label,
+                style: AppTextStyle.interSemiBold12.copyWith(
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Text(
+          '- $amount',
+          style: AppTextStyle.interSemiBold14.copyWith(
+            color: AppColors.errorRed,
           ),
         ),
       ],

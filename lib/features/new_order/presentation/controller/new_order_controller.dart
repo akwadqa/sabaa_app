@@ -281,7 +281,10 @@ final items = current.selectedItems.values.map((e) {
       if (current.isReturn && e.customRate != null) {
         map["rate"] = e.customRate;
       }
-
+  // ✅ Send free quantity if any
+  if (e.freeQuantity > 0) {
+    map["freeQty"] = e.freeQuantity;
+  }
       return map;
     }).toList();
 
@@ -394,4 +397,48 @@ void editRemark(String? value) {
       ),
     );
   }
+
+
+
+// DISCOUNT FUNCTIONALITY
+
+void setDiscount(DiscountType type, double value) {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(
+    discountType: type,
+    discountValue: value,
+  ));
+}
+
+void removeDiscount() {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(clearDiscount: true));
+}
+
+double calculateDiscountAmount(double subtotal) {
+  final current = state.value!;
+  if (!current.hasDiscount) return 0;
+
+  if (current.discountType == DiscountType.percentage) {
+    return subtotal * (current.discountValue! / 100);
+  } else {
+    return current.discountValue!;
+  }
+}
+// Inside new_order_controller.dart — add this method
+
+void updateFreeQuantity(String itemCode, int freeQty) {
+  final current = state.value!;
+  final map = Map<String, SelectedItem>.from(current.selectedItems);
+
+  final existing = map[itemCode];
+  if (existing == null) return;
+
+  // ✅ Clamp: freeQty can't exceed total quantity, min 0
+  final clamped = freeQty.clamp(0, existing.quantity);
+
+  map[itemCode] = existing.copyWith(freeQuantity: clamped);
+
+  state = AsyncData(current.copyWith(selectedItems: map));
+}
 }

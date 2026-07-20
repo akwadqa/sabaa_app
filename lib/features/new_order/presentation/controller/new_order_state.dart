@@ -7,6 +7,7 @@ import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
 
 import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
+enum DiscountType { percentage, amount }
 
 class NewOrderState {
   const NewOrderState({
@@ -23,7 +24,8 @@ class NewOrderState {
     this.isSubmitting = false,
      this.deliveryFee,
          this.remark,
-
+    this.discountType,          
+    this.discountValue,         
   });
 
   final List<ProductModel> allItems;
@@ -38,10 +40,13 @@ class NewOrderState {
   final bool isReturn;
   /// 🔥 key = itemCode
   final Map<String, SelectedItem> selectedItems;
-
+  final DiscountType? discountType;   
+  final double? discountValue;        
   final AsyncValue<void>? listState;
   final String? deliveryFee;
   bool get hasSelection => selectedItems.isNotEmpty;
+
+  bool get hasDiscount => discountType != null && discountValue != null && discountValue! > 0;  
 
   NewOrderState copyWith({
     List<ProductModel>? allItems,
@@ -58,7 +63,9 @@ class NewOrderState {
     AsyncValue<void>? listState,
     String? deliveryFee,
      bool clearRemark = false,
-
+  DiscountType? discountType,       
+    double? discountValue,            
+    bool clearDiscount = false,     
   }) {
     return NewOrderState(
       allItems: allItems ?? this.allItems,
@@ -74,6 +81,8 @@ class NewOrderState {
       selectedItems: selectedItems ?? this.selectedItems,
       listState: listState ?? this.listState,
       deliveryFee: deliveryFee ?? this.deliveryFee,
+            discountType: clearDiscount ? null : (discountType ?? this.discountType),       
+      discountValue: clearDiscount ? null : (discountValue ?? this.discountValue),   
     );
   }
 }

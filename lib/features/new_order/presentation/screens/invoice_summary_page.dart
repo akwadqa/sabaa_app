@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/free_item_toggle.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/new_order_section_header_widget.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
@@ -76,12 +77,19 @@ class InvoiceSummaryPage extends ConsumerWidget {
                           customRate: selected.customRate,
                           quantity: selected.quantity,
                           selectedUnit: selected.unit,
+                          showFreeToggle: !isReturn,
+                          freeQuantity: selected.freeQuantity,
+                          onFreeQuantityChanged: (freeQty) {
+                            ref
+                                .read(newOrderControllerProvider.notifier)
+                                .updateFreeQuantity(item.itemCode, freeQty);
+                          },
                           isSelected: true,
-                               onRateChanged: (rate) {
-                    ref
-                        .read(newOrderControllerProvider.notifier)
-                        .updateRate(item.itemCode, rate);
-                  },
+                          onRateChanged: (rate) {
+                            ref
+                                .read(newOrderControllerProvider.notifier)
+                                .updateRate(item.itemCode, rate);
+                          },
                           onIncrement: () => ref
                               .read(newOrderControllerProvider.notifier)
                               .increment(item),
@@ -96,6 +104,45 @@ class InvoiceSummaryPage extends ConsumerWidget {
                               .updateUnit(item.itemCode, unit))
                       .onlyPadding(bottom: 20);
                 }).toList(),
+
+// children: items.map((selected) {
+//   final item = selected.product;
+
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       OrderItemCard(
+//         item: item,
+//         allowEditPrice: isReturn,
+//         customRate: selected.customRate,
+//         quantity: selected.quantity,
+//         selectedUnit: selected.unit,
+//         isSelected: true,
+//         onRateChanged: (rate) {
+//           ref
+//               .read(newOrderControllerProvider.notifier)
+//               .updateRate(item.itemCode, rate);
+//         },
+//         onIncrement: () => ref
+//             .read(newOrderControllerProvider.notifier)
+//             .increment(item),
+//         onDecrement: () => ref
+//             .read(newOrderControllerProvider.notifier)
+//             .decrement(item.itemCode),
+//         onDelete: () => ref
+//             .read(newOrderControllerProvider.notifier)
+//             .toggleItem(item),
+//         onUnitChanged: (unit) => ref
+//             .read(newOrderControllerProvider.notifier)
+//             .updateUnit(item.itemCode, unit),
+//       ),
+
+//       // ✅ Free Items Toggle — only for normal orders, not returns
+
+//       const SizedBox(height: 20),
+//     ],
+//   );
+// }).toList(),
               ),
             ),
           ],

@@ -47,6 +47,8 @@ class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPag
       return InvoiceItemUI(
         name: e.product.itemName,
         count: selected?.quantity ?? 0,
+              uom: e.unit, // ✅ unit from SelectedItem
+              pricePerItem: e.product.amount.toCurrency(),
         total: formatPrice(total.toDouble()),
       );
     }).toList();

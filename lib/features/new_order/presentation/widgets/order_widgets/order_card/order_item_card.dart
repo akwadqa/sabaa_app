@@ -28,6 +28,9 @@ class OrderItemCard extends ConsumerStatefulWidget {
     this.allowEditPrice = false,
     this.customRate,
     this.onRateChanged,
+        this.freeQuantity = 0,        // ✅ NEW
+    this.onFreeQuantityChanged,   // ✅ NEW
+    this.showFreeToggle = false,  // ✅ NEW — only show in summary page
   });
 
   final bool isSelected;
@@ -42,6 +45,9 @@ class OrderItemCard extends ConsumerStatefulWidget {
   final bool allowEditPrice;
   final double? customRate;
   final ValueChanged<double?>? onRateChanged;
+    final int freeQuantity;                      // ✅ NEW
+  final ValueChanged<int>? onFreeQuantityChanged; // ✅ NEW
+  final bool showFreeToggle;   
   @override
   ConsumerState<OrderItemCard> createState() => _OrderItemCardState();
 }
@@ -260,6 +266,18 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                 ),
               ],
             ),
+              // ── Free Items Toggle ─────────────────────────────────
+    if (widget.isSelected && widget.showFreeToggle) ...[
+      const SizedBox(height: 10),
+      const Divider(height: 1, color: Color(0xFFEEEEEE)),
+      const SizedBox(height: 10),
+      _FreeItemsRow(
+        totalQuantity: widget.quantity,
+        freeQuantity: widget.freeQuantity,
+        onFreeQuantityChanged: widget.onFreeQuantityChanged ?? (_) {},
+      ),
+    ],
+
           // ── Bottom row: stepper + delete ──────────────────────────
           if (widget.allowEditPrice && widget.isSelected) ...[
             const SizedBox(height: 8),
@@ -384,6 +402,320 @@ class _EditableRateFieldState extends ConsumerState<_EditableRateField> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+// ── Free Items Row ────────────────────────────────────────────────────────────
+// Add this private class at the bottom of order_item_card.dart
+
+class _FreeItemsRow extends StatefulWidget {
+  const _FreeItemsRow({
+    required this.totalQuantity,
+    required this.freeQuantity,
+    required this.onFreeQuantityChanged,
+  });
+
+  final int totalQuantity;
+  final int freeQuantity;
+  final ValueChanged<int> onFreeQuantityChanged;
+
+  @override
+  State<_FreeItemsRow> createState() => _FreeItemsRowState();
+}
+
+class _FreeItemsRowState extends State<_FreeItemsRow> {
+  late TextEditingController _controller;
+  bool _isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.freeQuantity > 0;
+    _controller = TextEditingController(
+      text: widget.freeQuantity > 0 ? widget.freeQuantity.toString() : '',
+    );
+  }
+
+  @override
+  void didUpdateWidget(_FreeItemsRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // ── Sync when parent total quantity changes (user changed qty) ──
+    if (oldWidget.totalQuantity != widget.totalQuantity) {
+      final current = int.tryParse(_controller.text) ?? 0;
+      // Clamp free qty if total decreased below current free qty
+      if (current > widget.totalQuantity) {
+        final clamped = widget.totalQuantity;
+        _controller.text = clamped.toString();
+        widget.onFreeQuantityChanged(clamped);
+      }
+    }
+
+    // ── Sync if external reset (e.g. item removed then re-added) ──
+    if (oldWidget.freeQuantity != widget.freeQuantity &&
+        widget.freeQuantity == 0 &&
+        _isExpanded) {
+      setState(() {
+        _isExpanded = false;
+        _controller.clear();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // ── Checkbox toggled ──────────────────────────────────────────────────────
+
+  void _onToggle(bool? checked) {
+    final isChecked = checked ?? false;
+    setState(() => _isExpanded = isChecked);
+
+    if (!isChecked) {
+      _controller.clear();
+      widget.onFreeQuantityChanged(0);
+    } else {
+      // Default: 1 free item when first enabled
+      final defaultFree = 1.clamp(0, widget.totalQuantity);
+      _controller.text = defaultFree.toString();
+      widget.onFreeQuantityChanged(defaultFree);
+    }
+  }
+
+  // ── Stepper buttons ───────────────────────────────────────────────────────
+
+  void _increment() {
+    final current = int.tryParse(_controller.text) ?? 0;
+    if (current >= widget.totalQuantity) return;
+    final next = current + 1;
+    _controller.text = next.toString();
+    widget.onFreeQuantityChanged(next);
+  }
+
+  void _decrement() {
+    final current = int.tryParse(_controller.text) ?? 0;
+    if (current <= 0) return;
+    final next = current - 1;
+    if (next == 0) {
+      // Auto-collapse when reaching 0
+      setState(() {
+        _isExpanded = false;
+        _controller.clear();
+      });
+      widget.onFreeQuantityChanged(0);
+    } else {
+      _controller.text = next.toString();
+      widget.onFreeQuantityChanged(next);
+    }
+  }
+
+  // ── Manual text input ─────────────────────────────────────────────────────
+
+  void _onTextChanged(String value) {
+    final parsed = int.tryParse(value) ?? 0;
+    final clamped = parsed.clamp(0, widget.totalQuantity);
+
+    // Auto-correct if out of range
+    if (parsed != clamped) {
+      _controller.text = clamped.toString();
+      _controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: _controller.text.length),
+      );
+    }
+
+    widget.onFreeQuantityChanged(clamped);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Checkbox + label row ────────────────────────────────────
+        Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Checkbox(
+                value: _isExpanded,
+                onChanged: _onToggle,
+                activeColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                side: BorderSide(
+                  color: _isExpanded
+                      ? Colors.green
+                      : AppColors.borderGrey,
+                  width: 1.5,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'free_items'.tr(),
+              style: AppTextStyle.interMedium14.copyWith(
+                color: _isExpanded ? Colors.green[700] : AppColors.textSecondary,
+              ),
+            ),
+            const Spacer(),
+            // Show max hint when expanded
+            if (_isExpanded)
+              Text(
+                '${'max'.tr()}: ${widget.totalQuantity}',
+                style: AppTextStyle.interRegular12.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+          ],
+        ),
+
+        // ── Expandable stepper row ──────────────────────────────────
+        AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeInOut,
+          child: _isExpanded
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Row(
+                    children: [
+                      // Free badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.10),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.green.withOpacity(0.35),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.card_giftcard_rounded,
+                              size: 13,
+                              color: Colors.green,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'free'.tr(),
+                              style: AppTextStyle.interSemiBold12.copyWith(
+                                color: Colors.green[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      // ── Stepper: − [input] + ──────────────────────
+                      Row(
+                        children: [
+                          // Decrement
+                          _StepButton(
+                            icon: Icons.remove,
+                            onTap: _decrement,
+                            enabled: (int.tryParse(_controller.text) ?? 0) > 0,
+                          ),
+
+                          const SizedBox(width: 6),
+
+                          // Input field
+                          Container(
+                            width: 52,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.green.withOpacity(0.4),
+                              ),
+                            ),
+                            child: TextField(
+                              controller: _controller,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: AppTextStyle.interSemiBold14.copyWith(
+                                color: Colors.green[800],
+                              ),
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                  vertical: 9,
+                                ),
+                              ),
+                              onChanged: _onTextChanged,
+                            ),
+                          ),
+
+                          const SizedBox(width: 6),
+
+                          // Increment
+                          _StepButton(
+                            icon: Icons.add,
+                            onTap: _increment,
+                            enabled: (int.tryParse(_controller.text) ?? 0) <
+                                widget.totalQuantity,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Small step button ─────────────────────────────────────────────────────────
+
+class _StepButton extends StatelessWidget {
+  const _StepButton({
+    required this.icon,
+    required this.onTap,
+    this.enabled = true,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: enabled
+              ? Colors.green.withOpacity(0.12)
+              : AppColors.background,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: enabled
+                ? Colors.green.withOpacity(0.35)
+                : AppColors.borderGrey,
+          ),
+        ),
+        child: Icon(
+          icon,
+          size: 16,
+          color: enabled ? Colors.green[700] : AppColors.textSecondary,
+        ),
       ),
     );
   }

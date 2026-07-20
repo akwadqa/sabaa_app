@@ -24,6 +24,10 @@ class AppTextStyle {
     fontWeight: FontWeight.w700,
     fontSize: 12,
   );
+  static TextStyle interSemiBold10 = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 10,
+  );
 
   //? inter medium :
   static TextStyle interMedium20 = GoogleFonts.inter(

@@ -26,6 +26,8 @@ class ViewOnlyBody extends ConsumerWidget {
             .map((e) => InvoiceItemUI(
                   name: e.itemName,
                   count: e.qty,
+                        uom: e.uom, // ✅ unit from SelectedItem
+              pricePerItem: e.amount.toCurrency(),
                   total: formatPrice(e.amount.toDouble()),
                 ))
             .toList();
