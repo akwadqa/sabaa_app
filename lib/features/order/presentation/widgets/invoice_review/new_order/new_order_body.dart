@@ -74,38 +74,116 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
     final controller = ref.read(newOrderControllerProvider.notifier);
     final selectedProducts = state.selectedItems.values.toList();
     final isReturn = state.isReturn;
+    final selectedLines = state.selectedLines;
+// ── Group lines by itemCode to keep them together ──────────────
+    final grouped = <String, List<SelectedItemLine>>{};
+    final orderOfProducts = <String>[]; // preserve original order
 
-    final items = selectedProducts.map((e) {
-      final price = _effectivePrice(e);
-      final paidQty = e.quantity - e.freeQuantity;
+    for (final line in selectedLines) {
+      final code = line.product.itemCode;
+      if (!grouped.containsKey(code)) {
+        orderOfProducts.add(code);
+        grouped[code] = [];
+      }
+      grouped[code]!.add(line);
+    }
+    final allInvoiceItems = <InvoiceItemUI>[];
+    double subtotalValue = 0;
 
-      return InvoiceItemUI(
-        name: e.product.productName,
-        count: e.quantity,
-        paidCount: paidQty, // ✅
-        uom: e.unit,
-        pricePerItem: price.toCurrency(),
-        total: (price * paidQty).toCurrency(), // ✅ paid only
-        freeQuantity: e.freeQuantity,
-      );
-    }).toList();
-// ✅ Subtotal uses paid qty only
-    final subtotalValue = selectedProducts.fold<double>(
-      0,
-      (sum, e) {
-        final paidQty = e.quantity - e.freeQuantity;
-        return sum + (_effectivePrice(e) * paidQty);
-      },
+ 
+for (final itemCode in orderOfProducts) {
+  final lines = grouped[itemCode]!;
+
+  for (final line in lines) {
+    final uomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == line.unit,
+      orElse: () => line.product.uoms.first,
     );
+    final price = line.customRate ?? uomModel.price;
+    final paidQty = line.isAllFree ? 0 : line.quantity;
+
+    allInvoiceItems.add(InvoiceItemUI(
+      name: line.product.productName,
+      count: line.quantity,
+      paidCount: paidQty,
+      uom: line.unit,
+      pricePerItem: price.toCurrency(),
+      total: (price * paidQty).toCurrency(),
+      focQuantity: line.isFocEnabled ? line.focQuantity : 0,
+      focUom: line.isFocEnabled ? line.focUom : null,
+      isAllFree: line.isAllFree,
+      freeQuantity: line.isAllFree ? line.quantity : 0,
+    ));
+
+    if (!line.isAllFree) {
+      subtotalValue += price * line.quantity;
+    }
+  }
+}
+
+    // for (final e in selectedProducts) {
+    //   final price = _effectivePrice(e);
+
+    //   // ── Main line ────────────────────────────────────────────
+    //   allInvoiceItems.add(InvoiceItemUI(
+    //     name: e.product.productName,
+    //     count: e.quantity,
+    //     paidCount: e.isAllFree ? 0 : e.quantity,
+    //     uom: e.unit,
+    //     pricePerItem: price.toCurrency(),
+    //     total: e.isAllFree ? '0.00' : (price * e.quantity).toCurrency(),
+    //     focQuantity: e.isFocEnabled ? e.focQuantity : 0,
+    //     focUom: e.isFocEnabled ? e.focUom : null,
+    //     isAllFree: e.isAllFree,
+    //     freeQuantity: e.isAllFree ? e.quantity : e.freeQuantity,
+    //   ));
+
+    //   // ── Extra UOM lines ──────────────────────────────────────
+    //   for (final line in e.extraUomLines) {
+    //     final lineUomPrice = e.product.uoms
+    //         .firstWhere(
+    //           (u) => u.uom == line.uom,
+    //           orElse: () => e.product.uoms.first,
+    //         )
+    //         .price;
+
+    //     allInvoiceItems.add(InvoiceItemUI(
+    //       name: e.product.productName, // same name
+    //       count: line.quantity,
+    //       paidCount: line.quantity,
+    //       uom: line.uom, // different UOM
+    //       pricePerItem: lineUomPrice.toCurrency(),
+    //       total: (lineUomPrice * line.quantity).toCurrency(),
+    //       focQuantity: 0,
+    //       isAllFree: false,
+    //       freeQuantity: 0,
+    //     ));
+    //   }
+    // }
+
+// Use allInvoiceItems instead of items in InvoiceReviewCard
+
+// ── Subtotal includes extra lines ────────────────────────────
+    //  subtotalValue = selectedProducts.fold<double>(0, (sum, e) {
+    //   if (e.isAllFree) return sum;
+    //   final mainTotal = _effectivePrice(e) * e.quantity;
+    //   final extraTotal = e.extraUomLines.fold<double>(0, (s, line) {
+    //     final linePrice = e.product.uoms
+    //         .firstWhere(
+    //           (u) => u.uom == line.uom,
+    //           orElse: () => e.product.uoms.first,
+    //         )
+    //         .price;
+    //     return s + (linePrice * line.quantity);
+    //   });
+    //   return sum + mainTotal + extraTotal;
+    // });
 
     final deliveryFee = double.tryParse(state.deliveryFee ?? '') ?? 0.0;
-
-    // ── Calculate discount ──
     final discountAmount = controller.calculateDiscountAmount(subtotalValue);
-
-    // ── Total = subtotal + delivery - discount ──
     final totalValue = (subtotalValue + deliveryFee - discountAmount)
         .clamp(0, double.infinity);
+
     return KeyboardActions(
       config: _iosKeyboardConfig(),
       child: SingleChildScrollView(
@@ -133,7 +211,7 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
               ).symmetricPadding(horizontal: 12),
             ],
             InvoiceReviewCard(
-              items: items,
+              items: allInvoiceItems,
               subtotal: formatPrice(subtotalValue),
               deliveyFee: state.deliveryFee ?? '0',
               total: formatPrice(totalValue.toDouble()),

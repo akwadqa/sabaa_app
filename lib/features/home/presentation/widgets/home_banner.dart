@@ -27,18 +27,20 @@ class HeaderBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                '${'hello'.tr()} $userName',
-               style: AppTextStyle.interSemiBold18.copyWith(
-                  color: AppColors.white,
-                  letterSpacing: -0.14,
+          FittedBox(
+            child: Row(
+              children: [
+                Text(
+                  '${'hello'.tr()} $userName',
+                 style: AppTextStyle.interSemiBold18.copyWith(
+                    color: AppColors.white,
+                    letterSpacing: -0.14,
+                  ),
                 ),
-              ),
-              8.horizontalSpace,
-              const Text('👋', style: TextStyle(fontSize: 22)),
-            ],
+                8.horizontalSpace,
+                const Text('👋', style: TextStyle(fontSize: 22)),
+              ],
+            ),
           ),
           12.verticalSpace,
            Text(

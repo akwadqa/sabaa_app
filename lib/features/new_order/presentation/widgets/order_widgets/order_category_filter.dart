@@ -21,7 +21,11 @@ class OrderCategoryFilter extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: List.generate(categories.length, (i) {
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(
+          
+          
+          categories.length, (i) {
           final isActive = i == selectedIndex;
           return Padding(
             padding: EdgeInsets.only(right: i < categories.length - 1 ? 8 : 0),
@@ -37,7 +41,7 @@ class OrderCategoryFilter extends StatelessWidget {
                       ? null
                       : Border.all(color: const Color(0xFFF3F4F6)),
                 ),
-                alignment: Alignment.center,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   categories[i].tr(),
                   style: AppTextStyle.interMedium14.copyWith(

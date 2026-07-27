@@ -59,9 +59,6 @@ class $AssetsIconsGen {
   SvgGenImage get icSettingsThemeMode =>
       const SvgGenImage('assets/icons/ic_settings_theme_mode.svg');
 
-  /// File path: assets/icons/ic_waiting.svg
-  SvgGenImage get icWaiting => const SvgGenImage('assets/icons/ic_waiting.svg');
-
   /// File path: assets/icons/invoice_card_paymeny_ic.svg
   SvgGenImage get invoiceCardPaymenyIc =>
       const SvgGenImage('assets/icons/invoice_card_paymeny_ic.svg');
@@ -119,7 +116,6 @@ class $AssetsIconsGen {
         icSettingsLogout,
         icSettingsMyAccount,
         icSettingsThemeMode,
-        icWaiting,
         invoiceCardPaymenyIc,
         invoiceIc,
         invoicePayIc,

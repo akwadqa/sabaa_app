@@ -35,9 +35,11 @@ Map<String, dynamic> _$ProductModelToJson(_ProductModel instance) =>
 _UomModel _$UomModelFromJson(Map<String, dynamic> json) => _UomModel(
       uom: json['uom'] as String,
       price: (json['price'] as num).toDouble(),
+      availableStock: (json['availableStock'] as num).toInt(),
     );
 
 Map<String, dynamic> _$UomModelToJson(_UomModel instance) => <String, dynamic>{
       'uom': instance.uom,
       'price': instance.price,
+      'availableStock': instance.availableStock,
     };

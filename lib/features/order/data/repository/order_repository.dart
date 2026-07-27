@@ -27,10 +27,18 @@ class OrderRepository {
 
   OrderRepository(this._remoteDataSource);
 
-  Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status, required int page}) async {
+  Future<ApiResponse<OrderSummaryModel>> getOrderSummary({
+    required String customerId,
+    String? status,
+    required int page,
+    String? action,
+  }) async {
     final response = await _remoteDataSource.getOrderSummary(
-        customerId: customerId, status: status, page: page);
+      customerId: customerId,
+      status: status,
+      page: page,
+      action: action,
+    );
 
     if (response.status == 200) {
       return response;
@@ -83,31 +91,34 @@ class OrderRepository {
       return response;
     }
 
-  throw AppException(response.message);
-}
-
-Future<String> getDocumentHtml({
-  required String docName,
- required String docType ,
-}) async {
-  final response = await _remoteDataSource.getDocumentHtml(
-    docName: docName,
-    docType: docType,
-  );
-
-  if (response.hasSucceeded && response.data != null) {
-    return response.data!;
+    throw AppException(response.message);
   }
 
-  throw AppException(response.message ?? 'Failed to fetch document HTML');
-}
- Future<ApiResponse> hyperMarketUpdateStock(String visitId , List<StockUpdateInput> items) async {
-  final response = await _remoteDataSource.hyperMarketUpdateStock(visitId, items);
+  Future<String> getDocumentHtml({
+    required String docName,
+    required String docType,
+  }) async {
+    final response = await _remoteDataSource.getDocumentHtml(
+      docName: docName,
+      docType: docType,
+    );
 
-  if (response.status == 200) {
-    return response;
+    if (response.hasSucceeded && response.data != null) {
+      return response.data!;
+    }
+
+    throw AppException(response.message ?? 'Failed to fetch document HTML');
   }
 
-  throw AppException(response.message);
-}
+  Future<ApiResponse> hyperMarketUpdateStock(
+      String visitId, List<StockUpdateInput> items) async {
+    final response =
+        await _remoteDataSource.hyperMarketUpdateStock(visitId, items);
+
+    if (response.status == 200) {
+      return response;
+    }
+
+    throw AppException(response.message);
+  }
 }

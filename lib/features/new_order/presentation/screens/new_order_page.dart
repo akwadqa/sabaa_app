@@ -46,17 +46,19 @@ class _NewOrderPageState extends ConsumerState<NewOrderPage> {
       ref.read(newOrderControllerProvider.notifier).search(query);
     });
   }
-@override
-void initState() {
-  super.initState();
-  // ✅ Sync initial mode
-  Future.microtask(() {
-    final mode = ref.read(orderModeControllerProvider);
-    ref
-        .read(newOrderControllerProvider.notifier)
-        .setIsReturn(mode == OrderMode.returnItems);
-  });
-}
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Sync initial mode
+    Future.microtask(() {
+      final mode = ref.read(orderModeControllerProvider);
+      ref
+          .read(newOrderControllerProvider.notifier)
+          .setIsReturn(mode == OrderMode.returnItems);
+    });
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -78,11 +80,11 @@ void initState() {
       data: (s) => s.hasSelection,
       orElse: () => false,
     );
-     // ✅ Listen to mode changes and sync into NewOrderController state
-  ref.listen<OrderMode>(orderModeControllerProvider, (previous, next) {
-    final isReturnMode = next == OrderMode.returnItems;
-    ref.read(newOrderControllerProvider.notifier).setIsReturn(isReturnMode);
-  });
+    // ✅ Listen to mode changes and sync into NewOrderController state
+    ref.listen<OrderMode>(orderModeControllerProvider, (previous, next) {
+      final isReturnMode = next == OrderMode.returnItems;
+      ref.read(newOrderControllerProvider.notifier).setIsReturn(isReturnMode);
+    });
     return Scaffold(
         backgroundColor: AppColors.background,
         appBar: _buildAppBar(isReturn),
@@ -102,9 +104,10 @@ void initState() {
               isFiled: true,
               height: 48,
               width: double.infinity,
-     backgroundColor: hasItems
-              ? (isReturn ? AppColors.accent : AppColors.primary) // ✅
-              : AppColors.gray,              radius: 8,
+              backgroundColor: hasItems
+                  ? (isReturn ? AppColors.accent : AppColors.primary) // ✅
+                  : AppColors.gray,
+              radius: 8,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 10,
@@ -113,7 +116,9 @@ void initState() {
                       color: AppColors.white, size: 25),
                   // Text('add_to_order'.tr()),
                   Text(
-                isReturn ? 'add_to_return'.tr() : 'add_to_order'.tr(), // ✅
+                      isReturn
+                          ? 'add_to_return'.tr()
+                          : 'add_to_order'.tr(), // ✅
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displaySmall!.copyWith(
                           fontSize: 16,
@@ -124,15 +129,14 @@ void initState() {
             ),
           ),
         ),
-        body:  asyncProducts.when(
+        body: asyncProducts.when(
             loading: () => const Center(child: AppLoader()),
             error: (e, _) => AppErrorWidget(),
             data: (state) => _OrderBody(
                   state: state,
                   searchController: _searchController,
                   onSearchChanged: _onSearchChanged,
-                          isReturn: isReturn,
-
+                  isReturn: isReturn,
                 )));
   }
 
@@ -154,7 +158,7 @@ void initState() {
             style: AppTextStyle.interBold20.copyWith(color: AppColors.dark),
           ),
           Text(
-            widget.customer.name??"",
+            widget.customer.name ?? "",
             style: AppTextStyle.interRegular12.copyWith(
               color: AppColors.blueGrey,
             ),
@@ -191,8 +195,7 @@ class _OrderBody extends ConsumerWidget {
     required this.state,
     required this.searchController,
     required this.onSearchChanged,
-        required this.isReturn, // ✅ NEW
-
+    required this.isReturn, // ✅ NEW
   });
 
   final NewOrderState state;
@@ -206,6 +209,7 @@ class _OrderBody extends ConsumerWidget {
       padding: const EdgeInsetsDirectional.symmetric(horizontal: 16),
       child: Column(
         spacing: 18,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           16.verticalSpace,
           const OrderTabSwitcher(),
@@ -214,10 +218,10 @@ class _OrderBody extends ConsumerWidget {
             hintKey: 'search_items_barcode',
             onChanged: onSearchChanged,
             onBarcodeTap: () {
-            context.push(AppRoutes.barcodeScreen,extra: {'fromNewOrder': true});
-          },
+              context
+                  .push(AppRoutes.barcodeScreen, extra: {'fromNewOrder': true});
+            },
           ),
-
           OrderCategoryFilter(
             categories: state.categories.isNotEmpty
                 ? state.categories.map((e) => e.name).toList()
@@ -227,7 +231,7 @@ class _OrderBody extends ConsumerWidget {
                 ref.read(newOrderControllerProvider.notifier).selectCategory(i),
           ),
           NewOrderSectionHeaderWidget(
-                  titleKey: isReturn ? 'return_items' : 'items', // ✅
+            titleKey: isReturn ? 'return_items' : 'items', // ✅
             count: state.allItems.length,
             isReturn: isReturn, // ✅
           ),
@@ -248,14 +252,31 @@ class _OrderBody extends ConsumerWidget {
                         backgroundColor: AppColors.white,
                       ),
                     ),
-                if (state.filteredItems.isEmpty && state.listState is !AsyncLoading) AppEmptyDataWidget(),
-
+                  if (state.filteredItems.isEmpty &&
+                      state.listState is! AsyncLoading)
+                    AppEmptyDataWidget(),
                   ...state.filteredItems.map((item) {
                     final isSelected =
                         state.selectedItems.containsKey(item.itemCode);
 
                     final selected = state.selectedItems[item.itemCode];
 
+// ✅ Use the item's first UOM as fallback, not hardcoded "Box"
+                    final defaultUnit = item.uoms.isNotEmpty
+                        ? item.uoms
+                            .firstWhere(
+                              (u) => u.availableStock > 0,
+                              orElse: () => item.uoms.first,
+                            )
+                            .uom
+                        : (item.defaultUom ?? 'Pcs');
+                    final selectedUnit = selected?.unit ?? defaultUnit;
+                    final selectedUomStock = item.uoms
+                        .firstWhere(
+                          (u) => u.uom == selectedUnit,
+                          orElse: () => item.uoms.first,
+                        )
+                        .availableStock;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: GestureDetector(
@@ -265,7 +286,7 @@ class _OrderBody extends ConsumerWidget {
                         child: OrderItemCard(
                           item: item,
                           quantity: selected?.quantity ?? 0,
-                          selectedUnit: selected?.unit ?? "Box",
+                          selectedUnit: selected?.unit ?? defaultUnit,
                           isSelected: isSelected,
                           onIncrement: () => ref
                               .read(newOrderControllerProvider.notifier)

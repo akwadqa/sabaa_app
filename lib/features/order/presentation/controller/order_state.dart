@@ -13,6 +13,8 @@ class OrderState {
   final PaymentResponseModel? paymentData;
   final bool filterLoading;
   final List<String>? images;
+  final String selectedAction;
+  final String? summaryAction;
 
   OrderState({
     this.uploadCaptureResponse,
@@ -22,6 +24,9 @@ class OrderState {
     this.paymentData,
     required this.filterLoading,
     this.images,
+    this.selectedAction = 'invoice',
+    this.summaryAction,
+
   });
 
   factory OrderState.init() {
@@ -32,8 +37,11 @@ class OrderState {
       paymentData: null,
       images: [],
       filterLoading: false,
+      selectedAction: 'invoice',
     );
   }
+  // const _noValue = Object();
+
   OrderState copyWith({
     String? ordersTypeFilter,
     String? paymentMethod,
@@ -43,15 +51,23 @@ class OrderState {
     PaymentResponseModel? paymentData,
     bool? filterLoading,
     List<String>? images,
+    String? selectedAction,
+String? summaryAction,
+
   }) {
     return OrderState(
       ordersTypeFilter: ordersTypeFilter ?? this.ordersTypeFilter,
       orderSummary: orderSummary ?? this.orderSummary,
-      uploadCaptureResponse: uploadCaptureResponse ?? this.uploadCaptureResponse,
+      uploadCaptureResponse:
+          uploadCaptureResponse ?? this.uploadCaptureResponse,
       isPaying: isPaying ?? this.isPaying,
       paymentData: paymentData ?? this.paymentData,
       filterLoading: filterLoading ?? this.filterLoading,
       images: images ?? this.images,
+      selectedAction: selectedAction ?? this.selectedAction,
+summaryAction: summaryAction ?? this.summaryAction,
+
     );
   }
+
 }

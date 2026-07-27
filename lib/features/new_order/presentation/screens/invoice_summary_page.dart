@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/free_item_toggle.dart';
+import 'package:sabaa/features/new_order/domain/model/order_item.dart';
+import 'package:sabaa/features/new_order/presentation/controller/new_order_state.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/new_order_section_header_widget.dart';
+import 'package:sabaa/features/new_order/presentation/widgets/order_widgets/order_card/item_line_card.dart';
 import 'package:sabaa/features/order/presentation/pages/unified_invoice_review_page.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/custom_button_widget.dart';
@@ -20,9 +22,8 @@ class InvoiceSummaryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(newOrderControllerProvider).value!;
-
     final items = state.selectedItems.values.toList();
-    final isReturn = state.isReturn; // ✅
+    final isReturn = state.isReturn;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -31,18 +32,16 @@ class InvoiceSummaryPage extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
           child: CustomButtonWidget(
-            text: isReturn ? "confirm_return" : "confirm_order", // ✅
+            text: isReturn ? "confirm_return" : "confirm_order",
             onTap: () {
               context.push(AppRoutes.invoiceReviewScreen, extra: {
                 'mode': InvoiceReviewMode.newOrder,
               });
-              // context.push(AppRoutes.invoiceReviewPage);
             },
             isFiled: true,
             height: 48,
             width: double.infinity,
-            backgroundColor:
-                isReturn ? AppColors.accent : AppColors.primary, // ✅
+            backgroundColor: isReturn ? AppColors.accent : AppColors.primary,
             radius: 8,
           ),
         ),
@@ -53,105 +52,168 @@ class InvoiceSummaryPage extends ConsumerWidget {
           spacing: 20,
           children: [
             NewOrderSectionHeaderWidget(
-              titleKey: isReturn ? 'return_items' : 'invoice_items', // ✅
+              titleKey: isReturn ? 'return_items' : 'invoice_items',
               count: state.selectedItems.length,
-              isReturn: isReturn, // ✅
+              isReturn: isReturn,
             ),
-            Expanded(
-              child: ListView(
-                // padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 12),
-                children: items.map((selected) {
-                  final item = selected.product;
+      Expanded(
+        child: ListView(
+          children: _buildGroupedLines(context, ref, state, isReturn),
+        ),
+      ),
+            // Expanded(
+            //   child: ListView(
+            //     children: items.map((selected) {
+            //       final item = selected.product;
 
-                  return OrderItemCard(
-                          item: item,
-
-                          // OrderItem(
-                          //   id: item.itemCode,
-                          //   name: item.productName,
-                          //   sku: item.itemCode,
-                          //   price: '${item.price.toStringAsFixed(2)} QAR',
-                          //   isReturn: false,
-                          // ),
-                          allowEditPrice: isReturn,
-                          customRate: selected.customRate,
-                          quantity: selected.quantity,
-                          selectedUnit: selected.unit,
-                          showFreeToggle: !isReturn,
-                          freeQuantity: selected.freeQuantity,
-                          onFreeQuantityChanged: (freeQty) {
-                            ref
-                                .read(newOrderControllerProvider.notifier)
-                                .updateFreeQuantity(item.itemCode, freeQty);
-                          },
-                          isSelected: true,
-                          onRateChanged: (rate) {
-                            ref
-                                .read(newOrderControllerProvider.notifier)
-                                .updateRate(item.itemCode, rate);
-                          },
-                          onIncrement: () => ref
-                              .read(newOrderControllerProvider.notifier)
-                              .increment(item),
-                          onDecrement: () => ref
-                              .read(newOrderControllerProvider.notifier)
-                              .decrement(item.itemCode),
-                          onDelete: () => ref
-                              .read(newOrderControllerProvider.notifier)
-                              .toggleItem(item),
-                          onUnitChanged: (unit) => ref
-                              .read(newOrderControllerProvider.notifier)
-                              .updateUnit(item.itemCode, unit))
-                      .onlyPadding(bottom: 20);
-                }).toList(),
-
-// children: items.map((selected) {
-//   final item = selected.product;
-
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       OrderItemCard(
-//         item: item,
-//         allowEditPrice: isReturn,
-//         customRate: selected.customRate,
-//         quantity: selected.quantity,
-//         selectedUnit: selected.unit,
-//         isSelected: true,
-//         onRateChanged: (rate) {
-//           ref
-//               .read(newOrderControllerProvider.notifier)
-//               .updateRate(item.itemCode, rate);
-//         },
-//         onIncrement: () => ref
-//             .read(newOrderControllerProvider.notifier)
-//             .increment(item),
-//         onDecrement: () => ref
-//             .read(newOrderControllerProvider.notifier)
-//             .decrement(item.itemCode),
-//         onDelete: () => ref
-//             .read(newOrderControllerProvider.notifier)
-//             .toggleItem(item),
-//         onUnitChanged: (unit) => ref
-//             .read(newOrderControllerProvider.notifier)
-//             .updateUnit(item.itemCode, unit),
-//       ),
-
-//       // ✅ Free Items Toggle — only for normal orders, not returns
-
-//       const SizedBox(height: 20),
-//     ],
-//   );
-// }).toList(),
-              ),
-            ),
+            //       return OrderItemCard(
+            //         item: item,
+            //         allowEditPrice: isReturn,
+            //         customRate: selected.customRate,
+            //         quantity: selected.quantity,
+            //         selectedUnit: selected.unit,
+            //         showFreeToggle: !isReturn,
+            //         isFocEnabled: selected.isFocEnabled,
+            //         focUom: selected.focUom,
+            //         focQuantity: selected.focQuantity,
+            //         isAllFree: selected.isAllFree,
+            //         extraUomLines: selected.extraUomLines,
+            //         onAllFreeToggle: (value) {
+            //           ref
+            //               .read(newOrderControllerProvider.notifier)
+            //               .toggleAllFree(item.itemCode, value: value);
+            //         },
+            //         onFocToggle: (isEnabled) {
+            //           ref
+            //               .read(newOrderControllerProvider.notifier)
+            //               .toggleFoc(item.itemCode, value: isEnabled);
+            //         },
+            //         onFocUomChanged: (uom) {
+            //           ref
+            //               .read(newOrderControllerProvider.notifier)
+            //               .updateFocUom(item.itemCode, uom);
+            //         },
+            //         onFocQuantityChanged: (freeQty) {
+            //           ref
+            //               .read(newOrderControllerProvider.notifier)
+            //               .updateFocQuantity(item.itemCode, freeQty);
+            //         },
+            //         isSelected: true,
+            //         onRateChanged: (rate) {
+            //           ref
+            //               .read(newOrderControllerProvider.notifier)
+            //               .updateRate(item.itemCode, rate);
+            //         },
+            //         onIncrement: () => ref
+            //             .read(newOrderControllerProvider.notifier)
+            //             .increment(item),
+            //         onDecrement: () => ref
+            //             .read(newOrderControllerProvider.notifier)
+            //             .decrement(item.itemCode),
+            //         onDelete: () => ref
+            //             .read(newOrderControllerProvider.notifier)
+            //             .toggleItem(item),
+            //         onUnitChanged: (unit) => ref
+            //             .read(newOrderControllerProvider.notifier)
+            //             .updateUnit(item.itemCode, unit),
+            //       ).onlyPadding(bottom: 20);
+            //     }).toList(),
+            //   ),
+            // ),
+        
+        
           ],
         ),
       ),
     );
+    
+  }
+List<Widget> _buildGroupedLines(
+  BuildContext context,
+  WidgetRef ref,
+  NewOrderState state,
+  bool isReturn,
+) {
+  final widgets = <Widget>[];
+
+  // ── Preserve insertion order ───────────────────────────────
+  final grouped = <String, List<SelectedItemLine>>{};
+  final order = <String>[];
+
+  for (final line in state.selectedLines) {
+    final code = line.product.itemCode;
+    if (!grouped.containsKey(code)) {
+      order.add(code);
+      grouped[code] = [];
+    }
+    grouped[code]!.add(line);
   }
 
-  PreferredSizeWidget _buildAppBar(context, bool isReturn) {
+  for (final itemCode in order) {
+    final productLines = grouped[itemCode]!;
+    final product = productLines.first.product;
+
+    // ── All lines for this product, stacked ────────────────
+    for (int i = 0; i < productLines.length; i++) {
+      final line = productLines[i];
+      final isLastLine = i == productLines.length - 1;
+
+      widgets.add(
+        ItemLineCard(
+          key: ValueKey(line.lineId),
+          line: line,
+          canDelete: productLines.length > 1,
+           isOnlyLine: productLines.length == 1,
+        ).onlyPadding(bottom: isLastLine ? 0 : 8), // tight between lines
+      );
+    }
+
+    // ── "Add line" button directly after last line ─────────
+    if (!isReturn) {
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 20),
+          child: GestureDetector(
+            onTap: () => ref
+                .read(newOrderControllerProvider.notifier)
+                .addLineForItem(product),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.primary.withOpacity(0.25),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add_circle_outline_rounded,
+                    size: 15,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'add_uom_line'.tr(),
+                    style: AppTextStyle.interSemiBold12
+                        .copyWith(color: AppColors.primary),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  return widgets;
+}
+ 
+ PreferredSizeWidget _buildAppBar(context, bool isReturn) {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
@@ -161,7 +223,7 @@ class InvoiceSummaryPage extends ConsumerWidget {
         child: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary),
       ),
       title: Text(
-        isReturn ? 'return_summary'.tr() : 'invoice_summary'.tr(), // ✅
+        isReturn ? 'return_summary'.tr() : 'invoice_summary'.tr(),
         style: AppTextStyle.interBold20.copyWith(color: AppColors.dark),
       ),
       bottom: PreferredSize(

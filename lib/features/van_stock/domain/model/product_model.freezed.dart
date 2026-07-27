@@ -532,6 +532,7 @@ class __$ProductModelCopyWithImpl<$Res>
 mixin _$UomModel {
   String get uom;
   double get price;
+  int get availableStock;
 
   /// Create a copy of UomModel
   /// with the given fields replaced by the non-null parameter values.
@@ -549,16 +550,18 @@ mixin _$UomModel {
         (other.runtimeType == runtimeType &&
             other is UomModel &&
             (identical(other.uom, uom) || other.uom == uom) &&
-            (identical(other.price, price) || other.price == price));
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.availableStock, availableStock) ||
+                other.availableStock == availableStock));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uom, price);
+  int get hashCode => Object.hash(runtimeType, uom, price, availableStock);
 
   @override
   String toString() {
-    return 'UomModel(uom: $uom, price: $price)';
+    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock)';
   }
 }
 
@@ -567,7 +570,7 @@ abstract mixin class $UomModelCopyWith<$Res> {
   factory $UomModelCopyWith(UomModel value, $Res Function(UomModel) _then) =
       _$UomModelCopyWithImpl;
   @useResult
-  $Res call({String uom, double price});
+  $Res call({String uom, double price, int availableStock});
 }
 
 /// @nodoc
@@ -584,6 +587,7 @@ class _$UomModelCopyWithImpl<$Res> implements $UomModelCopyWith<$Res> {
   $Res call({
     Object? uom = null,
     Object? price = null,
+    Object? availableStock = null,
   }) {
     return _then(_self.copyWith(
       uom: null == uom
@@ -594,6 +598,10 @@ class _$UomModelCopyWithImpl<$Res> implements $UomModelCopyWith<$Res> {
           ? _self.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      availableStock: null == availableStock
+          ? _self.availableStock
+          : availableStock // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -691,13 +699,13 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String uom, double price)? $default, {
+    TResult Function(String uom, double price, int availableStock)? $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _UomModel() when $default != null:
-        return $default(_that.uom, _that.price);
+        return $default(_that.uom, _that.price, _that.availableStock);
       case _:
         return orElse();
     }
@@ -718,12 +726,12 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String uom, double price) $default,
+    TResult Function(String uom, double price, int availableStock) $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UomModel():
-        return $default(_that.uom, _that.price);
+        return $default(_that.uom, _that.price, _that.availableStock);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -743,12 +751,12 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String uom, double price)? $default,
+    TResult? Function(String uom, double price, int availableStock)? $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UomModel() when $default != null:
-        return $default(_that.uom, _that.price);
+        return $default(_that.uom, _that.price, _that.availableStock);
       case _:
         return null;
     }
@@ -758,7 +766,8 @@ extension UomModelPatterns on UomModel {
 /// @nodoc
 @JsonSerializable()
 class _UomModel implements UomModel {
-  const _UomModel({required this.uom, required this.price});
+  const _UomModel(
+      {required this.uom, required this.price, required this.availableStock});
   factory _UomModel.fromJson(Map<String, dynamic> json) =>
       _$UomModelFromJson(json);
 
@@ -766,6 +775,8 @@ class _UomModel implements UomModel {
   final String uom;
   @override
   final double price;
+  @override
+  final int availableStock;
 
   /// Create a copy of UomModel
   /// with the given fields replaced by the non-null parameter values.
@@ -788,16 +799,18 @@ class _UomModel implements UomModel {
         (other.runtimeType == runtimeType &&
             other is _UomModel &&
             (identical(other.uom, uom) || other.uom == uom) &&
-            (identical(other.price, price) || other.price == price));
+            (identical(other.price, price) || other.price == price) &&
+            (identical(other.availableStock, availableStock) ||
+                other.availableStock == availableStock));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uom, price);
+  int get hashCode => Object.hash(runtimeType, uom, price, availableStock);
 
   @override
   String toString() {
-    return 'UomModel(uom: $uom, price: $price)';
+    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock)';
   }
 }
 
@@ -808,7 +821,7 @@ abstract mixin class _$UomModelCopyWith<$Res>
       __$UomModelCopyWithImpl;
   @override
   @useResult
-  $Res call({String uom, double price});
+  $Res call({String uom, double price, int availableStock});
 }
 
 /// @nodoc
@@ -825,6 +838,7 @@ class __$UomModelCopyWithImpl<$Res> implements _$UomModelCopyWith<$Res> {
   $Res call({
     Object? uom = null,
     Object? price = null,
+    Object? availableStock = null,
   }) {
     return _then(_UomModel(
       uom: null == uom
@@ -835,6 +849,10 @@ class __$UomModelCopyWithImpl<$Res> implements _$UomModelCopyWith<$Res> {
           ? _self.price
           : price // ignore: cast_nullable_to_non_nullable
               as double,
+      availableStock: null == availableStock
+          ? _self.availableStock
+          : availableStock // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }

@@ -250,5 +250,18 @@
     "update": "Update",
     "free_items": "Free Items",
     "free": "Free",
+    "FOC": "FOC",
+    "not_included_in_total": "Not included in total",
+    "foc_details": "FOC Details",
+    "foc_uom": "FOC Unit",
+    "foc_quantity": "FOC Qty",
+    "available_stock": "Available",
+    "insufficient_foc_stock": "Insufficient stock for FOC item",
+    "all_free": "All Free",
+    "all_items_marked_free": "All items in this card are marked as free",
+    "all_items_free": "100% Free",
+    "add_uom_line": "Add UOM Line",
+    "add_line_for": "Add line for {}",
+    "max_stock": "Max stock",
     "Choose_from_gallery": "Choose from gallery"
 }

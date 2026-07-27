@@ -43,7 +43,32 @@ class OrderController extends _$OrderController {
   void changeSelectedPaymentMethod(String? method) {
     state = AsyncData(state.value!.copyWith(paymentMethod: method));
   }
+void setSummaryAction(String? action) {
+  state = AsyncData(state.value!.copyWith(summaryAction: action));
+}Future<void> changeSelectedAction({
+  required String action,
+  required String customerId,
+}) async {
+  _invoices.clear();
+  _currentPage = 0;
+  _totalPages = 0;
 
+  state = AsyncData(
+    state.value!.copyWith(
+      selectedAction: action,
+      summaryAction: action,
+      filterLoading: true,
+    ),
+  );
+
+  await getOrderSummary(
+    customerId: customerId,
+    page: 1,
+    showLoading: false,
+  );
+
+  state = AsyncData(state.value!.copyWith(filterLoading: false));
+}
   Future<OrderSummaryModel?> getOrderSummary(
       {required String customerId,
       required int page,
@@ -54,12 +79,16 @@ class OrderController extends _$OrderController {
         state = AsyncData(
             state.value!.copyWith(orderSummary: const AsyncLoading()));
       }
+      final currentAction = state.value!.selectedAction; // 👈 read from state
+
       final response = await ref.read(orderRepositoryProvider).getOrderSummary(
-          customerId: customerId,
-          status: state.value!.ordersTypeFilter != 'all'
-              ? state.value!.ordersTypeFilter
-              : null,
-          page: page);
+            customerId: customerId,
+            status: state.value!.ordersTypeFilter != 'all'
+                ? state.value!.ordersTypeFilter
+                : null,
+            page: page,
+            action: currentAction,
+          );
 
       _currentPage = response.pagination!.currentPage;
       _totalPages = response.pagination!.totalPages;
@@ -210,5 +239,4 @@ class OrderController extends _$OrderController {
       current.copyWith(images: updated),
     );
   }
-
 }

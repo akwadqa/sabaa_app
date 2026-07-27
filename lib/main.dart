@@ -22,7 +22,7 @@ Future<void> main() async {
           return UncontrolledProviderScope(
             container: container,
             child: EasyLocalization(
-              supportedLocales: const [Locale('en'), Locale('ar')],
+              supportedLocales: const [Locale('en'), Locale('ar')],   
               path: 'assets/translations',
               child: const MyApp(),
             ),

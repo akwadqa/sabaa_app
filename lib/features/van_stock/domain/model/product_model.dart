@@ -24,6 +24,7 @@ abstract class ProductModel with _$ProductModel {
   const factory UomModel({
     required String uom,
     required double price,
+    required int availableStock,
   }) = _UomModel;
 
   factory UomModel.fromJson(Map<String, dynamic> json) =>

@@ -7,6 +7,7 @@ import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
 import 'package:sabaa/features/van_stock/domain/model/stock_category_model.dart';
 
 import '../../../customers/domain/model/create_customer_response/create_customer_response.dart';
+
 enum DiscountType { percentage, amount }
 
 class NewOrderState {
@@ -22,10 +23,11 @@ class NewOrderState {
     this.customer,
     this.isReturn = false,
     this.isSubmitting = false,
-     this.deliveryFee,
-         this.remark,
-    this.discountType,          
-    this.discountValue,         
+    this.deliveryFee,
+    this.remark,
+    this.discountType,
+    this.discountValue,
+    this.selectedLines = const [],
   });
 
   final List<ProductModel> allItems;
@@ -38,15 +40,19 @@ class NewOrderState {
   final CustomerModel? customer;
   final bool isSubmitting;
   final bool isReturn;
+
   /// 🔥 key = itemCode
   final Map<String, SelectedItem> selectedItems;
-  final DiscountType? discountType;   
-  final double? discountValue;        
+  final DiscountType? discountType;
+  final double? discountValue;
   final AsyncValue<void>? listState;
   final String? deliveryFee;
+  final List<SelectedItemLine> selectedLines;
+
   bool get hasSelection => selectedItems.isNotEmpty;
 
-  bool get hasDiscount => discountType != null && discountValue != null && discountValue! > 0;  
+  bool get hasDiscount =>
+      discountType != null && discountValue != null && discountValue! > 0;
 
   NewOrderState copyWith({
     List<ProductModel>? allItems,
@@ -62,27 +68,31 @@ class NewOrderState {
     Map<String, SelectedItem>? selectedItems,
     AsyncValue<void>? listState,
     String? deliveryFee,
-     bool clearRemark = false,
-  DiscountType? discountType,       
-    double? discountValue,            
-    bool clearDiscount = false,     
+    bool clearRemark = false,
+    DiscountType? discountType,
+    double? discountValue,
+    bool clearDiscount = false,
+    List<SelectedItemLine>? selectedLines,
   }) {
     return NewOrderState(
       allItems: allItems ?? this.allItems,
       filteredItems: filteredItems ?? this.filteredItems,
       categories: categories ?? this.categories,
-      remark: clearRemark ? null : (remark ?? this.remark),      
+      remark: clearRemark ? null : (remark ?? this.remark),
       searchQuery: searchQuery ?? this.searchQuery,
       selectedCategory: selectedCategory ?? this.selectedCategory,
-      selectedCategoryIndex: selectedCategoryIndex ?? this.selectedCategoryIndex,
+      selectedCategoryIndex:
+          selectedCategoryIndex ?? this.selectedCategoryIndex,
       customer: customer ?? this.customer,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       isReturn: isReturn ?? this.isReturn,
       selectedItems: selectedItems ?? this.selectedItems,
       listState: listState ?? this.listState,
       deliveryFee: deliveryFee ?? this.deliveryFee,
-            discountType: clearDiscount ? null : (discountType ?? this.discountType),       
-      discountValue: clearDiscount ? null : (discountValue ?? this.discountValue),   
+      discountType: clearDiscount ? null : (discountType ?? this.discountType),
+      discountValue:
+          clearDiscount ? null : (discountValue ?? this.discountValue),
+      selectedLines: selectedLines ?? this.selectedLines,
     );
   }
 }

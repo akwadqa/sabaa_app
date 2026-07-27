@@ -21,16 +21,21 @@ class OrderRemoteDataSource {
 
   OrderRemoteDataSource(this._networkService);
 
-  Future<ApiResponse<OrderSummaryModel>> getOrderSummary(
-      {required String customerId, String? status, required int page}) async {
+  Future<ApiResponse<OrderSummaryModel>> getOrderSummary({
+    required String customerId,
+    String? status,
+    required int page,
+    String? action, // 👈 add this
+  }) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.orderSummary,
         queryParameters: {
           'customer_id': customerId,
           // 'customer_id': 1017,
-          'status': status,
+        if (status != null)   'status': status,
           'page': page,
+          if (action != null) 'action': action, // 👈 send only if provided
         },
       );
 
@@ -114,7 +119,8 @@ class OrderRemoteDataSource {
     }
   }
 
-  Future<ApiResponse<HyperMarketOrdersSummaryResponse>> hyperMarketOrderSummary(HyperMarketOrderSummaryParams params) async {
+  Future<ApiResponse<HyperMarketOrdersSummaryResponse>> hyperMarketOrderSummary(
+      HyperMarketOrderSummaryParams params) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.hyperMarketOrderSummary,
@@ -132,20 +138,23 @@ class OrderRemoteDataSource {
 
       return ApiResponse.fromJson(
         response.data as Map<String, dynamic>,
-        (json) => HyperMarketOrdersSummaryResponse.fromJson(json as Map<String, dynamic>),
+        (json) => HyperMarketOrdersSummaryResponse.fromJson(
+            json as Map<String, dynamic>),
       );
     } catch (e) {
       debugPrint('Error in getData: $e');
       rethrow;
     }
   }
-  Future<ApiResponse> hyperMarketUpdateStock(String visitId , List<StockUpdateInput> items) async {
+
+  Future<ApiResponse> hyperMarketUpdateStock(
+      String visitId, List<StockUpdateInput> items) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.hyperMarketUpdateStock,
         queryParameters: {
-         'visit_id' : visitId,
-         'items' : jsonEncode(items.map((item) => item.toJson()).toList()),
+          'visit_id': visitId,
+          'items': jsonEncode(items.map((item) => item.toJson()).toList()),
         },
       );
 
@@ -165,43 +174,43 @@ class OrderRemoteDataSource {
 
 // order_remote_data_source.dart
 
-Future<ApiResponse<String>> getDocumentHtml({
-  required String docName,
- required String docType ,
-}) async {
-  try {
-    final response = await _networkService.get(
-      ApiEndPoints.getDocumentHtml,
-      queryParameters: {
-        'doctype': docType,
-        'doc_name': docName,
-      },
-    );
+  Future<ApiResponse<String>> getDocumentHtml({
+    required String docName,
+    required String docType,
+  }) async {
+    try {
+      final response = await _networkService.get(
+        ApiEndPoints.getDocumentHtml,
+        queryParameters: {
+          'doctype': docType,
+          'doc_name': docName,
+        },
+      );
 
-    Dev.logLine('📄 HTML response status: ${response.statusCode}');
-    Dev.logLine('📄 HTML response data keys: ${(response.data as Map).keys}');
-    Dev.logLine('📄 Data.data type: ${response.data['data'].runtimeType}');
+      Dev.logLine('📄 HTML response status: ${response.statusCode}');
+      Dev.logLine('📄 HTML response data keys: ${(response.data as Map).keys}');
+      Dev.logLine('📄 Data.data type: ${response.data['data'].runtimeType}');
 
-    if (response.data == null || response.statusCode != 200) {
-      throw Exception('Failed to get document HTML');
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to get document HTML');
+      }
+
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) {
+          // ✅ Handle both flat and nested response shapes
+          if (json is Map<String, dynamic>) {
+            final html = json['html'] as String?;
+            Dev.logLine('📄 HTML length: ${html?.length ?? 0}');
+            return html ?? '';
+          }
+          return '';
+        },
+      );
+    } catch (e, st) {
+      Dev.logError('❌ getDocumentHtml error: $e');
+      Dev.logError('❌ Stack: $st');
+      rethrow;
     }
-
-    return ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (json) {
-        // ✅ Handle both flat and nested response shapes
-        if (json is Map<String, dynamic>) {
-          final html = json['html'] as String?;
-          Dev.logLine('📄 HTML length: ${html?.length ?? 0}');
-          return html ?? '';
-        }
-        return '';
-      },
-    );
-  } catch (e, st) {
-    Dev.logError('❌ getDocumentHtml error: $e');
-    Dev.logError('❌ Stack: $st');
-    rethrow;
   }
-}
 }

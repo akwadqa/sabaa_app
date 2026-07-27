@@ -11,8 +11,11 @@ class InvoiceItemUI {
   final String total;
   final String uom;
   final String pricePerItem; // price of one item
-  final int freeQuantity; // ✅ NEW
-  final int? paidCount; // ✅ paid only
+  final int focQuantity; // ✅ NEW
+  final int? paidCount; 
+  final String? focUom; 
+  final bool isAllFree;
+    final int freeQuantity;
 
   InvoiceItemUI({
     required this.name,
@@ -20,8 +23,12 @@ class InvoiceItemUI {
     required this.total,
     required this.uom,
     required this.pricePerItem,
-    this.freeQuantity = 0, // ✅ default
+    this.focQuantity = 0,
     this.paidCount,
+        this.focUom, 
+    this.isAllFree = false,
+    this.freeQuantity = 0,
+
   });
 }
 
@@ -100,21 +107,56 @@ class InvoiceReviewCard extends StatelessWidget {
           16.verticalSpace,
 
           /// ── ITEMS ───────────────────────────
+          // Flexible(
+          //   child: ConstrainedBox(
+          //     constraints: BoxConstraints(
+          //       maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+          //     ),
+          //     child: ListView.builder(
+          //       itemCount: items.length,
+          //       shrinkWrap: true,
+          //       physics: const BouncingScrollPhysics(),
+          //       itemBuilder: (context, index) {
+          //         return _InvoiceItemRow(item: items[index]);
+          //       },
+          //     ),
+          //   ),
+          // ),
+
           Flexible(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+  child: ConstrainedBox(
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+    ),
+    child: ListView.builder(
+      itemCount: items.length,
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        final item = items[index];
+        final isLast = index == items.length - 1;
+
+        // ✅ Show divider only when next item is a different product
+        final isLastOfProduct = isLast || items[index + 1].name != item.name;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _InvoiceItemRow(item: item),
+
+            // ✅ Thin divider between different products only
+            if (isLastOfProduct && !isLast)
+              const Divider(
+                height: 8,
+                thickness: 0.8,
+                color: Color(0xFFEEEEEE),
               ),
-              child: ListView.builder(
-                itemCount: items.length,
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _InvoiceItemRow(item: items[index]);
-                },
-              ),
-            ),
-          ),
+          ],
+        );
+      },
+    ),
+  ),
+),
           // SizedBox(
           //   height: items.length < 5
           //       ? null
@@ -259,36 +301,53 @@ class _InvoiceItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasFree = item.freeQuantity > 0;
+    final hasFoc = item.focQuantity > 0;
     final paidQty = item.paidCount ?? item.count;
+    final hasFree = item.freeQuantity > 0;
 
-    final allFree = paidQty == 0 && hasFree;
+    final allFoc = paidQty == 0 && hasFoc;
+    final allFree = item.isAllFree || (paidQty == 0 && hasFree);
 
+   
+    // ── Case 1: All Free — single green row, no paid row ──────────
+    if (item.isAllFree) {
+      return _ItemLine(
+        name: item.name,
+        uom: item.uom,
+        quantity: item.count,
+        pricePerItem: '0.00',
+        total: '0.00',
+        isFoc: true,
+      );
+    }
+
+    // ── Case 2: Normal + FOC (different UOM) ──────────────────────
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Paid row ──────────────────────────────────────
-        if (!allFree)
-          _ItemLine(
-            name: item.name,
-            uom: item.uom,
-            quantity: item.paidCount ?? item.count,
-            pricePerItem: item.pricePerItem, // ✅ real price
-            total: item.total,
-            isFree: false,
-          ),
+        // Paid row — always shown when not all free
+        _ItemLine(
+          name: item.name,
+          uom: item.uom,
+          quantity: paidQty,
+          pricePerItem: item.pricePerItem,
+          total: item.total,
+          isFoc: false,
+        ),
 
-        // ── Free row ──────────────────────────────────────
-        if (hasFree)
+        // FOC row — shown only when FOC is enabled with quantity
+        if (hasFoc)
           _ItemLine(
             name: item.name,
-            uom: item.uom,
-            quantity: item.freeQuantity,
-            pricePerItem: '0.00', // ✅ zero price for free
+            uom: item.focUom ?? item.uom, // ✅ use FOC uom (can differ)
+            quantity: item.focQuantity,
+            pricePerItem: '0.00',
             total: '0.00',
-            isFree: true,
+            isFoc: true,
           ),
       ],
     );
+  
   }
 }
 // ── Single line ───────────────────────────────────────────────────────────────
@@ -300,7 +359,7 @@ class _ItemLine extends StatelessWidget {
     required this.quantity,
     required this.pricePerItem,
     required this.total,
-    required this.isFree,
+    required this.isFoc,
   });
 
   final String name;
@@ -308,35 +367,35 @@ class _ItemLine extends StatelessWidget {
   final int quantity;
   final String pricePerItem; // ✅ always required now
   final String total;
-  final bool isFree;
+  final bool isFoc;
 
   @override
   Widget build(BuildContext context) {
     // ── Colors ──────────────────────────────────────────────────────────────
-    final Color nameColor = isFree ? Colors.green[700]! : AppColors.textPrimary;
+    final Color nameColor = isFoc ? Colors.green[700]! : AppColors.textPrimary;
     final Color metaColor =
-        isFree ? Colors.green[600]! : AppColors.textSecondary;
+        isFoc ? Colors.green[600]! : AppColors.textSecondary;
     final Color totalColor =
-        isFree ? Colors.green[700]! : AppColors.textPrimary;
+        isFoc ? Colors.green[700]! : AppColors.textPrimary;
 
     // ── Text styles ──────────────────────────────────────────────────────────
-    final TextStyle nameStyle = isFree
+    final TextStyle nameStyle = isFoc
         ? AppTextStyle.interMedium12.copyWith(color: nameColor)
         : AppTextStyle.interSemiBold14.copyWith(color: nameColor);
 
     final TextStyle metaStyle =
         AppTextStyle.interRegular12.copyWith(color: metaColor);
 
-    final TextStyle qtyPriceStyle = isFree
+    final TextStyle qtyPriceStyle = isFoc
         ? AppTextStyle.interMedium12.copyWith(color: metaColor)
         : AppTextStyle.interSemiBold12.copyWith(color: metaColor);
 
-    final TextStyle totalStyle = isFree
+    final TextStyle totalStyle = isFoc
         ? AppTextStyle.interMedium12.copyWith(color: totalColor)
         : AppTextStyle.interSemiBold14.copyWith(color: totalColor);
 
     return Container(
-      color: isFree ? Colors.green.withOpacity(0.05) : Colors.transparent,
+      color: isFoc ? Colors.green.withOpacity(0.05) : Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -347,7 +406,7 @@ class _ItemLine extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (isFree) ...[
+                if (isFoc) ...[
                   Icon(
                     Icons.card_giftcard_rounded,
                     size: 12,
@@ -357,7 +416,7 @@ class _ItemLine extends StatelessWidget {
                 ],
                 Expanded(
                   child: Text(
-                    isFree ? '$name (${'free'.tr()})' : name,
+                    isFoc ? '$name (${'FOC'.tr()})' : name,
                     style: nameStyle,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,

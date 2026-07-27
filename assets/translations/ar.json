@@ -246,5 +246,18 @@
     "update": "تحديث",
     "free_items": "عناصر مجانية",
     "free": "مجاني",
+    "FOC": "مجاني",
+    "not_included_in_total": "غير محسوب في الإجمالي",
+    "foc_details": "تفاصيل المجاني",
+    "foc_uom": "وحدة المجاني",
+    "foc_quantity": "كمية المجاني",
+    "available_stock": "المتوفر",
+    "insufficient_foc_stock": "المخزون غير كافٍ للصنف المجاني",
+    "all_free": "الكل مجاني",
+    "all_items_free": "مجاني بالكامل",
+    "all_items_marked_free": "جميع عناصر هذه البطاقة مجانية",
+    "add_uom_line": "إضافة وحدة قياس",
+    "add_line_for": "إضافة سطر لـ {}",
+    "max_stock": "الحد الأقصى للمخزون",
     "Choose_from_gallery": "اختر من المعرض"
 }
