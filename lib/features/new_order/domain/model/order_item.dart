@@ -59,6 +59,7 @@ class SelectedItemLine {
       product: product,
       quantity: 1,
       unit: defaultUom,
+      focUom: defaultUom
     );
   }
 }
@@ -106,7 +107,7 @@ class OrderItem {
 class SelectedItem {
   final ProductModel product;
   final int quantity;
-  final String unit;
+  final String unit;  
   final double? customRate;
   final int freeQuantity;
   final bool isAllFree;

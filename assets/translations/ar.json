@@ -259,5 +259,10 @@
     "add_uom_line": "إضافة وحدة قياس",
     "add_line_for": "إضافة سطر لـ {}",
     "max_stock": "الحد الأقصى للمخزون",
+    "orders": "طلبات",
+    "no_stock_to_confirm": "لا يوجد مخزون متاح، لا يمكن التأكيد",
+    "has_no_stock": "لا يوجد مخزون",
+    "selected": "المحدد",
+    "available": "المتاح",
     "Choose_from_gallery": "اختر من المعرض"
 }

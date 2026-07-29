@@ -162,9 +162,7 @@ class _OrderSummaryPageContentState
 
       if (_isSalesMan) {
         _tabController = TabController(length: 2, vsync: this);
-        ref
-            .read(orderControllerProvider.notifier)
-            .setSummaryAction('invoice');
+        ref.read(orderControllerProvider.notifier).setSummaryAction('invoice');
       } else {
         ref.read(orderControllerProvider.notifier).setSummaryAction(null);
       }
@@ -294,6 +292,11 @@ class _OrderSummaryPageContentState
                     final action = index == 0 ? 'invoice' : 'order';
                     ref
                         .read(orderControllerProvider.notifier)
+                        .resetOrdersFilter(
+                          customerId: widget.customer.customerId!,
+                        );
+                    ref
+                        .read(orderControllerProvider.notifier)
                         .changeSelectedAction(
                           action: action,
                           customerId: widget.customer.customerId!,
@@ -319,11 +322,14 @@ class _OrderSummaryPageContentState
             const SizedBox(height: 24),
 
             // ── Filters ──
-            OrderSummaryFiltersList(
-              selectedFilter: selectedFilter,
-              customerId: widget.customer.customerId!,
-            ),
-            const SizedBox(height: 24),
+
+            if (selectedAction != 'order') ...[
+              OrderSummaryFiltersList(
+                selectedFilter: selectedFilter,
+                customerId: widget.customer.customerId!,
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // ── Section Header ──
             Align(
@@ -362,6 +368,8 @@ class _OrderSummaryPageContentState
                         extra: {
                           'mode': InvoiceReviewMode.viewOnly,
                           'invoiceId': invoice.invoiceId,
+                          'type':
+                              selectedAction == 'order' ? 'order' : 'invoice',
                         },
                       );
                     },

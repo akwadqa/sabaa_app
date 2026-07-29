@@ -26,12 +26,14 @@ class ReturnOrderRepository {
     required int page,
   required  String invoiceId,
     String? category,
+    String? type,
   }) async {
     try {
       final response = await _datasource.getInvoiceDetails(
         page: page,
         invoiceId: invoiceId,
         category: category,
+        type: type,
       );
 
       if (response.hasSucceeded) return response;

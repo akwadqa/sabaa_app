@@ -141,50 +141,83 @@ class OrderSummaryInvoiceCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
-    Color bg;
-    Color text;
-    String labelKey;
+ Widget _buildStatusBadge() {
+  Color bg;
+  Color text;
+  String labelKey;
 
-    switch (invoice.status) {
-      case 'Paid':
-        bg = AppColors.paidBg;
-        text = AppColors.paidText;
-        labelKey = 'Paid';
-        break;
-      case 'Unpaid':
-        bg = AppColors.unpaidBg;
-        text = AppColors.unpaidText;
-        labelKey = 'Unpaid';
-        break;
-      case 'Partly Paid':
-        bg = AppColors.partlyPaidBg;
-        text = AppColors.partlyPaidText;
-        labelKey = 'Partly Paid';
-        break;
-      case 'Return':
-        bg = AppColors.returnBg;
-        text = AppColors.returnText;
-        labelKey = 'Return';
-        break;
-      default:
-        bg = Colors.grey;
-        text = Colors.white;
-        labelKey = invoice.status;
-    }
+  switch (invoice.status) {
+    // ── Existing payment statuses ──────────────────────────
+    case 'Paid':
+      bg = AppColors.paidBg;
+      text = AppColors.paidText;
+      labelKey = 'Paid';
+      break;
+    case 'Unpaid':
+      bg = AppColors.unpaidBg;
+      text = AppColors.unpaidText;
+      labelKey = 'Unpaid';
+      break;
+    case 'Partly Paid':
+      bg = AppColors.partlyPaidBg;
+      text = AppColors.partlyPaidText;
+      labelKey = 'Partly Paid';
+      break;
+    case 'Return':
+      bg = AppColors.returnBg;
+      text = AppColors.returnText;
+      labelKey = 'Return';
+      break;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(9999),
-      ),
-      child: Text(
-        labelKey.tr().toUpperCase(),
-        style: AppTextStyle.rubikBold12.copyWith(color: text),
-      ),
-    );
+    // ── Order statuses ─────────────────────────────────────
+    case 'Completed':
+      bg = AppColors.metricGreen;       // D1FAE5 — light green
+      text = AppColors.metricGreenIcon; // 15803D — dark green
+      labelKey = 'Completed';
+      break;
+
+    case 'To Deliver and Bill':
+      bg = AppColors.metricOrange;       // FFEDD5 — light orange
+      text = AppColors.metricOrangeIcon; // EA580C — dark orange
+      labelKey = 'To Deliver and Bill';
+      break;
+
+    case 'To Bill':
+      bg = AppColors.partlyPaidBg;      // D1E5F7 — light blue
+      text = AppColors.partlyPaidText;  // 005B93 — dark blue
+      labelKey = 'To Bill';
+      break;
+
+    case 'To Deliver':
+      bg = AppColors.metricPurple;       // CBC8FF — light purple
+      text = AppColors.metricPurpleIcon; // 7C3AED — dark purple
+      labelKey = 'To Deliver';
+      break;
+
+    case 'Draft':
+      bg = AppColors.chevronBg;         // F1F5F9 — light grey
+      text = AppColors.blueGrey;        // 617589 — medium grey
+      labelKey = 'Draft';
+      break;
+
+    default:
+      bg = AppColors.chevronBg;
+      text = AppColors.blueGrey;
+      labelKey = invoice.status;
   }
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(9999),
+    ),
+    child: Text(
+      labelKey.tr().toUpperCase(),
+      style: AppTextStyle.rubikBold12.copyWith(color: text),
+    ),
+  );
+}
 
   Widget _buildActionButton(BuildContext context, String type, WidgetRef ref) {
     final isPay = type == 'pay';

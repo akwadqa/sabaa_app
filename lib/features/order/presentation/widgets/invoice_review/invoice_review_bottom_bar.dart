@@ -16,6 +16,7 @@ class InvoiceReviewBottomBar extends ConsumerWidget {
     required this.fallbackInvoiceId,
     required this.onShare,
     required this.onPrint,
+    this.isOrder = false, // <-- ADD THIS
   });
 
   final InvoiceReviewMode mode;
@@ -23,9 +24,12 @@ class InvoiceReviewBottomBar extends ConsumerWidget {
   final String? fallbackInvoiceId;
   final VoidCallback onShare;
   final VoidCallback onPrint;
-
+  final bool isOrder; // <-- ADD THIS
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (isOrder) {
+      return const SizedBox.shrink(); // <-- ADD THIS
+    }
     switch (mode) {
       case InvoiceReviewMode.newOrder:
         return const NewOrderBottomBar();

@@ -29,6 +29,9 @@ class ItemLineCard extends ConsumerWidget {
   final bool isOnlyLine;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(
+      newOrderControllerProvider.select((val) => val.value?.selectedLines),
+    );
     final controller = ref.read(newOrderControllerProvider.notifier);
     final item = line.product;
     final uoms = item.uoms.isNotEmpty
@@ -41,18 +44,28 @@ class ItemLineCard extends ConsumerWidget {
           ];
 
     final uomStrings = uoms.map((u) => u.uom).toList();
+
     final safeUnit =
         uomStrings.contains(line.unit) ? line.unit : uomStrings.first;
+
     final uomModel = uoms.firstWhere(
       (u) => u.uom == safeUnit,
       orElse: () => uoms.first,
     );
-    final availableStock = uomModel.availableStock ?? 0;
+    // final availableStock = uomModel.availableStock ?? 0;
     final effectivePrice = line.customRate ?? uomModel.price;
 
-    final stockColor = availableStock == 0
+    // ✅ Use REMAINING stock (total minus other lines), not total
+    final remainingStock = controller.remainingStockForLine(
+      lineId: line.lineId,
+      itemCode: item.itemCode,
+      uom: safeUnit,
+    );
+
+    // ✅ Stock color based on remaining
+    final stockColor = remainingStock == 0
         ? AppColors.red
-        : availableStock <= 5
+        : remainingStock <= 5
             ? Colors.orange
             : Colors.green[700]!;
 
@@ -112,7 +125,7 @@ class ItemLineCard extends ConsumerWidget {
                         // ✅ Delete only if more than one line for this product
                         // if (canDelete)
                         GestureDetector(
-                           onTap: () {
+                          onTap: () {
                             if (isOnlyLine) {
                               // ✅ Remove entire product
                               controller.removeItem(item.itemCode);
@@ -196,7 +209,7 @@ class ItemLineCard extends ConsumerWidget {
                     line.lineId, line.quantity + 1),
                 onManualChange: (qty) =>
                     controller.updateLineQuantity(line.lineId, qty),
-                maxStock: availableStock,
+                maxStock: remainingStock,
               ),
             ],
           ),
@@ -209,7 +222,7 @@ class ItemLineCard extends ConsumerWidget {
               Icon(Icons.inventory_2_outlined, size: 12, color: stockColor),
               const SizedBox(width: 4),
               Text(
-                '${'available_stock'.tr()}: $availableStock $safeUnit',
+                '${'available_stock'.tr()}: $remainingStock $safeUnit',
                 style: AppTextStyle.interRegular12.copyWith(color: stockColor),
               ),
             ],
@@ -375,14 +388,57 @@ class _LineFocSection extends ConsumerWidget {
     final item = line.product;
     final uoms = item.uoms;
     final uomStrings = uoms.map((u) => u.uom).toList();
+
     final selectedFocUom =
         line.focUom ?? (uomStrings.isNotEmpty ? uomStrings.first : 'Pcs');
+
     final focUomModel = uoms.firstWhere(
       (u) => u.uom == selectedFocUom,
       orElse: () => uoms.first,
     );
-    final focStock = focUomModel.availableStock ?? 0;
+    final focStock = focUomModel.availableStock;
+    final focTotalStock = focUomModel.availableStock;
 
+// ✅ Watch so it rebuilds
+    final allLines = ref.watch(
+      newOrderControllerProvider
+          .select((val) => val.value?.selectedLines ?? []),
+    );
+
+// ✅ Sum ALL quantities that consume this UOM's stock:
+// 1. Main qty of THIS line (if same uom as FOC)
+// 2. Main qty of OTHER lines with same item+uom
+// 3. FOC qty of OTHER lines with same item+focUom
+    final consumedStock = allLines
+        .where((l) => l.product.itemCode == line.product.itemCode)
+        .fold(0, (sum, l) {
+      int consumed = 0;
+
+      // Main line quantity consuming focUom stock
+      if (l.unit == selectedFocUom) {
+        consumed += l.quantity;
+      }
+
+      // Other lines' FOC quantity consuming focUom stock
+      if (l.lineId != line.lineId &&
+          l.isFocEnabled &&
+          (l.focUom ?? l.unit) == selectedFocUom) {
+        consumed += l.focQuantity;
+      }
+
+      return sum + consumed;
+    });
+
+// ✅ What's left for THIS line's FOC
+    final focRemaining =
+        (focTotalStock - consumedStock).clamp(0, focTotalStock);
+
+// Stock color for FOC
+    final focStockColor = focRemaining == 0
+        ? AppColors.red
+        : focRemaining <= 5
+            ? Colors.orange
+            : AppColors.textSecondary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -563,9 +619,12 @@ class _LineFocSection extends ConsumerWidget {
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   icon: const Icon(Icons.add, size: 18),
-                                  onPressed: line.focQuantity < focStock
+                                  onPressed: focRemaining > 0 &&
+                                          line.focQuantity < focRemaining
                                       ? () => controller.updateLineFocQuantity(
-                                          line.lineId, line.focQuantity + 1)
+                                            line.lineId,
+                                            line.focQuantity + 1,
+                                          )
                                       : null,
                                 ),
                               ],
@@ -579,15 +638,19 @@ class _LineFocSection extends ConsumerWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    Icon(Icons.inventory_2_outlined,
+                    Icon(
+                        focRemaining == 0
+                            ? Icons.warning_amber_rounded
+                            : Icons.inventory_2_outlined,
                         size: 11,
-                        color:
-                            focStock == 0 ? AppColors.red : Colors.green[700]),
+                        color: focStockColor),
                     const SizedBox(width: 4),
                     Text(
-                      '${'available_stock'.tr()}: $focStock $selectedFocUom',
+                      focRemaining == 0
+                          ? '${'out_of_stock'.tr()} ($selectedFocUom)'
+                          : '${'available_stock'.tr()}: $focRemaining $selectedFocUom',
                       style: AppTextStyle.interRegular10
-                          .copyWith(color: AppColors.textSecondary),
+                          .copyWith(color: focStockColor),
                     ),
                   ],
                 ),
@@ -597,30 +660,30 @@ class _LineFocSection extends ConsumerWidget {
         ],
 
         // ── All Free active banner ──────────────────────────────
-        if (line.isAllFree) ...[
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.07),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.green.withOpacity(0.25)),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.card_giftcard_rounded,
-                    size: 15, color: Colors.green[700]),
-                const SizedBox(width: 8),
-                Text(
-                  'all_items_marked_free'.tr(),
-                  style: AppTextStyle.interMedium14
-                      .copyWith(color: Colors.green[700]),
-                ),
-              ],
-            ),
-          ),
-        ],
+        // if (line.isAllFree) ...[
+        //   const SizedBox(height: 10),
+        //   Container(
+        //     width: double.infinity,
+        //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        //     decoration: BoxDecoration(
+        //       color: Colors.green.withOpacity(0.07),
+        //       borderRadius: BorderRadius.circular(10),
+        //       border: Border.all(color: Colors.green.withOpacity(0.25)),
+        //     ),
+        //     child: Row(
+        //       children: [
+        //         Icon(Icons.card_giftcard_rounded,
+        //             size: 15, color: Colors.green[700]),
+        //         const SizedBox(width: 8),
+        //         Text(
+        //           'all_items_marked_free'.tr(),
+        //           style: AppTextStyle.interMedium14
+        //               .copyWith(color: Colors.green[700]),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ],
       ],
     );
   }

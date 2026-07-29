@@ -343,6 +343,7 @@ class AppRouter {
             return UnifiedInvoiceReviewPage(
               mode: extra['mode'] as InvoiceReviewMode,
               invoiceId: extra['invoiceId'] as String?,
+              type: extra['type'] as String?,
             );
           },
         ),

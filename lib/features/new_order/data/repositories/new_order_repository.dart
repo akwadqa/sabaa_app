@@ -37,23 +37,28 @@ class NewOrderRepository {
     throw AppException(message: response.message);
   }
 
+  // new_order_repository.dart
+
   Future<ApiResponse<InvoiceModel>> createInvoice({
     required String customerId,
     required String deliveryFee,
     String? remark,
     required List<Map<String, dynamic>> items,
+    double? discountAmount,
+    double? additionalDiscountPercentage,
   }) async {
     final response = await _datasource.createInvoice(
-        customerId: customerId,
-        items: items,
-        deliveryFee: deliveryFee,
-        remark: remark);
+      customerId: customerId,
+      items: items,
+      deliveryFee: deliveryFee,
+      remark: remark,
+      discountAmount: discountAmount,
+      additionalDiscountPercentage: additionalDiscountPercentage,
+    );
 
-    if (response.hasSucceeded) {
-      return response;
-    }
+    if (response.hasSucceeded) return response;
+
     Dev.logError("Create invoice failed in repo");
-
     throw AppException(message: response.message);
   }
 

@@ -7,21 +7,20 @@ import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 
 import '../../../van_stock/domain/model/van_stock_model.dart';
 
-
 class NewOrderDatasource {
   final NetworkService _networkService;
 
   NewOrderDatasource(this._networkService);
 
-  Future<ApiResponse<VanStockModel>> getProducts({required int page,  String? search, String? category}) async {
+  Future<ApiResponse<VanStockModel>> getProducts(
+      {required int page, String? search, String? category}) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.getVanStock,
-         queryParameters: {
+        queryParameters: {
           'page': page,
-        if(search!=null)  "search":search,
-        if(category!=null)  "category":category,
-
+          if (search != null) "search": search,
+          if (category != null) "category": category,
         },
       );
 
@@ -39,44 +38,54 @@ class NewOrderDatasource {
     }
   }
 
+ // new_order_datasource.dart
+
 Future<ApiResponse<InvoiceModel>> createInvoice({
   required String customerId,
-   String? remark,
   required String deliveryFee,
+  String? remark,
   required List<Map<String, dynamic>> items,
+  double? discountAmount,             
+  double? additionalDiscountPercentage,
 }) async {
   try {
-    final response = await _networkService.post(
-      ApiEndPoints.createInvoice, 
-      data: {
-        "customer_id": customerId,
-        "items": items,
-        "delivery_charge": deliveryFee,
-                if (remark != null && remark.isNotEmpty) "remarks": remark,
+    final body = <String, dynamic>{
+      "customer_id": customerId,
+      "items": items,
+      "delivery_charge": deliveryFee,
+      if (remark != null && remark.isNotEmpty) "remarks": remark,
+      // ✅ Send discount only when both are present
+      if (discountAmount != null) "discount_amount": discountAmount,
+      if (additionalDiscountPercentage != null) "additional_discount_percentage": additionalDiscountPercentage,
+    };
 
-      },
+    Dev.logMap(body); // ✅ log full body
+
+    final response = await _networkService.post(
+      ApiEndPoints.createInvoice,
+      data: body,
     );
 
-    if ( response.statusCode != 201) {
+    if (response.statusCode != 201) {
       Dev.logError("Create invoice failed in data source");
       throw Exception('Create invoice failed');
     }
 
-    return ApiResponse.fromJson(response.data, (json) =>InvoiceModel.fromJson(json as Map<String,dynamic>));
+    return ApiResponse.fromJson(
+      response.data,
+      (json) => InvoiceModel.fromJson(json as Map<String, dynamic>),
+    );
   } catch (e) {
     Dev.logError('Error in createInvoice: $e');
     rethrow;
   }
 }
-
-
   Future<ApiResponse<InvoiceModel>> createReturnOrder({
     // required String invoiceId,
     required List<Map<String, dynamic>> items,
-    
-  required String customerId,
-   String? remark,
-  required String deliveryFee,
+    required String customerId,
+    String? remark,
+    required String deliveryFee,
     String? returnReason,
   }) async {
     try {
@@ -84,10 +93,10 @@ Future<ApiResponse<InvoiceModel>> createInvoice({
         ApiEndPoints.createReturnOrder, // Assuming endpoint exists
         data: {
           // "invoice_id": invoiceId,
-        if (remark != null && remark.isNotEmpty) "remarks": remark,
+          if (remark != null && remark.isNotEmpty) "remarks": remark,
 
-        "delivery_charge": deliveryFee,
-        "customer_id": customerId,
+          "delivery_charge": deliveryFee,
+          "customer_id": customerId,
 
           "items": items,
           // if (returnReason != null) "return_reason": returnReason,
@@ -100,11 +109,11 @@ Future<ApiResponse<InvoiceModel>> createInvoice({
         throw Exception('Create return order failed');
       }
 
-    return ApiResponse.fromJson(response.data, (json) =>InvoiceModel.fromJson(json as Map<String,dynamic>));
+      return ApiResponse.fromJson(response.data,
+          (json) => InvoiceModel.fromJson(json as Map<String, dynamic>));
     } catch (e) {
       Dev.logError('Error in createReturnOrder: $e');
       rethrow;
     }
   }
-
 }

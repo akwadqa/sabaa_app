@@ -13,6 +13,7 @@ import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
+import '../../../../src/core/shared_widgets/app_toast.dart';
 import '../controller/new_order_controller.dart';
 import '../widgets/order_widgets/order_card/order_item_card.dart';
 
@@ -34,6 +35,11 @@ class InvoiceSummaryPage extends ConsumerWidget {
           child: CustomButtonWidget(
             text: isReturn ? "confirm_return" : "confirm_order",
             onTap: () {
+              final validationError = _validateLines(state);
+              if (validationError != null) {
+                AppToast.errorToast(validationError); // ✅ use your toast
+                return;
+              }
               context.push(AppRoutes.invoiceReviewScreen, extra: {
                 'mode': InvoiceReviewMode.newOrder,
               });
@@ -56,11 +62,11 @@ class InvoiceSummaryPage extends ConsumerWidget {
               count: state.selectedItems.length,
               isReturn: isReturn,
             ),
-      Expanded(
-        child: ListView(
-          children: _buildGroupedLines(context, ref, state, isReturn),
-        ),
-      ),
+            Expanded(
+              child: ListView(
+                children: _buildGroupedLines(context, ref, state, isReturn),
+              ),
+            ),
             // Expanded(
             //   child: ListView(
             //     children: items.map((selected) {
@@ -120,100 +126,98 @@ class InvoiceSummaryPage extends ConsumerWidget {
             //     }).toList(),
             //   ),
             // ),
-        
-        
           ],
         ),
       ),
     );
-    
-  }
-List<Widget> _buildGroupedLines(
-  BuildContext context,
-  WidgetRef ref,
-  NewOrderState state,
-  bool isReturn,
-) {
-  final widgets = <Widget>[];
-
-  // ── Preserve insertion order ───────────────────────────────
-  final grouped = <String, List<SelectedItemLine>>{};
-  final order = <String>[];
-
-  for (final line in state.selectedLines) {
-    final code = line.product.itemCode;
-    if (!grouped.containsKey(code)) {
-      order.add(code);
-      grouped[code] = [];
-    }
-    grouped[code]!.add(line);
   }
 
-  for (final itemCode in order) {
-    final productLines = grouped[itemCode]!;
-    final product = productLines.first.product;
+  List<Widget> _buildGroupedLines(
+    BuildContext context,
+    WidgetRef ref,
+    NewOrderState state,
+    bool isReturn,
+  ) {
+    final widgets = <Widget>[];
 
-    // ── All lines for this product, stacked ────────────────
-    for (int i = 0; i < productLines.length; i++) {
-      final line = productLines[i];
-      final isLastLine = i == productLines.length - 1;
+    // ── Preserve insertion order ───────────────────────────────
+    final grouped = <String, List<SelectedItemLine>>{};
+    final order = <String>[];
 
-      widgets.add(
-        ItemLineCard(
-          key: ValueKey(line.lineId),
-          line: line,
-          canDelete: productLines.length > 1,
-           isOnlyLine: productLines.length == 1,
-        ).onlyPadding(bottom: isLastLine ? 0 : 8), // tight between lines
-      );
+    for (final line in state.selectedLines) {
+      final code = line.product.itemCode;
+      if (!grouped.containsKey(code)) {
+        order.add(code);
+        grouped[code] = [];
+      }
+      grouped[code]!.add(line);
     }
 
-    // ── "Add line" button directly after last line ─────────
-    if (!isReturn) {
-      widgets.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 8, bottom: 20),
-          child: GestureDetector(
-            onTap: () => ref
-                .read(newOrderControllerProvider.notifier)
-                .addLineForItem(product),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.06),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: AppColors.primary.withOpacity(0.25),
+    for (final itemCode in order) {
+      final productLines = grouped[itemCode]!;
+      final product = productLines.first.product;
+
+      // ── All lines for this product, stacked ────────────────
+      for (int i = 0; i < productLines.length; i++) {
+        final line = productLines[i];
+        final isLastLine = i == productLines.length - 1;
+
+        widgets.add(
+          ItemLineCard(
+            key: ValueKey(line.lineId),
+            line: line,
+            canDelete: productLines.length > 1,
+            isOnlyLine: productLines.length == 1,
+          ).onlyPadding(bottom: isLastLine ? 0 : 8), // tight between lines
+        );
+      }
+
+      // ── "Add line" button directly after last line ─────────
+      if (!isReturn) {
+        widgets.add(
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 20),
+            child: GestureDetector(
+              onTap: () => ref
+                  .read(newOrderControllerProvider.notifier)
+                  .addLineForItem(product),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.25),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.add_circle_outline_rounded,
-                    size: 15,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    'add_uom_line'.tr(),
-                    style: AppTextStyle.interSemiBold12
-                        .copyWith(color: AppColors.primary),
-                  ),
-                ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.add_circle_outline_rounded,
+                      size: 15,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'add_uom_line'.tr(),
+                      style: AppTextStyle.interSemiBold12
+                          .copyWith(color: AppColors.primary),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      }
     }
+
+    return widgets;
   }
 
-  return widgets;
-}
- 
- PreferredSizeWidget _buildAppBar(context, bool isReturn) {
+  PreferredSizeWidget _buildAppBar(context, bool isReturn) {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
@@ -231,5 +235,54 @@ List<Widget> _buildGroupedLines(
         child: Divider(height: 1, color: AppColors.navBorder),
       ),
     );
+  }
+
+  /// Returns error message string if invalid, null if all good
+  String? _validateLines(NewOrderState state) {
+    // ── Group lines to check total qty per itemCode+uom ──────────
+    final grouped = <String, Map<String, int>>{}; // itemCode → uom → totalQty
+
+    for (final line in state.selectedLines) {
+      grouped.putIfAbsent(line.product.itemCode, () => {});
+      grouped[line.product.itemCode]![line.unit] =
+          (grouped[line.product.itemCode]![line.unit] ?? 0) + line.quantity;
+    }
+
+    for (final line in state.selectedLines) {
+      // ── Check main line UOM stock ─────────────────────────────
+      final uomModel = line.product.uoms.firstWhere(
+        (u) => u.uom == line.unit,
+        orElse: () => line.product.uoms.first,
+      );
+      final totalStock = uomModel.availableStock;
+
+      // ✅ Block if UOM has 0 stock at all
+      if (totalStock == 0 && !line.isAllFree) {
+        return '${line.product.productName} (${line.unit}) — ${'has_no_stock'.tr()}';
+      }
+
+      // ✅ Block if combined qty across duplicate lines exceeds stock
+      final totalSelected = grouped[line.product.itemCode]?[line.unit] ?? 0;
+      if (totalSelected > totalStock && !line.isAllFree) {
+        return '${line.product.productName} (${line.unit}): '
+            '${'selected'.tr()} $totalSelected / '
+            '${'available'.tr()} $totalStock';
+      }
+
+      // ── Check FOC UOM stock ───────────────────────────────────
+      if (line.isFocEnabled && line.focQuantity > 0) {
+        final focUom = line.focUom ?? line.unit;
+        final focUomModel = line.product.uoms.firstWhere(
+          (u) => u.uom == focUom,
+          orElse: () => line.product.uoms.first,
+        );
+
+        if (focUomModel.availableStock == 0) {
+          return '${line.product.productName} FOC ($focUom) — ${'has_no_stock'.tr()}';
+        }
+      }
+    }
+
+    return null; // ✅ All valid
   }
 }

@@ -199,6 +199,7 @@ for (final itemCode in orderOfProducts) {
                 hint: 'enter_delivery_fee',
                 onChanged: controller.editDeliveryFee,
               ).symmetricPadding(horizontal: 12),
+             if(totalValue!=0)
               DiscountCard(
                 currentType: state.discountType,
                 currentValue: state.discountValue,

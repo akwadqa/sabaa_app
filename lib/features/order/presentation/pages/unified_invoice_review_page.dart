@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +16,12 @@ class UnifiedInvoiceReviewPage extends ConsumerStatefulWidget {
     super.key,
     required this.mode,
     this.invoiceId,
+    this.type,
   });
 
   final InvoiceReviewMode mode;
   final String? invoiceId;
-
+  final String? type; 
   @override
   ConsumerState<UnifiedInvoiceReviewPage> createState() =>
       _UnifiedInvoiceReviewPageState();
@@ -50,7 +50,7 @@ class _UnifiedInvoiceReviewPageState
       Future.microtask(() {
         ref
             .read(invoiceDetailsControllerProvider.notifier)
-            .fetchInvoiceDetails(widget.invoiceId!);
+            .fetchInvoiceDetails(widget.invoiceId!, type: widget.type);
       });
     }
   }
@@ -73,7 +73,7 @@ class _UnifiedInvoiceReviewPageState
       backgroundColor: AppColors.background,
       appBar: InvoiceReviewAppBar(
         title: _getTitle(),
-        showShareAction: widget.mode == InvoiceReviewMode.viewOnly,
+        showShareAction:  widget.mode == InvoiceReviewMode.viewOnly && widget.type != 'order', 
         isSharing: _isGeneratingPdf,
         onShare: _pdfActions.shareFromHtml,
       ),
@@ -84,6 +84,7 @@ class _UnifiedInvoiceReviewPageState
         fallbackInvoiceId: widget.invoiceId,
         onShare: _pdfActions.shareFromHtml,
         onPrint: _pdfActions.printFromHtml,
+         isOrder: widget.type == 'order',
       ),
     );
   }

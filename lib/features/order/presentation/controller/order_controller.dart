@@ -43,32 +43,36 @@ class OrderController extends _$OrderController {
   void changeSelectedPaymentMethod(String? method) {
     state = AsyncData(state.value!.copyWith(paymentMethod: method));
   }
-void setSummaryAction(String? action) {
-  state = AsyncData(state.value!.copyWith(summaryAction: action));
-}Future<void> changeSelectedAction({
-  required String action,
-  required String customerId,
-}) async {
-  _invoices.clear();
-  _currentPage = 0;
-  _totalPages = 0;
 
-  state = AsyncData(
-    state.value!.copyWith(
-      selectedAction: action,
-      summaryAction: action,
-      filterLoading: true,
-    ),
-  );
+  void setSummaryAction(String? action) {
+    state = AsyncData(state.value!.copyWith(summaryAction: action));
+  }
 
-  await getOrderSummary(
-    customerId: customerId,
-    page: 1,
-    showLoading: false,
-  );
+  Future<void> changeSelectedAction({
+    required String action,
+    required String customerId,
+  }) async {
+    _invoices.clear();
+    _currentPage = 0;
+    _totalPages = 0;
 
-  state = AsyncData(state.value!.copyWith(filterLoading: false));
-}
+    state = AsyncData(
+      state.value!.copyWith(
+        selectedAction: action,
+        summaryAction: action,
+        filterLoading: true,
+      ),
+    );
+
+    await getOrderSummary(
+      customerId: customerId,
+      page: 1,
+      showLoading: false,
+    );
+
+    state = AsyncData(state.value!.copyWith(filterLoading: false));
+  }
+
   Future<OrderSummaryModel?> getOrderSummary(
       {required String customerId,
       required int page,
@@ -136,7 +140,12 @@ void setSummaryAction(String? action) {
     await getOrderSummary(customerId: customerId ?? _customerId!, page: 1);
     return true;
   }
-
+void resetOrdersFilter({required String customerId}) {
+  final current = state.value!;
+  state = AsyncData(
+    current.copyWith(ordersTypeFilter: 'all'),
+  );
+}
   Future<bool> createPayment({
     required String invoiceId,
     required String amount,

@@ -16,19 +16,22 @@ class InvoiceDetailsController extends _$InvoiceDetailsController {
     return InvoiceDetailsState.init();
   }
 
-  Future<void> fetchInvoiceDetails(String invoiceId) async {
+  Future<void> fetchInvoiceDetails(String invoiceId, {String? type}) async {
     state = const AsyncLoading();
     try {
-      final response = await ref
-          .read(returnOrderRepositoryProvider)
-          .getInvoiceDetails(invoiceId: invoiceId,page: 1);
+      final response =
+          await ref.read(returnOrderRepositoryProvider).getInvoiceDetails(
+                invoiceId: invoiceId,
+                page: 1,
+                type: type,
+              );
 
       state = AsyncData(InvoiceDetailsState(
         invoiceId: invoiceId,
         items: response.data?.items ?? [],
-        subtotal: response.data?.outstandingAmount.toDouble()??0,
+        subtotal: response.data?.outstandingAmount.toDouble() ?? 0,
         deliveryFee: response.data?.paidAmount.toDouble() ?? 0,
-        total: response.data?.grandTotal.toDouble()??0,
+        total: response.data?.grandTotal.toDouble() ?? 0,
         customerName: response.data?.customerName ?? '',
         postingDate: response.data?.postingDate ?? '',
         status: response.data?.status ?? '',
@@ -40,18 +43,19 @@ class InvoiceDetailsController extends _$InvoiceDetailsController {
 
 // invoice_details_controller.dart
 
-Future<String> fetchInvoiceHtml(String invoiceId) async {
-  final repo = ref.read(orderRepositoryProvider);
-  final html = await repo.getDocumentHtml(
-    docName: invoiceId,
-    docType: 'Sales Invoice',
-  );
+  Future<String> fetchInvoiceHtml(String invoiceId) async {
+    final repo = ref.read(orderRepositoryProvider);
+    final html = await repo.getDocumentHtml(
+      docName: invoiceId,
+      docType: 'Sales Invoice',
+    );
 
-  debugPrint('✅ Fetched HTML length: ${html.length}');
-  debugPrint('✅ First 200 chars: ${html.substring(0, html.length > 200 ? 200 : html.length)}');
+    debugPrint('✅ Fetched HTML length: ${html.length}');
+    debugPrint(
+        '✅ First 200 chars: ${html.substring(0, html.length > 200 ? 200 : html.length)}');
 
-  return html;
-}
+    return html;
+  }
 }
 
 class InvoiceDetailsState {

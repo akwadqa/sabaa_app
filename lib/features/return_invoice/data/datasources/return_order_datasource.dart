@@ -15,14 +15,22 @@ class ReturnOrderDatasource {
     required int page,
    required String invoiceId,
     String? category,
+    String? type,
+
   }) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.getInvoiceDetails,
+        // data: {
+
+
+        // },
         queryParameters: {
           'page': page,
            'invoice_id': invoiceId,
           if (category != null) 'category': category,
+          if (type != null) 'type': type,
+
         },
       );
 

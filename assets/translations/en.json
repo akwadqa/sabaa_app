@@ -103,6 +103,7 @@
     "building_number": "Building Number",
     "invoice_payment": "Invoice Payment",
     "invoice": "Invoice",
+    "invoices": "Invoices",
     "invoice_amount": "Invoice Amount",
     "out_balance": "Out. Balance",
     "payment_amount": "Payment Amount",
@@ -263,5 +264,10 @@
     "add_uom_line": "Add UOM Line",
     "add_line_for": "Add line for {}",
     "max_stock": "Max stock",
+    "has_no_stock": "Has no stock remaining",
+    "orders": "Orders",
+    "no_stock_to_confirm": "has no available stock, cannot confirm",
+    "selected": "selected",
+    "available": "available",
     "Choose_from_gallery": "Choose from gallery"
 }
