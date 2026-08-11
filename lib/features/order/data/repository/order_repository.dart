@@ -12,6 +12,9 @@ import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/exception/dio_exceptions.dart';
 import 'package:sabaa/src/infrastructure/network/services/dio_client.dart';
 
+import '../../../customers/domain/model/customer_details_model.dart';
+import '../../domain/create_payment/credit_note_reconcile_response.dart';
+import '../../domain/order_summary/credit_note_model.dart';
 import '../../domain/order_summary/payment_response_model.dart';
 
 part 'order_repository.g.dart';
@@ -46,7 +49,31 @@ class OrderRepository {
 
     throw AppException(response.message);
   }
+// In order_repository.dart add:
 
+Future<CustomerDetailsModel> getCustomerDetails({
+  required String customerId,
+}) async {
+  final response = await _remoteDataSource.getCustomerDetails(
+    customerId: customerId,
+  );
+  if (response.status == 200 && response.data != null) {
+    return response.data!;
+  }
+  throw AppException(response.message);
+}
+
+Future<CreditNoteReconcileResponse> reconcileCreditNotes({
+  required String invoiceId,
+  required List<String> creditNoteIds,
+}) async {
+  final response = await _remoteDataSource.reconcileCreditNotes(
+    invoiceId: invoiceId,
+    creditNoteIds: creditNoteIds,
+  );
+  if (response.hasSucceeded && response.data != null) return response.data!;
+  throw AppException(response.message);
+}
   Future<ApiResponse<PaymentResponseModel>> createPayment({
     required String invoiceId,
     required String amount,

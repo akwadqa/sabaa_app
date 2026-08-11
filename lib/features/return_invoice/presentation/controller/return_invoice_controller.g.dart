@@ -33,7 +33,7 @@ final class InvoiceControllerProvider
   InvoiceController create() => InvoiceController();
 }
 
-String _$invoiceControllerHash() => r'3e1feb7099b8bea36793960bfc80f1a359a433b3';
+String _$invoiceControllerHash() => r'a7658f6449d4543935ef9ab88711cfbd73a8dbd4';
 
 abstract class _$InvoiceController extends $AsyncNotifier<ReturnInvoiceState> {
   FutureOr<ReturnInvoiceState> build();

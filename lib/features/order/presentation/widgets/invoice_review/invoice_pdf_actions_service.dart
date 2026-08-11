@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:easy_localization/easy_localization.dart';
@@ -91,30 +92,44 @@ class InvoicePdfActionsService {
   }
 
   /// ✅ Share any document by ID
-  Future<void> shareFromHtmlById({
-    required String documentId,
-    required InvoiceDocType docType,
-  }) async {
-    onLoadingChange(true);
+Future<void> shareFromHtmlById({
+  required String documentId,
+  required InvoiceDocType docType,
+}) async {
+  onLoadingChange(true);
 
-    try {
-      final html = await _fetchHtml(documentId, docType);
+  try {
+    final html = await _fetchHtml(documentId, docType);
+    debugPrint('✅ HTML fetched: ${html.length}');
 
-      await Printing.sharePdf(
-        bytes: await Printing.convertHtml(
-          html: html,
-          format: PdfPageFormat.a4,
-        ),
-        filename: '${docType.apiValue}_${_sanitize(documentId)}.pdf',
-      );
-    } catch (e) {
-      debugPrint('❌ Share HTML error: $e');
-      _showError('failed_to_share_pdf'.tr());
-    } finally {
-      onLoadingChange(false);
-    }
+    if (!isMounted()) return;
+    onLoadingChange(false);
+
+    // ✅ Share HTML file directly — opens in browser, WhatsApp, email etc.
+    final dir = await getTemporaryDirectory();
+    final fileName = '${docType.apiValue}_${_sanitize(documentId)}.html'
+        .replaceAll(' ', '_');
+    final filePath = '${dir.path}/$fileName';
+    await File(filePath).writeAsString(html);
+
+    debugPrint('✅ HTML file saved: $filePath');
+
+    if (!isMounted()) return;
+
+    await Share.shareXFiles(
+      [XFile(filePath, mimeType: 'text/html')],
+      subject: '${docType.apiValue} - $documentId',
+    );
+
+    debugPrint('✅ Share opened');
+  } catch (e, st) {
+    debugPrint('❌ Share failed: $e\n$st');
+    if (isMounted()) _showError('failed_to_share_pdf'.tr());
+    onLoadingChange(false);
   }
-
+}
+  
+  
   // ═══════════════════════════════════════════════════════════════════════
   // PUBLIC API — LOCAL PDF (FALLBACK)
   // ═══════════════════════════════════════════════════════════════════════

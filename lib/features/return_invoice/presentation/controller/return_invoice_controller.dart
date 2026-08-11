@@ -1,9 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sabaa/features/new_order/data/repositories/new_order_repository.dart';
-import 'package:sabaa/features/return_invoice/domain/model/return_invoice_model.dart';
-import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
-import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 
 import 'return_invoice_state.dart';
  
@@ -67,43 +62,43 @@ class InvoiceController extends _$InvoiceController {
     );
   }
  
-  Future<bool> submitInvoice() async {
-    final current = state.value!;
-    state = AsyncData(current.copyWith(isSubmitting: true));
+  // Future<bool> submitInvoice() async {
+  //   final current = state.value!;
+  //   state = AsyncData(current.copyWith(isSubmitting: true));
  
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
+  //   try {
+  //     // Simulate API call
+  //     await Future.delayed(const Duration(seconds: 1));
  
-      // In real scenario, call repository to submit( HERE I WILL CHANGE)
-      final invoice = ReturnInvoiceModel(
-        invoiceId: 'ACC-SINV-2026-00132',
-        customer: 'customer123',
-        customerName: 'Customer Name',
-        status: 'Unpaid',
-        postingDate: DateTime.now().toString(),
-        grandTotal: current.totalAmount,
-        totalTaxesAndCharges: current.tax,
-        outstandingAmount: current.totalAmount,
-        paidAmount: 0,
-        isReturn: false,
-        items: [],
-      );
+  //     // In real scenario, call repository to submit( HERE I WILL CHANGE)
+  //     final invoice = ReturnInvoiceModel(
+  //       invoiceId: 'ACC-SINV-2026-00132',
+  //       customer: 'customer123',
+  //       customerName: 'Customer Name',
+  //       status: 'Unpaid',
+  //       postingDate: DateTime.now().toString(),
+  //       grandTotal: current.totalAmount,
+  //       totalTaxesAndCharges: current.tax,
+  //       outstandingAmount: current.totalAmount,
+  //       paidAmount: 0,
+  //       isReturn: false,
+  //       items: [],
+  //     );
  
-      state = AsyncData(
-        current.copyWith(
-          isSubmitting: false,
-          invoice: invoice,
-        ),
-      );
+  //     state = AsyncData(
+  //       current.copyWith(
+  //         isSubmitting: false,
+  //         invoice: invoice,
+  //       ),
+  //     );
  
-      AppToast.successToast('Invoice created successfully');
-      return true;
-    } catch (e) {
-      state = AsyncData(current.copyWith(isSubmitting: false));
-      AppToast.errorToast('Failed to create invoice');
-      Dev.logError('Invoice submission error: $e');
-      return false;
-    }
-  }
+  //     AppToast.successToast('Invoice created successfully');
+  //     return true;
+  //   } catch (e) {
+  //     state = AsyncData(current.copyWith(isSubmitting: false));
+  //     AppToast.errorToast('Failed to create invoice');
+  //     Dev.logError('Invoice submission error: $e');
+  //     return false;
+  //   }
+  // }
 }

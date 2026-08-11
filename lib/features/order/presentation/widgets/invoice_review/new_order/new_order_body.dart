@@ -90,36 +90,35 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
     final allInvoiceItems = <InvoiceItemUI>[];
     double subtotalValue = 0;
 
- 
-for (final itemCode in orderOfProducts) {
-  final lines = grouped[itemCode]!;
+    for (final itemCode in orderOfProducts) {
+      final lines = grouped[itemCode]!;
 
-  for (final line in lines) {
-    final uomModel = line.product.uoms.firstWhere(
-      (u) => u.uom == line.unit,
-      orElse: () => line.product.uoms.first,
-    );
-    final price = line.customRate ?? uomModel.price;
-    final paidQty = line.isAllFree ? 0 : line.quantity;
+      for (final line in lines) {
+        final uomModel = line.product.uoms.firstWhere(
+          (u) => u.uom == line.unit,
+          orElse: () => line.product.uoms.first,
+        );
+        final price = line.customRate ?? uomModel.price;
+        final paidQty = line.isAllFree ? 0 : line.quantity;
 
-    allInvoiceItems.add(InvoiceItemUI(
-      name: line.product.productName,
-      count: line.quantity,
-      paidCount: paidQty,
-      uom: line.unit,
-      pricePerItem: price.toCurrency(),
-      total: (price * paidQty).toCurrency(),
-      focQuantity: line.isFocEnabled ? line.focQuantity : 0,
-      focUom: line.isFocEnabled ? line.focUom : null,
-      isAllFree: line.isAllFree,
-      freeQuantity: line.isAllFree ? line.quantity : 0,
-    ));
+        allInvoiceItems.add(InvoiceItemUI(
+          name: line.product.productName,
+          count: line.quantity,
+          paidCount: paidQty,
+          uom: line.unit,
+          pricePerItem: price.toStringAsFixed(2),
+          total: (price * paidQty).toCurrency(),
+          focQuantity: line.isFocEnabled ? line.focQuantity : 0,
+          focUom: line.isFocEnabled ? line.focUom : null,
+          isAllFree: line.isAllFree,
+          freeQuantity: line.isAllFree ? line.quantity : 0,
+        ));
 
-    if (!line.isAllFree) {
-      subtotalValue += price * line.quantity;
+        if (!line.isAllFree) {
+          subtotalValue += price * line.quantity;
+        }
+      }
     }
-  }
-}
 
     // for (final e in selectedProducts) {
     //   final price = _effectivePrice(e);
@@ -199,17 +198,17 @@ for (final itemCode in orderOfProducts) {
                 hint: 'enter_delivery_fee',
                 onChanged: controller.editDeliveryFee,
               ).symmetricPadding(horizontal: 12),
-             if(totalValue!=0)
-              DiscountCard(
-                currentType: state.discountType,
-                currentValue: state.discountValue,
-                onApply: (type, value) {
-                  controller.setDiscount(type, value);
-                },
-                onRemove: () {
-                  controller.removeDiscount();
-                },
-              ).symmetricPadding(horizontal: 12),
+              if (totalValue != 0)
+                DiscountCard(
+                  currentType: state.discountType,
+                  currentValue: state.discountValue,
+                  onApply: (type, value) {
+                    controller.setDiscount(type, value);
+                  },
+                  onRemove: () {
+                    controller.removeDiscount();
+                  },
+                ).symmetricPadding(horizontal: 12),
             ],
             InvoiceReviewCard(
               items: allInvoiceItems,
@@ -219,8 +218,9 @@ for (final itemCode in orderOfProducts) {
               discountType: state.discountType,
               discountValue: state.discountValue,
               discountAmount: formatPrice(discountAmount),
+              isReturn: state.isReturn,
             ).symmetricPadding(horizontal: 12, vertical: 16),
-            const RemarkWidget().symmetricPadding(horizontal: 12),
+             RemarkWidget(isReturn: state.isReturn,).symmetricPadding(horizontal: 12),
           ],
         ),
       ),

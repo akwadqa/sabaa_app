@@ -8,7 +8,9 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 
 class RemarkWidget extends ConsumerWidget {
-  const RemarkWidget({super.key});
+  final bool isReturn;
+  const RemarkWidget({super.key, required this.isReturn});
+Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +28,7 @@ class RemarkWidget extends ConsumerWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: hasRemark ? AppColors.primary : AppColors.navBorder,
+            color: hasRemark ?returnColor : AppColors.navBorder,
             width: hasRemark ? 0.5 : 1,
           ),
           boxShadow: [
@@ -48,7 +50,7 @@ class RemarkWidget extends ConsumerWidget {
                     hasRemark
                         ? Icons.notes_rounded
                         : Icons.add_comment_outlined,
-                    color: hasRemark ? AppColors.primary : AppColors.blueGrey,
+                    color: hasRemark ?returnColor : AppColors.blueGrey,
                     size: 20,
                   ),
                   Expanded(
@@ -79,12 +81,12 @@ class RemarkWidget extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: hasRemark
-                    ? AppColors.primary.withOpacity(0.1)
-                    : AppColors.primary,
+                    ? returnColor.withOpacity(0.1)
+                    : returnColor,
               ),
               child: Icon(
                 hasRemark ? Icons.edit_outlined : Icons.add,
-                color: hasRemark ? AppColors.primary : AppColors.white,
+                color: hasRemark ? returnColor : AppColors.white,
                 size: 16,
               ),
             ),
@@ -109,7 +111,7 @@ class RemarkWidget extends ConsumerWidget {
         },
         onClear: () {
           ref.read(newOrderControllerProvider.notifier).editRemark(null);
-        },
+        }, returnColor: returnColor,
       ),
     );
   }
@@ -121,12 +123,13 @@ class _RemarkDialog extends StatefulWidget {
   const _RemarkDialog({
     required this.currentRemark,
     required this.onSave,
-    required this.onClear,
+    required this.onClear, required this.returnColor,
   });
 
   final String? currentRemark;
   final ValueChanged<String> onSave;
   final VoidCallback onClear;
+  final Color returnColor;
 
   @override
   State<_RemarkDialog> createState() => _RemarkDialogState();
@@ -223,7 +226,7 @@ class _RemarkDialogState extends State<_RemarkDialog> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                    color: AppColors.primary,
+                    color:widget.returnColor,
                     width: 1.5,
                   ),
                 ),
@@ -270,7 +273,7 @@ class _RemarkDialogState extends State<_RemarkDialog> {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: widget.returnColor,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,

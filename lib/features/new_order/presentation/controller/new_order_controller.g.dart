@@ -34,7 +34,7 @@ final class NewOrderControllerProvider
 }
 
 String _$newOrderControllerHash() =>
-    r'fb3078cf775c60c04876d445c167a41e98cab138';
+    r'eb4b84bf34a7f1072cb664da3400657d4928cb0d';
 
 abstract class _$NewOrderController extends $AsyncNotifier<NewOrderState> {
   FutureOr<NewOrderState> build();

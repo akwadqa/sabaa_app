@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sabaa/features/new_order/domain/model/new_order_model.dart';
 import 'package:sabaa/features/new_order/domain/model/order_item.dart';
 import 'package:sabaa/features/new_order/presentation/controller/new_order_controller.dart';
+import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/services_urls.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
@@ -16,19 +17,109 @@ import 'package:sabaa/features/van_stock/domain/model/product_model.dart';
 
 import 'quantity_stepper.dart';
 
-class ItemLineCard extends ConsumerWidget {
+class ItemLineCard extends ConsumerStatefulWidget {
   const ItemLineCard({
     super.key,
     required this.line,
     required this.canDelete,
     required this.isOnlyLine,
+    this.isReturn = false,
   });
 
   final SelectedItemLine line;
   final bool canDelete;
   final bool isOnlyLine;
+  final bool isReturn;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ItemLineCard> createState() => _ItemLineCardState();
+}
+
+class _ItemLineCardState extends ConsumerState<ItemLineCard> {
+  late final TextEditingController _rateController;
+  late final FocusNode _rateFocusNode;
+  bool _isEditingRate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _rateController = TextEditingController(
+      text: widget.line.customRate?.toString() ?? '',
+    );
+    _rateFocusNode = FocusNode();
+
+    _rateFocusNode.addListener(() {
+      if (!_rateFocusNode.hasFocus && _isEditingRate) {
+        _saveRate();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant ItemLineCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!_isEditingRate) {
+      _rateController.text = widget.line.customRate?.toString() ?? '';
+    }
+  }
+
+  void _startRateEdit(double currentValue) {
+    setState(() {
+      _isEditingRate = true;
+      _rateController.text =
+          (widget.line.customRate ?? currentValue).toString();
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _rateFocusNode.requestFocus();
+        _rateController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _rateController.text.length,
+        );
+      }
+    });
+  }
+
+  void _saveRate() {
+    final controller = ref.read(newOrderControllerProvider.notifier);
+    final text = _rateController.text.trim();
+
+    if (text.isEmpty) {
+      controller.updateLineRate(widget.line.lineId, null);
+    } else {
+      final parsed = double.tryParse(text);
+      controller.updateLineRate(widget.line.lineId, parsed);
+    }
+
+    if (mounted) {
+      setState(() {
+        _isEditingRate = false;
+      });
+    }
+  }
+
+  void _cancelRateEdit(double originalPrice) {
+    _rateController.text = widget.line.customRate?.toString() ?? '';
+    setState(() {
+      _isEditingRate = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _rateController.dispose();
+    _rateFocusNode.dispose();
+
+    super.dispose();
+  }
+Color get returnColor=>widget.isReturn?AppColors.accent:AppColors.primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final line = widget.line;
+
     ref.watch(
       newOrderControllerProvider.select((val) => val.value?.selectedLines),
     );
@@ -76,7 +167,7 @@ class ItemLineCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         border: BorderDirectional(
           start: BorderSide(
-            color: line.isAllFree ? Colors.green : AppColors.primary,
+            color: line.isAllFree ? Colors.green :returnColor,
             width: 5,
           ),
         ),
@@ -126,7 +217,7 @@ class ItemLineCard extends ConsumerWidget {
                         // if (canDelete)
                         GestureDetector(
                           onTap: () {
-                            if (isOnlyLine) {
+                            if (widget.isOnlyLine) {
                               // ✅ Remove entire product
                               controller.removeItem(item.itemCode);
                             } else {
@@ -157,31 +248,134 @@ class ItemLineCard extends ConsumerWidget {
                           ),
                         ),
                         20.horizontalSpace,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (line.customRate != null &&
-                                line.customRate != uomModel.price)
-                              Text(
-                                uomModel.price.toCurrency(),
-                                style: AppTextStyle.interRegular12.copyWith(
-                                  color: AppColors.blueGrey,
-                                  decoration: TextDecoration.lineThrough,
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 180),
+                              child: _isEditingRate && widget.isReturn
+                                  ? SizedBox(
+                                      key: const ValueKey('edit-rate'),
+                                      width: 82,
+                                      height: 34,
+                                      child: TextFormField(
+                                        controller: _rateController,
+                                        focusNode: _rateFocusNode,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
+                                        textInputAction: TextInputAction.done,
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyle.interSemiBold12
+                                            .copyWith(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText:
+                                              uomModel.price.toStringAsFixed(2),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 8,
+                                          ),
+                                          filled: true,
+                                          fillColor: AppColors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.navBorder),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.accent,
+                                                width: 1.2),
+                                          ),
+                                        ),
+                                        onFieldSubmitted: (_) => _saveRate(),
+                                        onTapOutside: (_) => _saveRate(),
+                                      ),
+                                    )
+                                  : Column(
+                                      key: const ValueKey('show-rate'),
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        if (!widget.isReturn &&
+                                            line.customRate != null &&
+                                            line.customRate != uomModel.price)
+                                          Text(
+                                            uomModel.price.toCurrency(),
+                                            style: AppTextStyle.interRegular12
+                                                .copyWith(
+                                              color: AppColors.blueGrey,
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                            ),
+                                          ),
+                                        Text(
+                                          effectivePrice.toCurrency(),
+                                          style: AppTextStyle.interSemiBold14
+                                              .copyWith(
+                                            color: line.customRate != null
+                                                ? AppColors.accent
+                                                : AppColors.primary,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                            if (widget.isReturn) ...[
+                              const SizedBox(width: 6),
+                              GestureDetector(
+                                onTap: () {
+                                  if (_isEditingRate) {
+                                    _saveRate();
+                                  } else {
+                                    _startRateEdit(uomModel.price);
+                                  }
+                                },
+                                child: Icon(
+                                  _isEditingRate
+                                      ? Icons.check_rounded
+                                      : Icons.edit_outlined,
+                                  size: 18,
+                                  color: _isEditingRate
+                                      ? AppColors.accent
+                                      : AppColors.blueGrey,
                                 ),
                               ),
-                            Text(
-                              effectivePrice.toCurrency(),
-                              style: AppTextStyle.interSemiBold14.copyWith(
-                                color: line.customRate != null
-                                    ? AppColors.accent
-                                    : AppColors.primary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                              if (_isEditingRate) ...[
+                                const SizedBox(width: 4),
+                                GestureDetector(
+                                  onTap: () => _cancelRateEdit(uomModel.price),
+                                  child: const Icon(
+                                    Icons.close_rounded,
+                                    size: 18,
+                                    color: AppColors.red,
+                                  ),
+                                ),
+                              ],
+                            ],
                           ],
                         ),
                       ],
                     ),
+                    // ✅ Show custom rate field ONLY on return
+                    // if (widget.isReturn) ...[
+                    //   const SizedBox(height: 8),
+                    //   _ReturnPriceField(
+                    //     lineId: line.lineId,
+                    //     defaultPrice: uomModel.price,
+                    //     currentRate: line.customRate,
+                    //     onRateChanged: (rate) {
+                    //       controller.updateLineRate(line.lineId, rate);
+                    //     },
+                    //   ),
+                    // ],
                   ],
                 ),
               ),
@@ -209,12 +403,16 @@ class ItemLineCard extends ConsumerWidget {
                     line.lineId, line.quantity + 1),
                 onManualChange: (qty) =>
                     controller.updateLineQuantity(line.lineId, qty),
-                maxStock: remainingStock,
+                maxStock: widget.isReturn
+                    ? 99999
+                    : remainingStock, isReturn: widget.isReturn, // ✅ no limit for return
               ),
             ],
           ),
 
-          6.verticalSpace,
+      
+          if (!widget.isReturn) ...[
+                6.verticalSpace,
 
           // ── STOCK INDICATOR ────────────────────────────────────
           Row(
@@ -227,15 +425,122 @@ class ItemLineCard extends ConsumerWidget {
               ),
             ],
           ),
+            const Divider(height: 1, color: Color(0xFFEEEEEE))
+                .symmetricPadding(vertical: 10),
 
-          10.verticalSpace,
-          const Divider(height: 1, color: Color(0xFFEEEEEE)),
-          10.verticalSpace,
-
-          // ── FOC + ALL FREE ─────────────────────────────────────
-          _LineFocSection(line: line),
+            // ── FOC + ALL FREE ─────────────────────────────────────
+            _LineFocSection(line: line),
+          ]
         ],
       ),
+    );
+  }
+}
+
+class _ReturnPriceField extends StatefulWidget {
+  const _ReturnPriceField({
+    required this.lineId,
+    required this.defaultPrice,
+    required this.currentRate,
+    required this.onRateChanged,
+  });
+
+  final String lineId;
+  final double defaultPrice;
+  final double? currentRate;
+  final ValueChanged<double?> onRateChanged;
+
+  @override
+  State<_ReturnPriceField> createState() => _ReturnPriceFieldState();
+}
+
+class _ReturnPriceFieldState extends State<_ReturnPriceField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(
+      text: widget.currentRate?.toString() ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // ── Label ───────────────────────────────────────────────
+        Text(
+          'return_price'.tr(),
+          style: AppTextStyle.interMedium12.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        // ── Default price hint ──────────────────────────────────
+        Text(
+          '(${'original'.tr()}: ${widget.defaultPrice.toStringAsFixed(2)})',
+          style: AppTextStyle.interRegular10.copyWith(
+            color: AppColors.textGrey,
+          ),
+        ),
+
+        const Spacer(),
+
+        // ── Price input ─────────────────────────────────────────
+        SizedBox(
+          width: 100,
+          child: TextFormField(
+            controller: _controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textAlign: TextAlign.center,
+            style: AppTextStyle.interSemiBold12.copyWith(
+              color: AppColors.textPrimary,
+            ),
+            decoration: InputDecoration(
+              hintText: widget.defaultPrice.toStringAsFixed(2),
+              hintStyle: AppTextStyle.interRegular12.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 8,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.navBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.accent, width: 1.5),
+              ),
+              // ✅ Clear button to reset to original price
+              suffixIcon: _controller.text.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () {
+                        _controller.clear();
+                        widget.onRateChanged(null); // reset to default
+                      },
+                      child: const Icon(Icons.close, size: 16),
+                    )
+                  : null,
+            ),
+            onChanged: (value) {
+              final parsed = double.tryParse(value);
+              widget.onRateChanged(parsed);
+              setState(() {}); // rebuild to show/hide clear button
+            },
+          ),
+        ),
+      ],
     );
   }
 }

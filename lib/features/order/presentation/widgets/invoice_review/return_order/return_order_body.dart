@@ -21,19 +21,32 @@ class ReturnOrderBody extends ConsumerWidget {
       data: (returnState) {
         final selectedProducts = returnState.selectedItems.values.toList();
 
-        final items = selectedProducts
-            .map((e) => InvoiceItemUI(
-                  name: e.product.itemName,
-                  count: e.quantity,
-                        uom: e.unit, // ✅ unit from SelectedItem
-              pricePerItem: e.product.amount.toCurrency(),
-                  total: formatPrice((e.product.amount * e.quantity).toDouble()),
-                ))
-            .toList();
+        final items = selectedProducts.map((e) {
+          final originalPrice = e.product.amount;
+          final effectivePrice = e.customRate ?? originalPrice; // ✅
+          final hasCustomRate =
+              e.customRate != null && e.customRate != originalPrice;
 
+          return InvoiceItemUI(
+            name: e.product.itemName,
+            count: e.quantity,
+            uom: e.unit,
+            pricePerItem:
+                effectivePrice.toDouble().toStringAsFixed(2), // ✅ new price
+            total: formatPrice((effectivePrice * e.quantity).toDouble()),
+            // ✅ Pass original only if price was changed → triggers strikethrough
+            originalPricePerItem:
+                hasCustomRate ? originalPrice.toDouble().toCurrency() : null,
+          );
+        }).toList();
+
+        // ✅ Subtotal uses effective price
         final subtotal = selectedProducts.fold<double>(
           0,
-          (sum, e) => sum + (e.product.amount * e.quantity),
+          (sum, e) {
+            final effectivePrice = e.customRate ?? e.product.amount;
+            return sum + (effectivePrice * e.quantity);
+          },
         );
 
         return SingleChildScrollView(
@@ -45,6 +58,7 @@ class ReturnOrderBody extends ConsumerWidget {
                 subtotal: formatPrice(subtotal),
                 deliveyFee: '0',
                 total: formatPrice(subtotal),
+                isReturn: true,
               ).symmetricPadding(horizontal: 12, vertical: 16),
             ],
           ),

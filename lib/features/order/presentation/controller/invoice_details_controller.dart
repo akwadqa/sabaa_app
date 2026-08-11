@@ -35,6 +35,7 @@ class InvoiceDetailsController extends _$InvoiceDetailsController {
         customerName: response.data?.customerName ?? '',
         postingDate: response.data?.postingDate ?? '',
         status: response.data?.status ?? '',
+         paymentReferences: response.data?.paymentReferences ?? [],
       ));
     } catch (e, st) {
       state = AsyncError(e, st);
@@ -67,7 +68,7 @@ class InvoiceDetailsState {
   final String customerName;
   final String postingDate;
   final String status;
-
+final List<String> paymentReferences;
   const InvoiceDetailsState({
     required this.invoiceId,
     required this.items,
@@ -77,6 +78,7 @@ class InvoiceDetailsState {
     required this.customerName,
     required this.postingDate,
     required this.status,
+      this.paymentReferences = const []
   });
 
   factory InvoiceDetailsState.init() => const InvoiceDetailsState(
@@ -88,6 +90,7 @@ class InvoiceDetailsState {
         customerName: '',
         postingDate: '',
         status: '',
+        paymentReferences: [],
       );
 }
 

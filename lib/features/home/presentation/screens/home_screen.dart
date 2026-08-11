@@ -80,6 +80,8 @@ class _HomeBody extends ConsumerWidget {
     );
     final pairedCount = metrics.length - (metrics.length.isOdd ? 1 : 0);
     final leftover = metrics.length.isOdd ? metrics.last : null;
+    final actions = quickActions as List<QuickAction>;
+
     return Scaffold(
       body: RefreshIndicator(
         color: AppColors.primary,
@@ -90,7 +92,7 @@ class _HomeBody extends ConsumerWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Align(
                   alignment: AlignmentGeometry.centerRight,
@@ -114,19 +116,20 @@ class _HomeBody extends ConsumerWidget {
                 16.verticalSpace,
 
                 Row(
-                  children: (quickActions as List<QuickAction>)
-                      .map<Widget>(
-                        (a) => QuickActionCardButton(
-                          action: a,
-                          onTap: a.onTap,
-                          trip: state.trip,
-                          tripStarted: state.tripStarted,
-                          tripActionState: state.tripActionState,
-                        ),
-                      )
-                      .expand((w) => [w, const SizedBox(width: AppSpacing.lg)])
-                      .toList(),
+                  children: [
+                    for (int i = 0; i < actions.length; i++) ...[
+                      QuickActionCardButton(
+                        action: actions[i],
+                        onTap: actions[i].onTap,
+                        trip: state.trip,
+                        tripStarted: state.tripStarted,
+                        tripActionState: state.tripActionState,
+                      ),
+                      if (i != actions.length - 1) const SizedBox(width: 16),
+                    ],
+                  ],
                 ),
+
                 24.verticalSpace,
 
                 // ── Today's Performance ──────────────────────────────

@@ -12,8 +12,12 @@ class NewOrderDatasource {
 
   NewOrderDatasource(this._networkService);
 
-  Future<ApiResponse<VanStockModel>> getProducts(
-      {required int page, String? search, String? category}) async {
+  Future<ApiResponse<VanStockModel>> getProducts({
+    required int page,
+    String? search,
+    String? category,
+    bool isReturn = false,
+  }) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.getVanStock,
@@ -21,6 +25,7 @@ class NewOrderDatasource {
           'page': page,
           if (search != null) "search": search,
           if (category != null) "category": category,
+          if (isReturn) 'is_return': true,
         },
       );
 
@@ -38,48 +43,50 @@ class NewOrderDatasource {
     }
   }
 
- // new_order_datasource.dart
+  // new_order_datasource.dart
 
-Future<ApiResponse<InvoiceModel>> createInvoice({
-  required String customerId,
-  required String deliveryFee,
-  String? remark,
-  required List<Map<String, dynamic>> items,
-  double? discountAmount,             
-  double? additionalDiscountPercentage,
-}) async {
-  try {
-    final body = <String, dynamic>{
-      "customer_id": customerId,
-      "items": items,
-      "delivery_charge": deliveryFee,
-      if (remark != null && remark.isNotEmpty) "remarks": remark,
-      // ✅ Send discount only when both are present
-      if (discountAmount != null) "discount_amount": discountAmount,
-      if (additionalDiscountPercentage != null) "additional_discount_percentage": additionalDiscountPercentage,
-    };
+  Future<ApiResponse<InvoiceModel>> createInvoice({
+    required String customerId,
+    required String deliveryFee,
+    String? remark,
+    required List<Map<String, dynamic>> items,
+    double? discountAmount,
+    double? additionalDiscountPercentage,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        "customer_id": customerId,
+        "items": items,
+        "delivery_charge": deliveryFee,
+        if (remark != null && remark.isNotEmpty) "remarks": remark,
+        // ✅ Send discount only when both are present
+        if (discountAmount != null) "discount_amount": discountAmount,
+        if (additionalDiscountPercentage != null)
+          "additional_discount_percentage": additionalDiscountPercentage,
+      };
 
-    Dev.logMap(body); // ✅ log full body
+      Dev.logMap(body); // ✅ log full body
 
-    final response = await _networkService.post(
-      ApiEndPoints.createInvoice,
-      data: body,
-    );
+      final response = await _networkService.post(
+        ApiEndPoints.createInvoice,
+        data: body,
+      );
 
-    if (response.statusCode != 201) {
-      Dev.logError("Create invoice failed in data source");
-      throw Exception('Create invoice failed');
+      if (response.statusCode != 201) {
+        Dev.logError("Create invoice failed in data source");
+        throw Exception('Create invoice failed');
+      }
+
+      return ApiResponse.fromJson(
+        response.data,
+        (json) => InvoiceModel.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      Dev.logError('Error in createInvoice: $e');
+      rethrow;
     }
-
-    return ApiResponse.fromJson(
-      response.data,
-      (json) => InvoiceModel.fromJson(json as Map<String, dynamic>),
-    );
-  } catch (e) {
-    Dev.logError('Error in createInvoice: $e');
-    rethrow;
   }
-}
+
   Future<ApiResponse<InvoiceModel>> createReturnOrder({
     // required String invoiceId,
     required List<Map<String, dynamic>> items,

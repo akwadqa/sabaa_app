@@ -168,6 +168,7 @@ class InvoiceSummaryPage extends ConsumerWidget {
             line: line,
             canDelete: productLines.length > 1,
             isOnlyLine: productLines.length == 1,
+            isReturn: isReturn,
           ).onlyPadding(bottom: isLastLine ? 0 : 8), // tight between lines
         );
       }
@@ -239,6 +240,8 @@ class InvoiceSummaryPage extends ConsumerWidget {
 
   /// Returns error message string if invalid, null if all good
   String? _validateLines(NewOrderState state) {
+      // ✅ Skip all stock validation for returns
+  if (state.isReturn) return null;
     // ── Group lines to check total qty per itemCode+uom ──────────
     final grouped = <String, Map<String, int>>{}; // itemCode → uom → totalQty
 

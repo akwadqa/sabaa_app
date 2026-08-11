@@ -25,11 +25,13 @@ class NewOrderRepository {
     required int page,
     String? search,
     String? category,
+     bool isReturn = false
   }) async {
     final response = await _datasource.getProducts(
       page: page,
       search: search,
       category: category,
+      isReturn: isReturn,
     );
 
     if (response.hasSucceeded) return response;

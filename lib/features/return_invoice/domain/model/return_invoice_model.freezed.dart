@@ -26,6 +26,7 @@ mixin _$ReturnInvoiceModel {
   bool get isReturn;
   String? get returnAgainst;
   List<InvoiceItemModel> get items;
+  List<String> get paymentReferences;
 
   /// Create a copy of ReturnInvoiceModel
   /// with the given fields replaced by the non-null parameter values.
@@ -64,7 +65,9 @@ mixin _$ReturnInvoiceModel {
                 other.isReturn == isReturn) &&
             (identical(other.returnAgainst, returnAgainst) ||
                 other.returnAgainst == returnAgainst) &&
-            const DeepCollectionEquality().equals(other.items, items));
+            const DeepCollectionEquality().equals(other.items, items) &&
+            const DeepCollectionEquality()
+                .equals(other.paymentReferences, paymentReferences));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -82,11 +85,12 @@ mixin _$ReturnInvoiceModel {
       paidAmount,
       isReturn,
       returnAgainst,
-      const DeepCollectionEquality().hash(items));
+      const DeepCollectionEquality().hash(items),
+      const DeepCollectionEquality().hash(paymentReferences));
 
   @override
   String toString() {
-    return 'ReturnInvoiceModel(invoiceId: $invoiceId, customer: $customer, customerName: $customerName, status: $status, postingDate: $postingDate, grandTotal: $grandTotal, totalTaxesAndCharges: $totalTaxesAndCharges, outstandingAmount: $outstandingAmount, paidAmount: $paidAmount, isReturn: $isReturn, returnAgainst: $returnAgainst, items: $items)';
+    return 'ReturnInvoiceModel(invoiceId: $invoiceId, customer: $customer, customerName: $customerName, status: $status, postingDate: $postingDate, grandTotal: $grandTotal, totalTaxesAndCharges: $totalTaxesAndCharges, outstandingAmount: $outstandingAmount, paidAmount: $paidAmount, isReturn: $isReturn, returnAgainst: $returnAgainst, items: $items, paymentReferences: $paymentReferences)';
   }
 }
 
@@ -108,7 +112,8 @@ abstract mixin class $ReturnInvoiceModelCopyWith<$Res> {
       num paidAmount,
       bool isReturn,
       String? returnAgainst,
-      List<InvoiceItemModel> items});
+      List<InvoiceItemModel> items,
+      List<String> paymentReferences});
 }
 
 /// @nodoc
@@ -136,6 +141,7 @@ class _$ReturnInvoiceModelCopyWithImpl<$Res>
     Object? isReturn = null,
     Object? returnAgainst = freezed,
     Object? items = null,
+    Object? paymentReferences = null,
   }) {
     return _then(_self.copyWith(
       invoiceId: null == invoiceId
@@ -186,6 +192,10 @@ class _$ReturnInvoiceModelCopyWithImpl<$Res>
           ? _self.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<InvoiceItemModel>,
+      paymentReferences: null == paymentReferences
+          ? _self.paymentReferences
+          : paymentReferences // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -295,7 +305,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             num paidAmount,
             bool isReturn,
             String? returnAgainst,
-            List<InvoiceItemModel> items)?
+            List<InvoiceItemModel> items,
+            List<String> paymentReferences)?
         $default, {
     required TResult orElse(),
   }) {
@@ -314,7 +325,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             _that.paidAmount,
             _that.isReturn,
             _that.returnAgainst,
-            _that.items);
+            _that.items,
+            _that.paymentReferences);
       case _:
         return orElse();
     }
@@ -347,7 +359,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             num paidAmount,
             bool isReturn,
             String? returnAgainst,
-            List<InvoiceItemModel> items)
+            List<InvoiceItemModel> items,
+            List<String> paymentReferences)
         $default,
   ) {
     final _that = this;
@@ -365,7 +378,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             _that.paidAmount,
             _that.isReturn,
             _that.returnAgainst,
-            _that.items);
+            _that.items,
+            _that.paymentReferences);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -397,7 +411,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             num paidAmount,
             bool isReturn,
             String? returnAgainst,
-            List<InvoiceItemModel> items)?
+            List<InvoiceItemModel> items,
+            List<String> paymentReferences)?
         $default,
   ) {
     final _that = this;
@@ -415,7 +430,8 @@ extension ReturnInvoiceModelPatterns on ReturnInvoiceModel {
             _that.paidAmount,
             _that.isReturn,
             _that.returnAgainst,
-            _that.items);
+            _that.items,
+            _that.paymentReferences);
       case _:
         return null;
     }
@@ -437,8 +453,10 @@ class _ReturnInvoiceModel implements ReturnInvoiceModel {
       required this.paidAmount,
       required this.isReturn,
       this.returnAgainst,
-      required final List<InvoiceItemModel> items})
-      : _items = items;
+      required final List<InvoiceItemModel> items,
+      required final List<String> paymentReferences})
+      : _items = items,
+        _paymentReferences = paymentReferences;
   factory _ReturnInvoiceModel.fromJson(Map<String, dynamic> json) =>
       _$ReturnInvoiceModelFromJson(json);
 
@@ -470,6 +488,15 @@ class _ReturnInvoiceModel implements ReturnInvoiceModel {
     if (_items is EqualUnmodifiableListView) return _items;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_items);
+  }
+
+  final List<String> _paymentReferences;
+  @override
+  List<String> get paymentReferences {
+    if (_paymentReferences is EqualUnmodifiableListView)
+      return _paymentReferences;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_paymentReferences);
   }
 
   /// Create a copy of ReturnInvoiceModel
@@ -513,7 +540,9 @@ class _ReturnInvoiceModel implements ReturnInvoiceModel {
                 other.isReturn == isReturn) &&
             (identical(other.returnAgainst, returnAgainst) ||
                 other.returnAgainst == returnAgainst) &&
-            const DeepCollectionEquality().equals(other._items, _items));
+            const DeepCollectionEquality().equals(other._items, _items) &&
+            const DeepCollectionEquality()
+                .equals(other._paymentReferences, _paymentReferences));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -531,11 +560,12 @@ class _ReturnInvoiceModel implements ReturnInvoiceModel {
       paidAmount,
       isReturn,
       returnAgainst,
-      const DeepCollectionEquality().hash(_items));
+      const DeepCollectionEquality().hash(_items),
+      const DeepCollectionEquality().hash(_paymentReferences));
 
   @override
   String toString() {
-    return 'ReturnInvoiceModel(invoiceId: $invoiceId, customer: $customer, customerName: $customerName, status: $status, postingDate: $postingDate, grandTotal: $grandTotal, totalTaxesAndCharges: $totalTaxesAndCharges, outstandingAmount: $outstandingAmount, paidAmount: $paidAmount, isReturn: $isReturn, returnAgainst: $returnAgainst, items: $items)';
+    return 'ReturnInvoiceModel(invoiceId: $invoiceId, customer: $customer, customerName: $customerName, status: $status, postingDate: $postingDate, grandTotal: $grandTotal, totalTaxesAndCharges: $totalTaxesAndCharges, outstandingAmount: $outstandingAmount, paidAmount: $paidAmount, isReturn: $isReturn, returnAgainst: $returnAgainst, items: $items, paymentReferences: $paymentReferences)';
   }
 }
 
@@ -559,7 +589,8 @@ abstract mixin class _$ReturnInvoiceModelCopyWith<$Res>
       num paidAmount,
       bool isReturn,
       String? returnAgainst,
-      List<InvoiceItemModel> items});
+      List<InvoiceItemModel> items,
+      List<String> paymentReferences});
 }
 
 /// @nodoc
@@ -587,6 +618,7 @@ class __$ReturnInvoiceModelCopyWithImpl<$Res>
     Object? isReturn = null,
     Object? returnAgainst = freezed,
     Object? items = null,
+    Object? paymentReferences = null,
   }) {
     return _then(_ReturnInvoiceModel(
       invoiceId: null == invoiceId
@@ -637,6 +669,10 @@ class __$ReturnInvoiceModelCopyWithImpl<$Res>
           ? _self._items
           : items // ignore: cast_nullable_to_non_nullable
               as List<InvoiceItemModel>,
+      paymentReferences: null == paymentReferences
+          ? _self._paymentReferences
+          : paymentReferences // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }

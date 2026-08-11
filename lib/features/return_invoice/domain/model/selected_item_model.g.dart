@@ -12,6 +12,7 @@ _SelectedItem _$SelectedItemFromJson(Map<String, dynamic> json) =>
           InvoiceItemModel.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toInt(),
       unit: json['unit'] as String,
+      customRate: (json['customRate'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$SelectedItemToJson(_SelectedItem instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$SelectedItemToJson(_SelectedItem instance) =>
       'product': instance.product,
       'quantity': instance.quantity,
       'unit': instance.unit,
+      'customRate': instance.customRate,
     };

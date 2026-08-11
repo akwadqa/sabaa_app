@@ -28,7 +28,7 @@ class PaymentBottomSheetHeader extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                'invoice'.tr() + ' $invoiceId',
+                '${'invoice'.tr()} $invoiceId',
                 style: AppTextStyle.rubikRegular16.copyWith(
                   color: AppColors.blueGrey,
                 ),

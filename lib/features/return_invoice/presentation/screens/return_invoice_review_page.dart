@@ -1,37 +1,35 @@
 import 'dart:ui';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sabaa/features/customers/presentation/widgets/add_customer_page/custom_labeled_text_filed.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/new_order/presentation/widgets/invoice_widgets/invoice_review_card.dart';
 import 'package:sabaa/features/return_invoice/presentation/controller/return_order_controller.dart';
 import 'package:sabaa/gen/assets.gen.dart';
 import 'package:sabaa/src/application/router/app_routes.dart';
 import 'package:sabaa/src/core/shared_widgets/app_loader.dart';
-import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
-import 'package:sabaa/src/core/utils/extenssions/int_extenssion.dart';
 import 'package:sabaa/src/core/utils/extenssions/widget_extensions.dart';
 import 'package:sabaa/src/core/utils/functions/helper_methods.dart';
-import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:slider_button/slider_button.dart';
-
 import '../../../../src/core/shared_widgets/custom_button_widget.dart';
 
 class ReturnInvoiceReviewPage extends ConsumerStatefulWidget {
   final bool isReturn;
   const ReturnInvoiceReviewPage({super.key, required this.isReturn});
   @override
-  ConsumerState<ReturnInvoiceReviewPage> createState() => _ReturnInvoiceReviewPageState();
+  ConsumerState<ReturnInvoiceReviewPage> createState() =>
+      _ReturnInvoiceReviewPageState();
 }
 
-class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPage> {
-  
+class _ReturnInvoiceReviewPageState
+    extends ConsumerState<ReturnInvoiceReviewPage> {
+  Color get returnColor =>
+      widget.isReturn ? AppColors.accent : AppColors.primary;
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(returnOrderControllerProvider).value!;
@@ -47,8 +45,8 @@ class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPag
       return InvoiceItemUI(
         name: e.product.itemName,
         count: selected?.quantity ?? 0,
-              uom: e.unit, // ✅ unit from SelectedItem
-              pricePerItem: e.product.amount.toCurrency(),
+        uom: e.unit, // ✅ unit from SelectedItem
+        pricePerItem: e.product.amount.toStringAsFixed(2),
         total: formatPrice(total.toDouble()),
       );
     }).toList();
@@ -80,69 +78,68 @@ class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPag
               child: state.isSubmitting
                   ? _LoadingButton()
                   : SliderButton(
-                    useGlassEffect: true,
-                    alignLabel: Alignment.center,
-                    action: () async {
-                      // if (!isValid) return false;
-                      final controller =
-                          ref.read(returnOrderControllerProvider.notifier);
-                  
-                      final success = await controller.createReturnOrder();
-                  
-                      // if (!context.mounted) return false;
-                  
-                      if (success) {
-                        // await Future.delayed(
-                        //     const Duration(milliseconds: 300));
-                  
-                        await _showSuccessDialog(context, ref);
-                        return true;
-                      }
-                  
-                      // return success;
-                    },
-                    label: Text(
-                      "swipe_to_confirm".tr(),
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                    icon: Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient:  LinearGradient(
-                          colors: AppColors.primaryGradient,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                      useGlassEffect: true,
+                      alignLabel: Alignment.center,
+                      action: () async {
+                        // if (!isValid) return false;
+                        final controller =
+                            ref.read(returnOrderControllerProvider.notifier);
+
+                        final returnState =
+                            await controller.createReturnOrder();
+
+                        // if (!context.mounted) return false;
+
+                        if (returnState != null) {
+                          // await Future.delayed(
+                          //     const Duration(milliseconds: 300));
+
+                          await _showSuccessDialog(context, ref);
+                          return true;
+                        }
+
+                        // return success;
+                      },
+                      label: Text(
+                        "swipe_to_confirm".tr(),
+                        style: AppTextStyle.interSemiBold14.copyWith(
+                          color: AppColors.returnText,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryShadow,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
+                      ),
+                      icon: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: AppColors.primaryGradient,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryShadow,
+                              blurRadius: 10,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.white,
-                        size: 18,
-                      ),
+                      width: double.infinity,
+                      height: 64,
+                      radius: 18,
+                      backgroundColor: AppColors.sliderBackground,
+                      baseColor: AppColors.sliderBase,
+                      highlightedColor: returnColor,
+                      buttonColor: Colors.transparent,
                     ),
-                    width: double.infinity,
-                    height: 64,
-                    radius: 18,
-                    backgroundColor: AppColors.sliderBackground,
-                    baseColor:  AppColors.sliderBase
-                        ,
-                    highlightedColor:
-                        AppColors.sliderHighlight ,
-                    buttonColor: Colors.transparent,
-                  ),
             ),
           );
         },
@@ -162,6 +159,7 @@ class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPag
             subtotal: formatPrice(subtotalValue),
             deliveyFee: null,
             total: formatPrice(totalValue),
+            isReturn: true,
           ).symmetricPadding(horizontal: 12, vertical: 16),
         ],
       ),
@@ -237,7 +235,7 @@ class _ReturnInvoiceReviewPageState extends ConsumerState<ReturnInvoiceReviewPag
                       CustomButtonWidget(
                         text: "back_to_home",
                         onTap: () {
-                           ref.read(bottomNavIndexProvider.notifier).state = 0;
+                          ref.read(bottomNavIndexProvider.notifier).state = 0;
 
                           context.goNamed(AppRoutes.mainScreen); // ✅ best
                         },

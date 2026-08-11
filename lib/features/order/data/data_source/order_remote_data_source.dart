@@ -14,6 +14,9 @@ import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
 import 'package:sabaa/src/logger/log_services/dev_logger.dart';
 
+import '../../../customers/domain/model/customer_details_model.dart';
+import '../../domain/create_payment/credit_note_reconcile_response.dart';
+import '../../domain/order_summary/credit_note_model.dart';
 import '../../domain/order_summary/payment_response_model.dart';
 
 class OrderRemoteDataSource {
@@ -52,7 +55,61 @@ class OrderRemoteDataSource {
       rethrow;
     }
   }
+// In order_remote_data_source.dart add:
 
+Future<ApiResponse<CustomerDetailsModel>> getCustomerDetails({
+  required String customerId,
+}) async {
+  try {
+    final response = await _networkService.get(
+      ApiEndPoints.getCustomerDetails,
+      queryParameters: {
+        'customer_id': customerId,
+      },
+    );
+
+    if (response.data == null || response.statusCode != 200) {
+      throw Exception('Failed to get customer details');
+    }
+
+    return ApiResponse.fromJson(
+      response.data as Map<String, dynamic>,
+      (json) => CustomerDetailsModel.fromJson(json as Map<String, dynamic>),
+    );
+  } catch (e) {
+    Dev.logError('Error in getCustomerDetails: $e');
+    rethrow;
+  }
+}
+
+
+Future<ApiResponse<CreditNoteReconcileResponse>> reconcileCreditNotes({
+  required String invoiceId,
+  required List<String> creditNoteIds,
+}) async {
+  try {
+    final response = await _networkService.get(
+      ApiEndPoints.reconcileCreditNotes,
+      queryParameters: {
+        'invoice_id': invoiceId,
+        'credit_notes': jsonEncode(creditNoteIds),
+      },
+    );
+
+    if (response.data == null || response.statusCode != 200) {
+      throw Exception('Failed to reconcile credit notes');
+    }
+
+    return ApiResponse.fromJson(
+      response.data as Map<String, dynamic>,
+      (json) => CreditNoteReconcileResponse.fromJson(
+          json as Map<String, dynamic>),
+    );
+  } catch (e) {
+    Dev.logError('Error in reconcileCreditNotes: $e');
+    rethrow;
+  }
+}
   Future<ApiResponse<PaymentResponseModel>> createPayment({
     required String invoiceId,
     required String amount,

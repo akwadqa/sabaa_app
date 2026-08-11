@@ -12,6 +12,7 @@ class QuantityStepper extends StatefulWidget {
     required this.onIncrement,
     required this.onManualChange,
     required this.maxStock,
+    required this.isReturn,
   });
 
   final int quantity;
@@ -19,7 +20,7 @@ class QuantityStepper extends StatefulWidget {
   final VoidCallback onIncrement;
   final Function(int) onManualChange;
   final int maxStock;
-
+  final bool isReturn;
   @override
   State<QuantityStepper> createState() => _QuantityStepperState();
 }
@@ -42,6 +43,9 @@ class _QuantityStepperState extends State<QuantityStepper> {
     super.didUpdateWidget(oldWidget);
   }
 
+  Color get returnColor =>
+      widget.isReturn ? AppColors.accent : AppColors.primary;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,6 +61,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
             icon: Icons.remove,
             onTap: widget.onDecrement,
             plus: false,
+            returnColor: returnColor,
           ),
           // SizedBox(
           //   width: 48,
@@ -97,6 +102,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
             icon: Icons.add,
             onTap: widget.onIncrement,
             plus: true,
+            returnColor: returnColor,
           ),
         ],
       ),
@@ -105,12 +111,17 @@ class _QuantityStepperState extends State<QuantityStepper> {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton(
-      {required this.icon, required this.onTap, required this.plus});
+  const _StepButton({
+    required this.icon,
+    required this.onTap,
+    required this.plus,
+    required this.returnColor,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
   final bool plus;
+  final Color returnColor;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +133,7 @@ class _StepButton extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: plus ? AppColors.primary : AppColors.white,
+            color: plus ? returnColor : AppColors.white,
             borderRadius: BorderRadius.circular(4),
             boxShadow: const [
               BoxShadow(
@@ -133,7 +144,7 @@ class _StepButton extends StatelessWidget {
             ],
           ),
           child: Icon(icon,
-              size: 16, color: plus ? AppColors.white : AppColors.primary),
+              size: 16, color: plus ? AppColors.white : returnColor),
         ),
       ),
     );

@@ -18,6 +18,7 @@ abstract class ReturnInvoiceModel with _$ReturnInvoiceModel {
     required bool isReturn,
     String? returnAgainst,
     required List<InvoiceItemModel> items,
+    required List<String> paymentReferences,
   }) = _ReturnInvoiceModel;
 
   factory ReturnInvoiceModel.fromJson(Map<String, dynamic> json) =>

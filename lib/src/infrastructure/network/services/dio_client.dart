@@ -13,7 +13,7 @@ Dio dio(Ref ref) {
   const timeout = Duration(seconds: 120);
 
   final dio = Dio(BaseOptions(
-    baseUrl: ServicesUrls.devBaseUrl,
+    baseUrl: ServicesUrls.prodBaseUrl,
     connectTimeout: timeout,
     receiveTimeout: timeout,
     sendTimeout: timeout,

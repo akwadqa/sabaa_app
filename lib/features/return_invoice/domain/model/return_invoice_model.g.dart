@@ -22,6 +22,9 @@ _ReturnInvoiceModel _$ReturnInvoiceModelFromJson(Map<String, dynamic> json) =>
       items: (json['items'] as List<dynamic>)
           .map((e) => InvoiceItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      paymentReferences: (json['paymentReferences'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$ReturnInvoiceModelToJson(_ReturnInvoiceModel instance) =>
@@ -38,6 +41,7 @@ Map<String, dynamic> _$ReturnInvoiceModelToJson(_ReturnInvoiceModel instance) =>
       'isReturn': instance.isReturn,
       'returnAgainst': instance.returnAgainst,
       'items': instance.items,
+      'paymentReferences': instance.paymentReferences,
     };
 
 _InvoiceItemModel _$InvoiceItemModelFromJson(Map<String, dynamic> json) =>

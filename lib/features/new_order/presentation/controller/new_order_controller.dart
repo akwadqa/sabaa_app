@@ -47,6 +47,7 @@ class NewOrderController extends _$NewOrderController {
     String? search,
     String? category,
     bool showLoading = true,
+    bool? isReturn,
   }) async {
     final current = state.value!;
     if (showLoading) state = const AsyncLoading();
@@ -55,9 +56,10 @@ class NewOrderController extends _$NewOrderController {
       final repo = ref.read(newOrderRepositoryProvider);
 
       final response = await repo.getProducts(
-          page: page, search: search ?? current.searchQuery, category: category
-          // current.selectedCategory == null ? null : current.selectedCategory,
-          );
+        page: page, search: search ?? current.searchQuery, category: category,
+        isReturn: isReturn ?? current.isReturn,
+        // current.selectedCategory == null ? null : current.selectedCategory,
+      );
 
       _currentPage = response.pagination?.currentPage ?? 1;
       _totalPages = response.pagination?.totalPages ?? 1;
@@ -111,12 +113,15 @@ class NewOrderController extends _$NewOrderController {
     final current = state.value;
 
     await fetchItems(
-        page: _currentPage + 1,
-        search: current?.searchQuery.trim().isEmpty == true
-            ? null
-            : current?.searchQuery.trim(),
-        category: current?.selectedCategory,
-        showLoading: false);
+      page: _currentPage + 1,
+      search: current?.searchQuery.trim().isEmpty == true
+          ? null
+          : current?.searchQuery.trim(),
+      category: current?.selectedCategory,
+      isReturn: current?.isReturn ?? false, // ✅
+
+      showLoading: false,
+    );
     return true;
   }
 
@@ -124,7 +129,12 @@ class NewOrderController extends _$NewOrderController {
     _currentPage = 1;
     _totalPages = 1;
     _products.clear();
-    await fetchItems(page: 1);
+    final current = state.value;
+
+    await fetchItems(
+      page: 1,
+      isReturn: current?.isReturn ?? false,
+    );
     return true;
   }
 
@@ -148,6 +158,7 @@ class NewOrderController extends _$NewOrderController {
       search: query.trim().isEmpty ? null : query.trim(),
       category: current.selectedCategory,
       showLoading: false,
+      isReturn: current.isReturn,
     );
   }
 
@@ -181,49 +192,50 @@ class NewOrderController extends _$NewOrderController {
           : current.searchQuery.trim(),
       category: category,
       showLoading: false,
+      isReturn: current.isReturn,
     );
   }
 
- void toggleItem(ProductModel item) {
-  final current = state.value!;
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  var lines = List<SelectedItemLine>.from(current.selectedLines);
+  void toggleItem(ProductModel item) {
+    final current = state.value!;
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    var lines = List<SelectedItemLine>.from(current.selectedLines);
 
-  if (map.containsKey(item.itemCode)) {
-    map.remove(item.itemCode);
-    lines.removeWhere((l) => l.product.itemCode == item.itemCode);
-  } else {
-    // ✅ Pick first UOM with stock > 0
-    final availableUom = item.uoms.firstWhere(
-      (u) => u.availableStock > 0,
-      orElse: () => item.uoms.first,
-    );
+    if (map.containsKey(item.itemCode)) {
+      map.remove(item.itemCode);
+      lines.removeWhere((l) => l.product.itemCode == item.itemCode);
+    } else {
+      // ✅ Pick first UOM with stock > 0
+      final availableUom = item.uoms.firstWhere(
+        (u) => u.availableStock > 0,
+        orElse: () => item.uoms.first,
+      );
 
-    // ✅ Warn if all UOMs have 0 stock
-    if (availableUom.availableStock == 0) {
-      AppToast.errorToast('out_of_stock'.tr());
-      return; // ✅ Don't add item with 0 stock
+      // ✅ Warn if all UOMs have 0 stock
+      //  if (!current.isReturn && availableUom.availableStock == 0) {
+      //   AppToast.errorToast('out_of_stock'.tr());
+      //   return;
+      // }
+
+      map[item.itemCode] = SelectedItem(
+        product: item,
+        quantity: 1,
+        unit: availableUom.uom,
+      );
+
+      lines.add(SelectedItemLine(
+        lineId: const Uuid().v4(),
+        product: item,
+        quantity: 1,
+        unit: availableUom.uom,
+      ));
     }
 
-    map[item.itemCode] = SelectedItem(
-      product: item,
-      quantity: 1,
-      unit: availableUom.uom,
-    );
-
-    lines.add(SelectedItemLine(
-      lineId: const Uuid().v4(),
-      product: item,
-      quantity: 1,
-      unit: availableUom.uom,
+    state = AsyncData(current.copyWith(
+      selectedItems: map,
+      selectedLines: lines,
     ));
   }
-
-  state = AsyncData(current.copyWith(
-    selectedItems: map,
-    selectedLines: lines,
-  ));
-}
 // void toggleItem(ProductModel item) {
 //   final current = state.value!;
 //   final map = Map<String, SelectedItem>.from(current.selectedItems);
@@ -261,38 +273,38 @@ class NewOrderController extends _$NewOrderController {
 //     selectedLines: lines,
 //   ));
 // }
- void updateUnit(String itemCode, String unit) {
-  final current = state.value!;
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  final existing = map[itemCode];
-  if (existing == null) return;
+  void updateUnit(String itemCode, String unit) {
+    final current = state.value!;
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    final existing = map[itemCode];
+    if (existing == null) return;
 
-  // ✅ Get stock for newly selected UOM
-  final newUomModel = existing.product.uoms.firstWhere(
-    (u) => u.uom == unit,
-    orElse: () => existing.product.uoms.first,
-  );
-  final maxStock = newUomModel.availableStock;
+    // ✅ Get stock for newly selected UOM
+    final newUomModel = existing.product.uoms.firstWhere(
+      (u) => u.uom == unit,
+      orElse: () => existing.product.uoms.first,
+    );
+    final maxStock = newUomModel.availableStock;
 
-  // ✅ Clamp quantity to new UOM's stock (min 1 if stock > 0)
-  final clampedQty = maxStock == 0 ? 0 : existing.quantity.clamp(1, maxStock);
+    // ✅ Clamp quantity to new UOM's stock (min 1 if stock > 0)
+    final clampedQty = maxStock == 0 ? 0 : existing.quantity.clamp(1, maxStock);
 
-  map[itemCode] = existing.copyWith(unit: unit, quantity: clampedQty);
+    map[itemCode] = existing.copyWith(unit: unit, quantity: clampedQty);
 
-  // ✅ Sync first line
-  final lines = current.selectedLines.map((l) {
-    if (l.product.itemCode == itemCode &&
-        l.lineId == _firstLineId(current, itemCode)) {
-      return l.copyWith(unit: unit, quantity: clampedQty);
-    }
-    return l;
-  }).toList();
+    // ✅ Sync first line
+    final lines = current.selectedLines.map((l) {
+      if (l.product.itemCode == itemCode &&
+          l.lineId == _firstLineId(current, itemCode)) {
+        return l.copyWith(unit: unit, quantity: clampedQty);
+      }
+      return l;
+    }).toList();
 
-  state = AsyncData(current.copyWith(
-    selectedItems: map,
-    selectedLines: lines,
-  ));
-}
+    state = AsyncData(current.copyWith(
+      selectedItems: map,
+      selectedLines: lines,
+    ));
+  }
 
   String? _firstLineId(NewOrderState state, String itemCode) {
     final match = state.selectedLines
@@ -303,91 +315,93 @@ class NewOrderController extends _$NewOrderController {
 
 // In new_order_controller.dart
 
-void increment(ProductModel item) {
-  final current = state.value!;
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  final existing = map[item.itemCode];
-  if (existing == null) return;
+  void increment(ProductModel item) {
+    final current = state.value!;
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    final existing = map[item.itemCode];
+    if (existing == null) return;
 
-  // ✅ Use UOM-specific stock, not the product-level string
-  final uomModel = item.uoms.firstWhere(
-    (u) => u.uom == existing.unit,
-    orElse: () => item.uoms.first,
-  );
-  final maxStock = uomModel.availableStock; // ✅ int from UomModel
-
-  if (existing.quantity >= maxStock) {
-    AppToast.errorToast(
-      '${'max_stock'.tr()}: $maxStock ${existing.unit}',
+    // ✅ Use UOM-specific stock, not the product-level string
+    final uomModel = item.uoms.firstWhere(
+      (u) => u.uom == existing.unit,
+      orElse: () => item.uoms.first,
     );
-    return;
-  }
+    final maxStock = uomModel.availableStock; // ✅ int from UomModel
+    // ✅ Only enforce stock limit for NEW SALE
 
-  final newQty = existing.quantity + 1;
-  map[item.itemCode] = existing.copyWith(quantity: newQty);
+    if (!current.isReturn && existing.quantity >= maxStock) {
+      AppToast.errorToast(
+        '${'max_stock'.tr()}: $maxStock ${existing.unit}',
+      );
+      return;
+    }
 
-  final lines = _syncFirstLineQuantity(current, item.itemCode, newQty);
+    final newQty = existing.quantity + 1;
+    map[item.itemCode] = existing.copyWith(quantity: newQty);
 
-  state = AsyncData(current.copyWith(
-    selectedItems: map,
-    selectedLines: lines,
-  ));
-}
+    final lines = _syncFirstLineQuantity(current, item.itemCode, newQty);
 
-void decrement(String id) {
-  final current = state.value!;
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  final existing = map[id];
-  if (existing == null) return;
-
-  if (existing.quantity <= 1) {
-    map.remove(id);
-    final lines = List<SelectedItemLine>.from(current.selectedLines)
-      ..removeWhere((l) => l.product.itemCode == id);
     state = AsyncData(current.copyWith(
       selectedItems: map,
       selectedLines: lines,
     ));
-    return;
   }
 
-  final newQty = existing.quantity - 1;
-  map[id] = existing.copyWith(quantity: newQty);
-  final lines = _syncFirstLineQuantity(current, id, newQty);
+  void decrement(String id) {
+    final current = state.value!;
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    final existing = map[id];
+    if (existing == null) return;
 
-  state = AsyncData(current.copyWith(
-    selectedItems: map,
-    selectedLines: lines,
-  ));
-}
+    if (existing.quantity <= 1) {
+      map.remove(id);
+      final lines = List<SelectedItemLine>.from(current.selectedLines)
+        ..removeWhere((l) => l.product.itemCode == id);
+      state = AsyncData(current.copyWith(
+        selectedItems: map,
+        selectedLines: lines,
+      ));
+      return;
+    }
 
-void setQuantity(ProductModel item, int qty) {
-  final current = state.value!;
-  final existing = current.selectedItems[item.itemCode];
-  if (existing == null) return;
+    final newQty = existing.quantity - 1;
+    map[id] = existing.copyWith(quantity: newQty);
+    final lines = _syncFirstLineQuantity(current, id, newQty);
 
-  // ✅ Use UOM-specific stock
-  final uomModel = item.uoms.firstWhere(
-    (u) => u.uom == existing.unit,
-    orElse: () => item.uoms.first,
-  );
-  final maxStock = uomModel.availableStock;
-
-  if (qty > maxStock) {
-    AppToast.errorToast('${'max_stock'.tr()}: $maxStock ${existing.unit}');
-    return;
+    state = AsyncData(current.copyWith(
+      selectedItems: map,
+      selectedLines: lines,
+    ));
   }
 
-  final clamped = qty.clamp(1, maxStock);
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  map[item.itemCode] = existing.copyWith(quantity: clamped);
-  final lines = _syncFirstLineQuantity(current, item.itemCode, clamped);
+  void setQuantity(ProductModel item, int qty) {
+    final current = state.value!;
+    final existing = current.selectedItems[item.itemCode];
+    if (existing == null) return;
 
-  state = AsyncData(current.copyWith(
-    selectedItems: map,
-    selectedLines: lines,
-  ));
-}
+    // ✅ Use UOM-specific stock
+    final uomModel = item.uoms.firstWhere(
+      (u) => u.uom == existing.unit,
+      orElse: () => item.uoms.first,
+    );
+    final maxStock = uomModel.availableStock;
+
+  if (!current.isReturn && qty > maxStock) {
+      AppToast.errorToast('${'max_stock'.tr()}: $maxStock ${existing.unit}');
+      return;
+    }
+
+  final clamped = current.isReturn ? qty.clamp(1, 99999) : qty.clamp(1, maxStock);
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    map[item.itemCode] = existing.copyWith(quantity: clamped);
+    final lines = _syncFirstLineQuantity(current, item.itemCode, clamped);
+
+    state = AsyncData(current.copyWith(
+      selectedItems: map,
+      selectedLines: lines,
+    ));
+  }
+
 // ── Helper: sync first line quantity for a product ────────────────
   List<SelectedItemLine> _syncFirstLineQuantity(
     NewOrderState state,
@@ -403,143 +417,149 @@ void setQuantity(ProductModel item, int qty) {
       return l;
     }).toList();
   }
-  
-/// Returns remaining stock for a line's UOM
-/// = totalStock - qty used by ALL other lines of same item+uom (excluding self)
-int remainingStockForLine({
-  required String lineId,
-  required String itemCode,
-  required String uom,
-}) {
-  final current = state.value!;
 
-  final line = current.selectedLines
-      .where((l) => l.lineId == lineId)
-      .firstOrNull;
-  if (line == null) return 0;
+  /// Returns remaining stock for a line's UOM
+  /// = totalStock - qty used by ALL other lines of same item+uom (excluding self)
+  int remainingStockForLine({
+    required String lineId,
+    required String itemCode,
+    required String uom,
+  }) {
+    final current = state.value!;
 
-  final uomModel = line.product.uoms.firstWhere(
-    (u) => u.uom == uom,
-    orElse: () => line.product.uoms.first,
-  );
-  final totalStock = uomModel.availableStock;
+    final line =
+        current.selectedLines.where((l) => l.lineId == lineId).firstOrNull;
+    if (line == null) return 0;
 
-  // ✅ Sum qty from OTHER lines of same product+uom
-  final usedByOtherLines = current.selectedLines
-      .where((l) =>
-          l.lineId != lineId &&
-          l.product.itemCode == itemCode &&
-          l.unit == uom)
-      .fold(0, (sum, l) => sum + l.quantity);
-
-  return (totalStock - usedByOtherLines).clamp(0, totalStock);
-}
-//?
-Future<InvoiceModel?> createInvoice() async {
-  final current = state.value!;
-  state = AsyncData(current.copyWith(isSubmitting: true));
-
-  try {
-    final repo = ref.read(newOrderRepositoryProvider);
-    final items = <Map<String, dynamic>>[];
-
-    for (final line in current.selectedLines) {
-      // ── Main paid line ──────────────────────────────────────
-      final mainLine = <String, dynamic>{
-        'itemCode': line.product.itemCode,
-        'qty': line.quantity,
-        'uom': line.unit,
-      };
-
-      // Return with custom rate
-      if (current.isReturn && line.customRate != null) {
-        mainLine['rate'] = line.customRate;
-      }
-
-      // All Free → rate: 0
-      if (line.isAllFree) {
-        mainLine['rate'] = 0;
-      }
-
-      items.add(mainLine);
-
-      // ── FOC → separate line with rate: 0 ───────────────────
-      if (!line.isAllFree && line.isFocEnabled && line.focQuantity > 0) {
-        items.add({
-          'itemCode': line.product.itemCode,
-          'qty': line.focQuantity,
-          'uom': line.focUom ?? line.unit,
-          'rate': 0,
-        });
-      }
-    }
-
-     // ── Discount fields ─────────────────────────────────────────
-    double? discountAmount;
-    double? additionalDiscountPercentage;
-
-    if (current.hasDiscount && current.discountValue != null && current.discountValue! > 0) {
-      if (current.discountType == DiscountType.percentage) {
-        additionalDiscountPercentage = current.discountValue; // ✅ Send directly as percentage
-      } else {
-        discountAmount = current.discountValue; // ✅ Send directly as amount
-      }
-    }
-    // ── Log ─────────────────────────────────────────────────────
-    Dev.logLine('Body');
-    Dev.logLine('customer_id: ${current.customer?.customerId}');
-    Dev.logLine('items: $items');
-    Dev.logLine('delivery_charge: ${current.deliveryFee ?? "0"}');
-    if (discountAmount != null) {
-      Dev.logLine('discount_amount: ${discountAmount.toStringAsFixed(2)}');
-    if (discountAmount != null) {
-      Dev.logLine('discount_amount: $discountAmount');
-    }
-    if (additionalDiscountPercentage != null) {
-      Dev.logLine('additional_discount_percentage: $additionalDiscountPercentage');
-    }    }
-
-    if (current.isReturn) {
-      final response = await repo.createReturnInvoice(
-        customerId: current.customer!.customerId!,
-        items: items,
-        deliveryFee: current.deliveryFee ?? "0",
-        remark: current.remark,
-      );
-
-      state = AsyncData(state.value!.copyWith(
-        selectedItems: {},
-        selectedLines: [],
-        isSubmitting: false,
-      ));
-      return response.data;
-    } else {
-      final response = await repo.createInvoice(
-        customerId: current.customer!.customerId!,
-        items: items,
-        deliveryFee: current.deliveryFee ?? "0",
-        remark: current.remark,
-        discountAmount: discountAmount,  
-        additionalDiscountPercentage: additionalDiscountPercentage,   
-      );
-
-      state = AsyncData(state.value!.copyWith(
-        selectedItems: {},
-        selectedLines: [],
-        isSubmitting: false,
-      ));
-      return response.data;
-    }
-  } catch (e) {
-    state = AsyncData(state.value!.copyWith(isSubmitting: false));
-    AppToast.errorToast(
-      current.isReturn ? 'Failed to create return' : 'Failed to create invoice',
+    final uomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == uom,
+      orElse: () => line.product.uoms.first,
     );
-    return null;
+    final totalStock = uomModel.availableStock;
+
+    // ✅ Sum qty from OTHER lines of same product+uom
+    final usedByOtherLines = current.selectedLines
+        .where((l) =>
+            l.lineId != lineId &&
+            l.product.itemCode == itemCode &&
+            l.unit == uom)
+        .fold(0, (sum, l) => sum + l.quantity);
+
+    return (totalStock - usedByOtherLines).clamp(0, totalStock);
   }
-} 
-  
-  
+
+//?
+  Future<InvoiceModel?> createInvoice() async {
+    final current = state.value!;
+    state = AsyncData(current.copyWith(isSubmitting: true));
+
+    try {
+      final repo = ref.read(newOrderRepositoryProvider);
+      final items = <Map<String, dynamic>>[];
+
+      for (final line in current.selectedLines) {
+        // ── Main paid line ──────────────────────────────────────
+        final mainLine = <String, dynamic>{
+          'itemCode': line.product.itemCode,
+          'qty': line.quantity,
+          'uom': line.unit,
+        };
+
+        // Return with custom rate
+        if (current.isReturn && line.customRate != null) {
+          mainLine['rate'] = line.customRate;
+        }
+
+        // All Free → rate: 0
+        if (line.isAllFree) {
+          mainLine['rate'] = 0;
+        }
+
+        items.add(mainLine);
+
+        // ── FOC → separate line with rate: 0 ───────────────────
+        if (!line.isAllFree && line.isFocEnabled && line.focQuantity > 0) {
+          items.add({
+            'itemCode': line.product.itemCode,
+            'qty': line.focQuantity,
+            'uom': line.focUom ?? line.unit,
+            'rate': 0,
+          });
+        }
+      }
+
+      // ── Discount fields ─────────────────────────────────────────
+      double? discountAmount;
+      double? additionalDiscountPercentage;
+
+      if (current.hasDiscount &&
+          current.discountValue != null &&
+          current.discountValue! > 0) {
+        if (current.discountType == DiscountType.percentage) {
+          additionalDiscountPercentage =
+              current.discountValue; // ✅ Send directly as percentage
+        } else {
+          discountAmount = current.discountValue; // ✅ Send directly as amount
+        }
+      }
+      // ── Log ─────────────────────────────────────────────────────
+      Dev.logLine('Body');
+      Dev.logLine('customer_id: ${current.customer?.customerId}');
+      Dev.logLine('items: $items');
+      Dev.logLine('delivery_charge: ${current.deliveryFee ?? "0"}');
+      if (discountAmount != null) {
+        Dev.logLine('discount_amount: ${discountAmount.toStringAsFixed(2)}');
+        if (discountAmount != null) {
+          Dev.logLine('discount_amount: $discountAmount');
+        }
+        if (additionalDiscountPercentage != null) {
+          Dev.logLine(
+              'additional_discount_percentage: $additionalDiscountPercentage');
+        }
+      }
+
+      if (current.isReturn) {
+        final response = await repo.createReturnInvoice(
+          customerId: current.customer!.customerId!,
+          items: items,
+          deliveryFee: current.deliveryFee ?? "0",
+          remark: current.remark,
+        );
+
+        state = AsyncData(state.value!.copyWith(
+          selectedItems: {},
+          selectedLines: [],
+          isSubmitting: false,
+        ));
+        return response.data;
+      } else {
+        final response = await repo.createInvoice(
+          customerId: current.customer!.customerId!,
+          items: items,
+          deliveryFee: current.deliveryFee ?? "0",
+          remark: current.remark,
+          discountAmount: discountAmount,
+          additionalDiscountPercentage: additionalDiscountPercentage,
+        );
+
+        state = AsyncData(state.value!.copyWith(
+          selectedItems: {},
+          selectedLines: [],
+          isSubmitting: false,
+        ));
+        return response.data;
+      }
+    } catch (e) {
+      state = AsyncData(state.value!.copyWith(isSubmitting: false));
+      AppToast.errorToast(
+        current.isReturn
+            ? 'Failed to create return'
+            : 'Failed to create invoice',
+      );
+      return null;
+    }
+  }
+
   void clearOrder() {
     final current = state.value!;
 
@@ -555,21 +575,48 @@ Future<InvoiceModel?> createInvoice() async {
 
   void setIsReturn(bool value) {
     final current = state.value!;
-    state = AsyncData(current.copyWith(isReturn: value));
+
+    // ✅ Update state with isReturn + show loading only on list
+    state = AsyncData(current.copyWith(
+      isReturn: value,
+      listState: const AsyncLoading(), // ✅ loading indicator on items only
+    ));
+
+    _resetPagination();
+    _products.clear();
+
+    fetchItems(
+      page: 1,
+      search: current.searchQuery.trim().isEmpty
+          ? null
+          : current.searchQuery.trim(),
+      category: current.selectedCategory,
+      showLoading: false, // ✅ NOT full screen loading
+      isReturn: value,
+    );
   }
 
+  // void updateRate(String itemCode, double? rate) {
+  //   final current = state.value!;
+  //   final map = Map<String, SelectedItem>.from(current.selectedItems);
+
+  //   final existing = map[itemCode];
+  //   if (existing == null) return;
+
+  //   map[itemCode] = existing.copyWith(
+  //     customRate: rate,
+  //     clearCustomRate: rate == null,
+  //   );
+
+  //   state = AsyncData(current.copyWith(selectedItems: map));
+  // }
   void updateRate(String itemCode, double? rate) {
     final current = state.value!;
     final map = Map<String, SelectedItem>.from(current.selectedItems);
-
     final existing = map[itemCode];
     if (existing == null) return;
 
-    map[itemCode] = existing.copyWith(
-      customRate: rate,
-      clearCustomRate: rate == null,
-    );
-
+    map[itemCode] = existing.copyWith(customRate: rate);
     state = AsyncData(current.copyWith(selectedItems: map));
   }
 
@@ -884,106 +931,108 @@ Future<InvoiceModel?> createInvoice() async {
     state = AsyncData(current.copyWith(selectedLines: lines));
   }
 
-
   void updateLineQuantity(String lineId, int qty) {
-  final current = state.value!;
+    final current = state.value!;
 
-  final line = current.selectedLines
-      .where((l) => l.lineId == lineId)
-      .firstOrNull;
-  if (line == null) return;
+    final line =
+        current.selectedLines.where((l) => l.lineId == lineId).firstOrNull;
+    if (line == null) return;
 
-  // ✅ UOM-specific stock
-  final uomModel = line.product.uoms.firstWhere(
-    (u) => u.uom == line.unit,
-    orElse: () => line.product.uoms.first,
-  );
-  final maxStock = uomModel.availableStock;
+    // ✅ UOM-specific stock
+    final uomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == line.unit,
+      orElse: () => line.product.uoms.first,
+    );
+    final maxStock = uomModel.availableStock;
 
-  if (maxStock == 0) {
-    AppToast.errorToast('${'out_of_stock'.tr()} (${line.unit})');
-    return;
-  }
-
-  final clamped = qty.clamp(1, maxStock);
-
-  if (qty > maxStock) {
-    AppToast.errorToast('${'max_stock'.tr()}: $maxStock ${line.unit}');
-  }
-
-  // ✅ Update line quantity
-  final lines = current.selectedLines.map((l) {
-    if (l.lineId == lineId) return l.copyWith(quantity: clamped);
-    return l;
-  }).toList();
-
-  // ✅ Sync selectedItems if first line
-  final isFirst = current.selectedLines
-          .where((l) => l.product.itemCode == line.product.itemCode)
-          .firstOrNull
-          ?.lineId == lineId;
-
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  if (isFirst) {
-    final existing = map[line.product.itemCode];
-    if (existing != null) {
-      map[line.product.itemCode] = existing.copyWith(quantity: clamped);
+     // ✅ Only enforce stock for NEW SALE
+  if (!current.isReturn) {
+    if (maxStock == 0) {
+      AppToast.errorToast('${'out_of_stock'.tr()} (${line.unit})');
+      return;
+    }
+    if (qty > maxStock) {
+      AppToast.errorToast('${'max_stock'.tr()}: $maxStock ${line.unit}');
     }
   }
 
-  state = AsyncData(current.copyWith(
-    selectedLines: lines,
-    selectedItems: map,
-  ));
-}
+   final clamped = current.isReturn ? qty.clamp(1, 99999) : qty.clamp(1, maxStock);
 
-void updateLineUnit(String lineId, String unit) {
-  final current = state.value!;
 
-  final line = current.selectedLines
-      .where((l) => l.lineId == lineId)
-      .firstOrNull;
-  if (line == null) return;
+    // ✅ Update line quantity
+    final lines = current.selectedLines.map((l) {
+      if (l.lineId == lineId) return l.copyWith(quantity: clamped);
+      return l;
+    }).toList();
 
-  // ✅ Get stock for new UOM
-  final uomModel = line.product.uoms.firstWhere(
-    (u) => u.uom == unit,
-    orElse: () => line.product.uoms.first,
-  );
-  final maxStock = uomModel.availableStock;
+    // ✅ Sync selectedItems if first line
+    final isFirst = current.selectedLines
+            .where((l) => l.product.itemCode == line.product.itemCode)
+            .firstOrNull
+            ?.lineId ==
+        lineId;
 
-  // ✅ Clamp quantity to new UOM stock
-  final clampedQty = maxStock == 0 ? 1 : line.quantity.clamp(1, maxStock);
-
-  final lines = current.selectedLines.map((l) {
-    if (l.lineId == lineId) {
-      return l.copyWith(unit: unit, quantity: clampedQty);
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    if (isFirst) {
+      final existing = map[line.product.itemCode];
+      if (existing != null) {
+        map[line.product.itemCode] = existing.copyWith(quantity: clamped);
+      }
     }
-    return l;
-  }).toList();
 
-  // ✅ Sync selectedItems if first line
-  final isFirst = current.selectedLines
-          .where((l) => l.product.itemCode == line.product.itemCode)
-          .firstOrNull
-          ?.lineId == lineId;
-
-  final map = Map<String, SelectedItem>.from(current.selectedItems);
-  if (isFirst) {
-    final existing = map[line.product.itemCode];
-    if (existing != null) {
-      map[line.product.itemCode] = existing.copyWith(
-        unit: unit,
-        quantity: clampedQty,
-      );
-    }
+    state = AsyncData(current.copyWith(
+      selectedLines: lines,
+      selectedItems: map,
+    ));
   }
 
-  state = AsyncData(current.copyWith(
-    selectedLines: lines,
-    selectedItems: map,
-  ));
-}
+  void updateLineUnit(String lineId, String unit) {
+    final current = state.value!;
+
+    final line =
+        current.selectedLines.where((l) => l.lineId == lineId).firstOrNull;
+    if (line == null) return;
+
+    // ✅ Get stock for new UOM
+    final uomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == unit,
+      orElse: () => line.product.uoms.first,
+    );
+    final maxStock = uomModel.availableStock;
+
+    // ✅ Clamp quantity to new UOM stock
+    final clampedQty = maxStock == 0 ? 1 : line.quantity.clamp(1, maxStock);
+
+    final lines = current.selectedLines.map((l) {
+      if (l.lineId == lineId) {
+        return l.copyWith(unit: unit, quantity: clampedQty);
+      }
+      return l;
+    }).toList();
+
+    // ✅ Sync selectedItems if first line
+    final isFirst = current.selectedLines
+            .where((l) => l.product.itemCode == line.product.itemCode)
+            .firstOrNull
+            ?.lineId ==
+        lineId;
+
+    final map = Map<String, SelectedItem>.from(current.selectedItems);
+    if (isFirst) {
+      final existing = map[line.product.itemCode];
+      if (existing != null) {
+        map[line.product.itemCode] = existing.copyWith(
+          unit: unit,
+          quantity: clampedQty,
+        );
+      }
+    }
+
+    state = AsyncData(current.copyWith(
+      selectedLines: lines,
+      selectedItems: map,
+    ));
+  }
 
   void _syncFirstLineToSelectedItems(
     String lineId,
@@ -1025,48 +1074,58 @@ void updateLineUnit(String lineId, String unit) {
   void updateLineFocUom(String lineId, String uom) =>
       updateLine(lineId, (l) => l.copyWith(focUom: uom));
 
-void updateLineFocQuantity(String lineId, int qty) {
-  final current = state.value!;
+  void updateLineFocQuantity(String lineId, int qty) {
+    final current = state.value!;
 
-  final line = current.selectedLines
-      .where((l) => l.lineId == lineId)
-      .firstOrNull;
-  if (line == null) return;
+    final line =
+        current.selectedLines.where((l) => l.lineId == lineId).firstOrNull;
+    if (line == null) return;
 
-  final focUom = line.focUom ?? line.unit;
-  final focUomModel = line.product.uoms.firstWhere(
-    (u) => u.uom == focUom,
-    orElse: () => line.product.uoms.first,
-  );
-  final focTotalStock = focUomModel.availableStock;
+    final focUom = line.focUom ?? line.unit;
+    final focUomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == focUom,
+      orElse: () => line.product.uoms.first,
+    );
+    final focTotalStock = focUomModel.availableStock;
 
-  // ✅ How much stock is consumed by ALL lines of same item for this UOM
-  final consumedByAll = current.selectedLines
-      .where((l) => l.product.itemCode == line.product.itemCode)
-      .fold(0, (sum, l) {
-        int consumed = 0;
-        // Main qty consuming this UOM
-        if (l.unit == focUom) consumed += l.quantity;
-        // OTHER lines' FOC consuming this UOM
-        if (l.lineId != lineId &&
-            l.isFocEnabled &&
-            (l.focUom ?? l.unit) == focUom) {
-          consumed += l.focQuantity;
-        }
-        return sum + consumed;
-      });
+    // ✅ How much stock is consumed by ALL lines of same item for this UOM
+    final consumedByAll = current.selectedLines
+        .where((l) => l.product.itemCode == line.product.itemCode)
+        .fold(0, (sum, l) {
+      int consumed = 0;
+      // Main qty consuming this UOM
+      if (l.unit == focUom) consumed += l.quantity;
+      // OTHER lines' FOC consuming this UOM
+      if (l.lineId != lineId &&
+          l.isFocEnabled &&
+          (l.focUom ?? l.unit) == focUom) {
+        consumed += l.focQuantity;
+      }
+      return sum + consumed;
+    });
 
-  // ✅ Remaining = total - already consumed (excluding this line's current FOC)
-  final currentFocOfThisLine = line.isFocEnabled ? line.focQuantity : 0;
-  final remaining = (focTotalStock - consumedByAll + currentFocOfThisLine)
-      .clamp(0, focTotalStock);
+    // ✅ Remaining = total - already consumed (excluding this line's current FOC)
+    final currentFocOfThisLine = line.isFocEnabled ? line.focQuantity : 0;
+    final remaining = (focTotalStock - consumedByAll + currentFocOfThisLine)
+        .clamp(0, focTotalStock);
 
-  if (qty > remaining) {
-    AppToast.errorToast('${'max_stock'.tr()}: $remaining $focUom');
-    return;
+    if (qty > remaining) {
+      AppToast.errorToast('${'max_stock'.tr()}: $remaining $focUom');
+      return;
+    }
+
+    final clamped = qty.clamp(0, remaining);
+    updateLine(lineId, (l) => l.copyWith(focQuantity: clamped));
   }
 
-  final clamped = qty.clamp(0, remaining);
-  updateLine(lineId, (l) => l.copyWith(focQuantity: clamped));
-}
+// !return
+  void updateLineRate(String lineId, double? rate) {
+    updateLine(
+      lineId,
+      (l) => l.copyWith(
+        customRate: rate,
+        clearCustomRate: rate == null,
+      ),
+    );
+  }
 }

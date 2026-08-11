@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/van_stock/domain/model/van_stock_model.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/dio_client.dart';
@@ -46,7 +47,7 @@ class ReturnOrderRepository {
   }
 
   /// Create return order
-  Future<ApiResponse<void>> createReturnOrder({
+  Future<ApiResponse<InvoiceModel>> createReturnOrder({
   required  String invoiceId,
     required List<Map<String, dynamic>> items,
     String? returnReason,

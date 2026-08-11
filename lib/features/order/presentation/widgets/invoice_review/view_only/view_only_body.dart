@@ -27,7 +27,7 @@ class ViewOnlyBody extends ConsumerWidget {
                   name: e.itemName,
                   count: e.qty,
                         uom: e.uom, // ✅ unit from SelectedItem
-              pricePerItem: e.amount.toCurrency(),
+              pricePerItem: e.amount.toStringAsFixed(2),
                   total: formatPrice(e.amount.toDouble()),
                 ))
             .toList();

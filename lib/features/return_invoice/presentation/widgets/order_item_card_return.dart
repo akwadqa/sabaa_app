@@ -14,7 +14,7 @@ import 'return_quantity_stepper.dart';
 /// - Read-only unit dropdown (cannot be changed)
 /// - Quantity limited to available stock
 /// - Shows return-specific styling
-class OrderItemCardReturn extends StatelessWidget {
+class OrderItemCardReturn extends StatefulWidget {
   const OrderItemCardReturn({
     super.key,
     required this.item,
@@ -25,6 +25,8 @@ class OrderItemCardReturn extends StatelessWidget {
     required this.onIncrement,
     required this.onDecrement,
     required this.onDelete,
+    this.customRate, // ✅ add
+    this.onRateChanged, // ✅ add
   });
 
   final InvoiceItemModel item;
@@ -35,9 +37,90 @@ class OrderItemCardReturn extends StatelessWidget {
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
   final VoidCallback onDelete;
+  final double? customRate; // ✅ add
+  final ValueChanged<double?>? onRateChanged; // ✅ add
+
+  @override
+  State<OrderItemCardReturn> createState() => _OrderItemCardReturnState();
+}
+
+class _OrderItemCardReturnState extends State<OrderItemCardReturn> {
+  bool _isEditingRate = false;
+  late final TextEditingController _rateController;
+  late final FocusNode _rateFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _rateController = TextEditingController(
+      text: widget.customRate?.toString() ?? '',
+    );
+    _rateFocusNode = FocusNode();
+
+    _rateFocusNode.addListener(() {
+      if (!_rateFocusNode.hasFocus && _isEditingRate) {
+        _saveRate();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant OrderItemCardReturn oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_isEditingRate) {
+      _rateController.text = widget.customRate?.toString() ?? '';
+    }
+  }
+
+  void _startRateEdit() {
+    setState(() {
+      _isEditingRate = true;
+      _rateController.text =
+          (widget.customRate ?? widget.item.amount.toDouble()).toString();
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _rateFocusNode.requestFocus();
+        _rateController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _rateController.text.length,
+        );
+      }
+    });
+  }
+
+  void _saveRate() {
+    final text = _rateController.text.trim();
+
+    if (text.isEmpty) {
+      widget.onRateChanged?.call(null);
+    } else {
+      final parsed = double.tryParse(text);
+      widget.onRateChanged?.call(parsed);
+    }
+
+    if (mounted) {
+      setState(() => _isEditingRate = false);
+    }
+  }
+
+  void _cancelRateEdit() {
+    _rateController.text = widget.customRate?.toString() ?? '';
+    setState(() => _isEditingRate = false);
+  }
+
+  @override
+  void dispose() {
+    _rateController.dispose();
+    _rateFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final effectivePrice = widget.customRate ?? widget.item.amount.toDouble();
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -45,8 +128,8 @@ class OrderItemCardReturn extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: BorderDirectional(
           start: BorderSide(
-            color: isSelected ? AppColors.primary : AppColors.borderGrey,
-            width: isSelected ? 5 : 1,
+            color: widget.isSelected ? AppColors.accent : AppColors.borderGrey,
+            width: widget.isSelected ? 5 : 1,
           ),
         ),
         boxShadow: const [
@@ -60,27 +143,42 @@ class OrderItemCardReturn extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Top row: image + name/sku/price + delete ───────────────
+          // ── Top row: image + name/sku/price + delete ───────────
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _ProductImage(
-                imageUrl:
-                    ServicesUrls.imageUrl + (item.itemCode ?? ""),
+                imageUrl: ServicesUrls.imageUrl + (widget.item.itemCode ?? ""),
               ),
               12.horizontalSpace,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.itemName,
-                      style: AppTextStyle.interSemiBold14.copyWith(
-                        color: AppColors.textHeading,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.item.itemName,
+                            style: AppTextStyle.interSemiBold14.copyWith(
+                              color: AppColors.textHeading,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (widget.isSelected)
+                          GestureDetector(
+                            onTap: widget.onDelete,
+                            child: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: AppColors.red,
+                              size: 25,
+                            ),
+                          ),
+                      ],
                     ),
                     4.verticalSpace,
                     Row(
@@ -88,19 +186,107 @@ class OrderItemCardReturn extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            'SKU: ${item.itemCode}',
+                            'SKU: ${widget.item.itemCode}',
                             style: AppTextStyle.interRegular12.copyWith(
                               color: AppColors.blueGrey,
                             ),
                           ),
                         ),
-                        // 10.horizontalSpace,
-                        Text(
-                          item.amount.toCurrency(),
-                          style: AppTextStyle.interSemiBold14.copyWith(
-                            color: AppColors.accent, // Return color
-                            fontWeight: FontWeight.w700,
-                          ),
+
+                        // ✅ Price with inline edit
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 180),
+                              child: _isEditingRate
+                                  ? SizedBox(
+                                      key: const ValueKey('edit-rate'),
+                                      width: 82,
+                                      height: 34,
+                                      child: TextFormField(
+                                        controller: _rateController,
+                                        focusNode: _rateFocusNode,
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(decimal: true),
+                                        textInputAction: TextInputAction.done,
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyle.interSemiBold12
+                                            .copyWith(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        decoration: InputDecoration(
+                                          isDense: true,
+                                          hintText: widget.item.amount
+                                              .toStringAsFixed(2),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 8,
+                                          ),
+                                          filled: true,
+                                          fillColor: AppColors.white,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.navBorder),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            borderSide: const BorderSide(
+                                                color: AppColors.accent,
+                                                width: 1.2),
+                                          ),
+                                        ),
+                                        onFieldSubmitted: (_) => _saveRate(),
+                                        onTapOutside: (_) => _saveRate(),
+                                      ),
+                                    )
+                                  : Text(
+                                      key: const ValueKey('show-rate'),
+                                      effectivePrice.toCurrency(),
+                                      style:
+                                          AppTextStyle.interSemiBold14.copyWith(
+                                        color: AppColors.accent,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                            ),
+
+                            // ✅ Edit / Confirm / Cancel icons
+                            const SizedBox(width: 6),
+                            GestureDetector(
+                              onTap: () {
+                                if (_isEditingRate) {
+                                  _saveRate();
+                                } else {
+                                  _startRateEdit();
+                                }
+                              },
+                              child: Icon(
+                                _isEditingRate
+                                    ? Icons.check_rounded
+                                    : Icons.edit_outlined,
+                                size: 18,
+                                color: _isEditingRate
+                                    ? AppColors.accent
+                                    : AppColors.blueGrey,
+                              ),
+                            ),
+                            if (_isEditingRate) ...[
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: _cancelRateEdit,
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  size: 18,
+                                  color: AppColors.red,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),
@@ -108,23 +294,21 @@ class OrderItemCardReturn extends StatelessWidget {
                 ),
               ),
               12.horizontalSpace,
-              if (isSelected)
-                GestureDetector(
-                  onTap: onDelete,
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: AppColors.red,
-                    size: 25,
-                  ),
-                ),
+              // if (widget.isSelected)
+              //   GestureDetector(
+              //     onTap: widget.onDelete,
+              //     child: const Icon(
+              //       Icons.delete_outline_rounded,
+              //       color: AppColors.red,
+              //       size: 25,
+              //     ),
+              //   ),
             ],
           ),
-          if (isSelected) ...[
+          if (widget.isSelected) ...[
             12.verticalSpace,
-            // ── Unit (Read-Only) + Quantity Controls ──────────────────
             Row(
               children: [
-                // Read-Only Unit Badge
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -137,21 +321,20 @@ class OrderItemCardReturn extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    selectedUnit,
+                    widget.selectedUnit,
                     style: AppTextStyle.interSemiBold12.copyWith(
                       color: AppColors.textHeading,
                     ),
                   ),
                 ),
                 const Spacer(),
-                // Quantity Stepper (Limited to max return quantity)
                 ReturnQuantityStepper(
-                  quantity: quantity,
-                  onDecrement: quantity > 0 ? onDecrement : null,
-                  onIncrement: quantity < maxReturnQuantity
-                      ? onIncrement
+                  quantity: widget.quantity,
+                  onDecrement: widget.quantity > 0 ? widget.onDecrement : null,
+                  onIncrement: widget.quantity < widget.maxReturnQuantity
+                      ? widget.onIncrement
                       : null,
-                  maxStock: maxReturnQuantity,
+                  maxStock: widget.maxReturnQuantity,
                 ),
               ],
             ),

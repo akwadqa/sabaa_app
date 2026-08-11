@@ -17,6 +17,7 @@ mixin _$SelectedItem {
   InvoiceItemModel get product;
   int get quantity;
   String get unit;
+  double? get customRate;
 
   /// Create a copy of SelectedItem
   /// with the given fields replaced by the non-null parameter values.
@@ -37,16 +38,19 @@ mixin _$SelectedItem {
             (identical(other.product, product) || other.product == product) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.unit, unit) || other.unit == unit));
+            (identical(other.unit, unit) || other.unit == unit) &&
+            (identical(other.customRate, customRate) ||
+                other.customRate == customRate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, product, quantity, unit);
+  int get hashCode =>
+      Object.hash(runtimeType, product, quantity, unit, customRate);
 
   @override
   String toString() {
-    return 'SelectedItem(product: $product, quantity: $quantity, unit: $unit)';
+    return 'SelectedItem(product: $product, quantity: $quantity, unit: $unit, customRate: $customRate)';
   }
 }
 
@@ -56,7 +60,11 @@ abstract mixin class $SelectedItemCopyWith<$Res> {
           SelectedItem value, $Res Function(SelectedItem) _then) =
       _$SelectedItemCopyWithImpl;
   @useResult
-  $Res call({InvoiceItemModel product, int quantity, String unit});
+  $Res call(
+      {InvoiceItemModel product,
+      int quantity,
+      String unit,
+      double? customRate});
 
   $InvoiceItemModelCopyWith<$Res> get product;
 }
@@ -76,6 +84,7 @@ class _$SelectedItemCopyWithImpl<$Res> implements $SelectedItemCopyWith<$Res> {
     Object? product = null,
     Object? quantity = null,
     Object? unit = null,
+    Object? customRate = freezed,
   }) {
     return _then(_self.copyWith(
       product: null == product
@@ -90,6 +99,10 @@ class _$SelectedItemCopyWithImpl<$Res> implements $SelectedItemCopyWith<$Res> {
           ? _self.unit
           : unit // ignore: cast_nullable_to_non_nullable
               as String,
+      customRate: freezed == customRate
+          ? _self.customRate
+          : customRate // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 
@@ -197,14 +210,16 @@ extension SelectedItemPatterns on SelectedItem {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(InvoiceItemModel product, int quantity, String unit)?
+    TResult Function(InvoiceItemModel product, int quantity, String unit,
+            double? customRate)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _SelectedItem() when $default != null:
-        return $default(_that.product, _that.quantity, _that.unit);
+        return $default(
+            _that.product, _that.quantity, _that.unit, _that.customRate);
       case _:
         return orElse();
     }
@@ -225,13 +240,15 @@ extension SelectedItemPatterns on SelectedItem {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(InvoiceItemModel product, int quantity, String unit)
+    TResult Function(InvoiceItemModel product, int quantity, String unit,
+            double? customRate)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SelectedItem():
-        return $default(_that.product, _that.quantity, _that.unit);
+        return $default(
+            _that.product, _that.quantity, _that.unit, _that.customRate);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -251,13 +268,15 @@ extension SelectedItemPatterns on SelectedItem {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(InvoiceItemModel product, int quantity, String unit)?
+    TResult? Function(InvoiceItemModel product, int quantity, String unit,
+            double? customRate)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SelectedItem() when $default != null:
-        return $default(_that.product, _that.quantity, _that.unit);
+        return $default(
+            _that.product, _that.quantity, _that.unit, _that.customRate);
       case _:
         return null;
     }
@@ -268,7 +287,10 @@ extension SelectedItemPatterns on SelectedItem {
 @JsonSerializable()
 class _SelectedItem implements SelectedItem {
   const _SelectedItem(
-      {required this.product, required this.quantity, required this.unit});
+      {required this.product,
+      required this.quantity,
+      required this.unit,
+      this.customRate});
   factory _SelectedItem.fromJson(Map<String, dynamic> json) =>
       _$SelectedItemFromJson(json);
 
@@ -278,6 +300,8 @@ class _SelectedItem implements SelectedItem {
   final int quantity;
   @override
   final String unit;
+  @override
+  final double? customRate;
 
   /// Create a copy of SelectedItem
   /// with the given fields replaced by the non-null parameter values.
@@ -302,16 +326,19 @@ class _SelectedItem implements SelectedItem {
             (identical(other.product, product) || other.product == product) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.unit, unit) || other.unit == unit));
+            (identical(other.unit, unit) || other.unit == unit) &&
+            (identical(other.customRate, customRate) ||
+                other.customRate == customRate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, product, quantity, unit);
+  int get hashCode =>
+      Object.hash(runtimeType, product, quantity, unit, customRate);
 
   @override
   String toString() {
-    return 'SelectedItem(product: $product, quantity: $quantity, unit: $unit)';
+    return 'SelectedItem(product: $product, quantity: $quantity, unit: $unit, customRate: $customRate)';
   }
 }
 
@@ -323,7 +350,11 @@ abstract mixin class _$SelectedItemCopyWith<$Res>
       __$SelectedItemCopyWithImpl;
   @override
   @useResult
-  $Res call({InvoiceItemModel product, int quantity, String unit});
+  $Res call(
+      {InvoiceItemModel product,
+      int quantity,
+      String unit,
+      double? customRate});
 
   @override
   $InvoiceItemModelCopyWith<$Res> get product;
@@ -345,6 +376,7 @@ class __$SelectedItemCopyWithImpl<$Res>
     Object? product = null,
     Object? quantity = null,
     Object? unit = null,
+    Object? customRate = freezed,
   }) {
     return _then(_SelectedItem(
       product: null == product
@@ -359,6 +391,10 @@ class __$SelectedItemCopyWithImpl<$Res>
           ? _self.unit
           : unit // ignore: cast_nullable_to_non_nullable
               as String,
+      customRate: freezed == customRate
+          ? _self.customRate
+          : customRate // ignore: cast_nullable_to_non_nullable
+              as double?,
     ));
   }
 

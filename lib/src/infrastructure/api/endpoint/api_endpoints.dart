@@ -8,16 +8,18 @@ class ApiEndPoints {
   static const String createCustomer = '$domain.customer.create_customer';
   static const String getCustomers = '$domain.customer.get_customers';
   static const String searchCustomers = '$domain.customer.search_customers';
+  static const String getCustomerDetails = '$domain.customer.get_customer_details';
+  static const String reconcileCreditNotes = '$domain.payments.reconcile_credit_notes';
 
   //? --- Orders ---
   static const String orderSummary = '$domain.orders.get_order_summary';
   static const String getInvoiceDetails = '$domain.orders.get_invoice_details';
   static const String uploadCapture = '$domain.capture.upload_capture';
 
-  static const String hyperMarketOrderSummary = '$domain.hypermarket.get_customer_delivered_items';
-  static const String hyperMarketUpdateStock = '$domain.hypermarket.save_visit_items';
-
-
+  static const String hyperMarketOrderSummary =
+      '$domain.hypermarket.get_customer_delivered_items';
+  static const String hyperMarketUpdateStock =
+      '$domain.hypermarket.save_visit_items';
 
   //? --- AUTH ---
   static const String signIn = '$domain.auth.login';
@@ -33,7 +35,7 @@ class ApiEndPoints {
   static const String createInvoice = '$domain.orders.create_invoice';
   static const String createPaymentApi = '$domain.payments.create_payment';
   static const String createReturnOrder = '$domain.returns.create_return_order';
-    static const String getDocumentHtml = '$domain.print.get_document_html';
+  static const String getDocumentHtml = '$domain.print.get_document_html';
 
   //? --- Settings ---
   static const String deleteAccountApi = '$domain.profile.delete_user_profile';
@@ -41,5 +43,4 @@ class ApiEndPoints {
   static const String appNotification = 'sabaa.api.api.get_notification_logs';
 
   static const String sendFcmToken = 'fcm_frappe.api.device_token';
-
 }

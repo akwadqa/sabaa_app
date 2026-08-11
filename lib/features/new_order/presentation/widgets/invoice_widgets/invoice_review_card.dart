@@ -12,11 +12,11 @@ class InvoiceItemUI {
   final String uom;
   final String pricePerItem; // price of one item
   final int focQuantity; // ✅ NEW
-  final int? paidCount; 
-  final String? focUom; 
+  final int? paidCount;
+  final String? focUom;
   final bool isAllFree;
-    final int freeQuantity;
-
+  final int freeQuantity;
+  final String? originalPricePerItem;
   InvoiceItemUI({
     required this.name,
     required this.count,
@@ -25,10 +25,10 @@ class InvoiceItemUI {
     required this.pricePerItem,
     this.focQuantity = 0,
     this.paidCount,
-        this.focUom, 
+    this.focUom,
     this.isAllFree = false,
     this.freeQuantity = 0,
-
+    this.originalPricePerItem,
   });
 }
 
@@ -42,6 +42,7 @@ class InvoiceReviewCard extends StatelessWidget {
     this.discountType,
     this.discountValue,
     this.discountAmount,
+    this.isReturn=false,
   });
 
   final List<InvoiceItemUI> items;
@@ -51,6 +52,7 @@ class InvoiceReviewCard extends StatelessWidget {
   final DiscountType? discountType;
   final double? discountValue;
   final String? discountAmount;
+  final bool isReturn;
 
   bool get _hasDiscount =>
       discountType != null && discountValue != null && discountValue! > 0;
@@ -69,7 +71,7 @@ class InvoiceReviewCard extends StatelessWidget {
       return '$formatted QAR';
     }
   }
-
+Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
@@ -85,7 +87,7 @@ class InvoiceReviewCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: BorderDirectional(
           start: BorderSide(
-            color: AppColors.primary,
+            color: returnColor,
             width: 8,
           ),
         ),
@@ -124,39 +126,40 @@ class InvoiceReviewCard extends StatelessWidget {
           // ),
 
           Flexible(
-  child: ConstrainedBox(
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.sizeOf(context).height * 0.35,
-    ),
-    child: ListView.builder(
-      itemCount: items.length,
-      shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        final item = items[index];
-        final isLast = index == items.length - 1;
-
-        // ✅ Show divider only when next item is a different product
-        final isLastOfProduct = isLast || items[index + 1].name != item.name;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _InvoiceItemRow(item: item),
-
-            // ✅ Thin divider between different products only
-            if (isLastOfProduct && !isLast)
-              const Divider(
-                height: 8,
-                thickness: 0.8,
-                color: Color(0xFFEEEEEE),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.35,
               ),
-          ],
-        );
-      },
-    ),
-  ),
-),
+              child: ListView.builder(
+                itemCount: items.length,
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final item = items[index];
+                  final isLast = index == items.length - 1;
+
+                  // ✅ Show divider only when next item is a different product
+                  final isLastOfProduct =
+                      isLast || items[index + 1].name != item.name;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _InvoiceItemRow(item: item),
+
+                      // ✅ Thin divider between different products only
+                      if (isLastOfProduct && !isLast)
+                        const Divider(
+                          height: 8,
+                          thickness: 0.8,
+                          color: Color(0xFFEEEEEE),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
           // SizedBox(
           //   height: items.length < 5
           //       ? null
@@ -308,7 +311,6 @@ class _InvoiceItemRow extends StatelessWidget {
     final allFoc = paidQty == 0 && hasFoc;
     final allFree = item.isAllFree || (paidQty == 0 && hasFree);
 
-   
     // ── Case 1: All Free — single green row, no paid row ──────────
     if (item.isAllFree) {
       return _ItemLine(
@@ -333,6 +335,7 @@ class _InvoiceItemRow extends StatelessWidget {
           pricePerItem: item.pricePerItem,
           total: item.total,
           isFoc: false,
+          originalPricePerItem: item.originalPricePerItem, // ✅ pass it
         ),
 
         // FOC row — shown only when FOC is enabled with quantity
@@ -347,7 +350,6 @@ class _InvoiceItemRow extends StatelessWidget {
           ),
       ],
     );
-  
   }
 }
 // ── Single line ───────────────────────────────────────────────────────────────
@@ -360,6 +362,7 @@ class _ItemLine extends StatelessWidget {
     required this.pricePerItem,
     required this.total,
     required this.isFoc,
+    this.originalPricePerItem,
   });
 
   final String name;
@@ -368,15 +371,14 @@ class _ItemLine extends StatelessWidget {
   final String pricePerItem; // ✅ always required now
   final String total;
   final bool isFoc;
-
+  final String? originalPricePerItem;
   @override
   Widget build(BuildContext context) {
     // ── Colors ──────────────────────────────────────────────────────────────
     final Color nameColor = isFoc ? Colors.green[700]! : AppColors.textPrimary;
     final Color metaColor =
         isFoc ? Colors.green[600]! : AppColors.textSecondary;
-    final Color totalColor =
-        isFoc ? Colors.green[700]! : AppColors.textPrimary;
+    final Color totalColor = isFoc ? Colors.green[700]! : AppColors.textPrimary;
 
     // ── Text styles ──────────────────────────────────────────────────────────
     final TextStyle nameStyle = isFoc
@@ -393,6 +395,7 @@ class _ItemLine extends StatelessWidget {
     final TextStyle totalStyle = isFoc
         ? AppTextStyle.interMedium12.copyWith(color: totalColor)
         : AppTextStyle.interSemiBold14.copyWith(color: totalColor);
+    final bool hasPriceChange = originalPricePerItem != null;
 
     return Container(
       color: isFoc ? Colors.green.withOpacity(0.05) : Colors.transparent,
@@ -442,14 +445,46 @@ class _ItemLine extends StatelessWidget {
 
           // ── Qty × Price ──────────────────────────────────────────────────
           // Uses Expanded so long prices never overflow
+          // Expanded(
+          //   flex: 4,
+          //   child: Text(
+          //     '$quantity × $pricePerItem',
+          //     style: qtyPriceStyle,
+          //     textAlign: TextAlign.center,
+          //     maxLines: 1,
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          // ),
           Expanded(
             flex: 4,
-            child: Text(
-              '$quantity × $pricePerItem',
-              style: qtyPriceStyle,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ✅ Show original price struck through if price was changed
+                // if (hasPriceChange)
+                //   Text(
+                //     '$quantity × $originalPricePerItem',
+                //     style: AppTextStyle.interRegular10.copyWith(
+                //       color: AppColors.textGrey,
+                //       decoration: TextDecoration.lineThrough,
+                //     ),
+                //     textAlign: TextAlign.center,
+                //     maxLines: 1,
+                //     overflow: TextOverflow.ellipsis,
+                //   ),
+
+                // ✅ Effective price (highlighted if changed)
+                Text(
+                  '$quantity × $pricePerItem',
+                  style: qtyPriceStyle.copyWith(
+                    color: hasPriceChange ? AppColors.accent : metaColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
 

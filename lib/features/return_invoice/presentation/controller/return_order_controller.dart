@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:sabaa/features/customers/domain/model/create_customer_response/create_customer_response.dart';
 import 'package:sabaa/features/customers/domain/model/customer_model.dart';
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/return_invoice/data/repositories/return_order_repository.dart';
 import 'package:sabaa/features/return_invoice/domain/model/return_invoice_model.dart';
 import 'package:sabaa/features/return_invoice/domain/model/selected_item_model.dart';
@@ -324,51 +325,68 @@ Future<void> search(String query) async {
 
   /// Unit is read-only for returns, so no updateUnit method
 
-  Future<bool> createReturnOrder() async {
-    final current = state.value!;
-    state = AsyncData(current.copyWith(isSubmitting: true));
+Future<InvoiceModel?> createReturnOrder() async {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(isSubmitting: true));
 
-    try {
-      final customerId = current.customer?.customerId;
-      final repo = ref.read(returnOrderRepositoryProvider);
+  try {
+    final customerId = current.customer?.customerId;
+    final repo = ref.read(returnOrderRepositoryProvider);
 
-      final items = current.selectedItems.values.map((e) {
-        return {
-          "itemCode": e.product.itemCode,
-          "qty": e.quantity,
-          "uom": e.unit,
-        };
-      }).toList();
+    final items = current.selectedItems.values.map((e) {
+      final itemMap = <String, dynamic>{
+        "itemCode": e.product.itemCode,
+        "qty": e.quantity,
+        "uom": e.unit,
+      };
 
-      if (customerId == null) {
-        Dev.logError('customer?.id==null');
-        return false;
+      // ✅ Send custom rate if user changed it
+      if (e.customRate != null) {
+        itemMap['rate'] = e.customRate;
       }
 
-      // Call repository to create return order (adjust endpoint as needed)
-      await repo.createReturnOrder(
-        invoiceId: current.invoiceId!, // ✅ correct
-        items: items,
-        // deliveryFee: '0',
-      );
+      return itemMap;
+    }).toList();
 
-      final latest = state.value!;
-      state = AsyncData(latest.copyWith(
-        selectedItems: {},
-        isSubmitting: false,
-      ));
-
-      AppToast.successToast('Return order created successfully');
-      return true;
-    } catch (e) {
-      final latest = state.value!;
-      state = AsyncData(latest.copyWith(isSubmitting: false));
-      AppToast.errorToast('Failed to create return order');
-      Dev.logError('Return order error: $e');
-      return false;
+    if (customerId == null) {
+      Dev.logError('customer?.id==null');
+      return null;
     }
-  }
 
+    // ✅ Capture the response
+    final response = await repo.createReturnOrder(
+      invoiceId: current.invoiceId!,
+      items: items,
+    );
+
+    final latest = state.value!;
+    state = AsyncData(latest.copyWith(
+      selectedItems: {},
+      isSubmitting: false,
+    ));
+
+    AppToast.successToast('Return order created successfully');
+    return response.data; // ✅ return the invoice
+  } catch (e) {
+    final latest = state.value!;
+    state = AsyncData(latest.copyWith(isSubmitting: false));
+    AppToast.errorToast('Failed to create return order');
+    Dev.logError('Return order error: $e');
+    return null;
+  }
+}
+
+// return_order_controller.dart
+
+void updateRate(String itemCode, double? rate) {
+  final current = state.value!;
+  final map = Map<String, SelectedItem>.from(current.selectedItems);
+  final existing = map[itemCode];
+  if (existing == null) return;
+
+  map[itemCode] = existing.copyWith(customRate: rate);
+  state = AsyncData(current.copyWith(selectedItems: map));
+}
   void clearOrder() {
     final current = state.value!;
 

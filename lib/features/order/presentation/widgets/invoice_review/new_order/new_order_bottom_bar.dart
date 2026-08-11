@@ -8,6 +8,8 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:sabaa/src/resourses/font_manager/app_text_style.dart';
 import 'package:slider_button/slider_button.dart';
 
+import '../return_order/return_created_dialog.dart';
+
 class NewOrderBottomBar extends ConsumerWidget {
   const NewOrderBottomBar({super.key});
 
@@ -59,7 +61,7 @@ class NewOrderBottomBar extends ConsumerWidget {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => InvoiceCreatedDialog(invoice: invoice),
+              builder: (_) =>isReturn?ReturnCreatedDialog(invoice: invoice,): InvoiceCreatedDialog(invoice: invoice),
             );
           }
         });

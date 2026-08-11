@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sabaa/features/order/data/repository/order_repository.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
+import 'package:sabaa/features/order/domain/order_summary/payment_response_model.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 import 'package:sabaa/features/order/presentation/controller/order_state.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
@@ -140,12 +142,14 @@ class OrderController extends _$OrderController {
     await getOrderSummary(customerId: customerId ?? _customerId!, page: 1);
     return true;
   }
-void resetOrdersFilter({required String customerId}) {
-  final current = state.value!;
-  state = AsyncData(
-    current.copyWith(ordersTypeFilter: 'all'),
-  );
-}
+
+  void resetOrdersFilter({required String customerId}) {
+    final current = state.value!;
+    state = AsyncData(
+      current.copyWith(ordersTypeFilter: 'all'),
+    );
+  }
+
   Future<bool> createPayment({
     required String invoiceId,
     required String amount,
@@ -177,7 +181,55 @@ void resetOrdersFilter({required String customerId}) {
       return false;
     }
   }
+// order_controller.dart — add this method
+// order_controller.dart
 
+// order_controller.dart
+
+Future<bool> reconcileCreditNotes({
+  required String invoiceId,
+  required List<String> creditNoteIds,
+  String? customerName, // ✅ pass customer name from bottom sheet
+}) async {
+  final current = state.value!;
+  state = AsyncData(current.copyWith(isPaying: true));
+
+  try {
+    final response = await ref.read(orderRepositoryProvider).reconcileCreditNotes(
+      invoiceId: invoiceId,
+      creditNoteIds: creditNoteIds,
+    );
+
+    // ✅ Calculate total allocated amount from all credit notes
+    final totalAllocated = response.allocations.fold<double>(
+      0,
+      (sum, a) => sum + a.allocatedAmount.toDouble(),
+    );
+
+    // ✅ Build paymentData same as normal payment
+    final paymentData = PaymentResponseModel(
+      paymentId: response.invoiceId,        // Invoice ID
+      paymentType: 'Credit Note',            // Type
+      party: customerName ?? '',
+      partyName: customerName ?? '',
+      modeOfPayment: 'Credit Note',          // Mode
+      paidAmount: totalAllocated,            // Sum of allocations
+      currency: 'QAR',
+      docStatus: 1,
+    );
+
+    state = AsyncData(current.copyWith(
+      isPaying: false,
+      paymentData: paymentData,
+    ));
+
+    return true;
+  } catch (e) {
+    state = AsyncData(current.copyWith(isPaying: false));
+    AppToast.errorToast('failed_to_apply_credit_notes'.tr());
+    return false;
+  }
+}
   Future<UploadCaptureResponse?> uploadCapture({
     required String visitId,
     required String captureNote,

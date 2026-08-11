@@ -33,18 +33,18 @@ class ReturnOrderBottomBar extends ConsumerWidget {
       useGlassEffect: true,
       alignLabel: Alignment.center,
       action: () async {
-        final success = await ref
+        final invoice = await ref
             .read(returnOrderControllerProvider.notifier)
             .createReturnOrder();
 
-        if (!success || !context.mounted) return false;
+        if (invoice == null || !context.mounted) return false;
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => const ReturnCreatedDialog(),
+              builder: (_) =>  ReturnCreatedDialog(invoice: invoice,),
             );
           }
         });
@@ -54,7 +54,7 @@ class ReturnOrderBottomBar extends ConsumerWidget {
       label: Text(
         'swipe_to_confirm'.tr(),
         style: AppTextStyle.interSemiBold14.copyWith(
-          color: AppColors.primary,
+          color: AppColors.accent,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -64,7 +64,7 @@ class ReturnOrderBottomBar extends ConsumerWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: AppColors.primaryGradient,
+            colors: AppColors.accentGradient,
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -80,7 +80,7 @@ class ReturnOrderBottomBar extends ConsumerWidget {
       radius: 18,
       backgroundColor: AppColors.sliderBackground,
       baseColor: AppColors.sliderBase,
-      highlightedColor: AppColors.sliderHighlight,
+      highlightedColor: AppColors.accent,
       buttonColor: Colors.transparent,
     );
   }

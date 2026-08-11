@@ -93,7 +93,7 @@ class _ReturnItemsPageState extends ConsumerState<ReturnItemsPage> {
             isFiled: true,
             height: 48,
             width: double.infinity,
-            backgroundColor: hasItems ? AppColors.primary : AppColors.gray,
+            backgroundColor: hasItems ? AppColors.accent : AppColors.gray,
             radius: 8,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -181,7 +181,8 @@ class _ReturnOrderBody extends ConsumerWidget {
             hintKey: 'search_items_barcode',
             onChanged: onSearchChanged,
             onBarcodeTap: () {
-              context.push(AppRoutes.barcodeScreen, extra: {'fromNewOrder': false});
+              context.push(AppRoutes.barcodeScreen,
+                  extra: {'fromNewOrder': false});
             },
           ),
           // OrderCategoryFilter(
@@ -238,6 +239,12 @@ class _ReturnOrderBody extends ConsumerWidget {
                           selectedUnit: selected?.unit ?? 'Box',
                           isSelected: isSelected,
                           maxReturnQuantity: item.qty,
+                          customRate: selected?.customRate,
+                          onRateChanged: (rate) {
+                            ref
+                                .read(returnOrderControllerProvider.notifier)
+                                .updateRate(item.itemCode, rate);
+                          },
                           onIncrement: () => ref
                               .read(returnOrderControllerProvider.notifier)
                               .increment(item),

@@ -1,3 +1,4 @@
+import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/src/infrastructure/api/endpoint/api_endpoints.dart';
 import 'package:sabaa/src/infrastructure/api/response/api_response.dart';
 import 'package:sabaa/src/infrastructure/network/services/network_service.dart';
@@ -13,24 +14,21 @@ class ReturnOrderDatasource {
 
   Future<ApiResponse<ReturnInvoiceModel>> getInvoiceDetails({
     required int page,
-   required String invoiceId,
+    required String invoiceId,
     String? category,
     String? type,
-
   }) async {
     try {
       final response = await _networkService.get(
         ApiEndPoints.getInvoiceDetails,
         // data: {
 
-
         // },
         queryParameters: {
           'page': page,
-           'invoice_id': invoiceId,
+          'invoice_id': invoiceId,
           if (category != null) 'category': category,
           if (type != null) 'type': type,
-
         },
       );
 
@@ -49,7 +47,7 @@ class ReturnOrderDatasource {
   }
 
   /// Create return order
-  Future<ApiResponse<void>> createReturnOrder({
+  Future<ApiResponse<InvoiceModel>> createReturnOrder({
     required String invoiceId,
     required List<Map<String, dynamic>> items,
     String? returnReason,
@@ -70,11 +68,11 @@ class ReturnOrderDatasource {
         throw Exception('Create return order failed');
       }
 
-      return ApiResponse.fromJson(response.data, (_) {});
+      return ApiResponse.fromJson(response.data,
+          (json) => InvoiceModel.fromJson(json as Map<String, dynamic>));
     } catch (e) {
       Dev.logError('Error in createReturnOrder: $e');
       rethrow;
     }
   }
-
 }

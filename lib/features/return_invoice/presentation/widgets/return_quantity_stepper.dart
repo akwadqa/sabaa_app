@@ -220,7 +220,7 @@ class _StepButton extends StatelessWidget {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: plus&enabled ? AppColors.primary : AppColors.white,
+            color: plus&enabled ? AppColors.accent : AppColors.white,
             borderRadius: BorderRadius.circular(4),
             boxShadow: const [
               BoxShadow(
@@ -231,7 +231,7 @@ class _StepButton extends StatelessWidget {
             ],
           ),
           child: Icon(icon,
-              size: 16, color: enabled ?plus?AppColors.background: AppColors.textPrimary : Colors.grey[400]),
+              size: 16, color: enabled ?plus?AppColors.background: AppColors.accent : Colors.grey[400]),
         ),
       ),
     );

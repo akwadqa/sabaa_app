@@ -63,6 +63,8 @@ class _OrderSummaryPageState extends ConsumerState<OrderSummaryPage> {
         return InvoicePaymentBottomSheet(
           invoice: invoice,
           outstandingBalance: invoice.outstandingAmount,
+          customer: widget.customer,
+
         );
       },
     );
@@ -223,6 +225,9 @@ class _OrderSummaryPageContentState
 
     return AppPaginationWidget(
       key: ValueKey('${selectedFilter}_${selectedAction ?? 'default'}'),
+         enablePullDown: true,
+              onRefresh: () =>
+                  ref.read(orderControllerProvider.notifier).refresh(),
       onLoading: (page) {
         if (orderSummary.invoices.isEmpty) {
           return Future.value(false);
@@ -377,6 +382,7 @@ class _OrderSummaryPageContentState
                       invoice: invoice,
                       customer: customer,
                       outstandingBalance: orderSummary.outstandingBalance,
+                      selectedActionIsOrder: selectedAction == 'order',
                       actions: invoice.status == 'Paid'
                           ? ['return']
                           : ['return', 'pay'],

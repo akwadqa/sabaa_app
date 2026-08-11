@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sabaa/features/customers/presentation/screens/create_customer_success_page.dart';
 import 'package:sabaa/features/main/presentation/screens/main_screen.dart';
 import 'package:sabaa/features/order/presentation/widgets/invoice_review/invoice_pdf_actions_service.dart';
@@ -16,6 +19,7 @@ import 'package:flutter/widgets.dart' as flutter;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:sabaa/src/core/utils/functions/helper_methods.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../src/core/shared_widgets/custom_button_widget.dart';
 import '../../../../src/resourses/font_manager/app_text_style.dart';
 import '../controller/order_controller.dart';
@@ -146,7 +150,9 @@ class PaymentSuccessPage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(title, style: AppTextStyle.interMedium14),
-          Text(value, style: AppTextStyle.interMedium14),
+          SizedBox(
+            width: 150,
+            child: Text(value, style: AppTextStyle.interMedium14)),
         ],
       ),
     );
@@ -156,6 +162,7 @@ class PaymentSuccessPage extends ConsumerWidget {
 // ═══════════════════════════════════════════════════════════════════════════════
 // PRINT RECEIPT BUTTON
 // ═══════════════════════════════════════════════════════════════════════════════
+enum ReceiptAction { print, share }
 
 class _PrintReceiptButton extends ConsumerStatefulWidget {
   const _PrintReceiptButton({
@@ -173,15 +180,18 @@ class _PrintReceiptButton extends ConsumerStatefulWidget {
   final num amount;
 
   @override
-  ConsumerState<_PrintReceiptButton> createState() => _PrintReceiptButtonState();
+  ConsumerState<_PrintReceiptButton> createState() =>
+      _PrintReceiptButtonState();
 }
 
 class _PrintReceiptButtonState extends ConsumerState<_PrintReceiptButton> {
   bool _isLoading = false;
   late final InvoicePdfActionsService _pdfActions;
   bool _isGeneratingPdf = false;
+  ReceiptAction? _loadingAction;
+  bool get _isBusy => _loadingAction != null;
 
- @override
+  @override
   void initState() {
     super.initState();
 
@@ -190,8 +200,12 @@ class _PrintReceiptButtonState extends ConsumerState<_PrintReceiptButton> {
       context: () => context,
       isMounted: () => mounted,
       onLoadingChange: (loading) {
-        if (mounted) setState(() => _isGeneratingPdf = loading);
-      },
+    if (!mounted) return;
+
+        // only clear loading when action finishes
+        if (!loading) {
+          setState(() => _loadingAction = null);
+        }      },
     );
 
     // if (widget.mode == InvoiceReviewMode.viewOnly && widget.invoiceId != null) {
@@ -203,13 +217,26 @@ class _PrintReceiptButtonState extends ConsumerState<_PrintReceiptButton> {
     // }
   }
 
-
   Future<void> _printReceipt() async {
-    // ✅ Use the ID-based method for Payment Entry
+    if (_isBusy) return;
+
+    setState(() => _loadingAction = ReceiptAction.print);
+
+    try {
+      final isCreditNote = widget.paymentType == 'Credit Note';
+
     await _pdfActions.printFromHtmlById(
-      documentId: widget.invoiceId,               // payment.paymentId
-      docType: InvoiceDocType.paymentEntry,       // ✅ Payment Entry
+      documentId: widget.invoiceId,
+      docType: isCreditNote
+          ? InvoiceDocType.salesInvoice   // Print the invoice for credit note
+          : InvoiceDocType.paymentEntry,  // Print payment entry for normal
     );
+
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loadingAction = null);
+      }
+    }
   }
 // ! Old manual handle pdf Donot delete it maybe need re use it //
   // Future<void> _printReceipt() async {
@@ -249,47 +276,142 @@ class _PrintReceiptButtonState extends ConsumerState<_PrintReceiptButton> {
   //     if (mounted) setState(() => _isLoading = false);
   //   }
   // }
+  // ✅ Share using local PDF (PaymentReceiptPdfGenerator) — no HTML needed
+  Future<void> _shareReceipt() async {
+    if (_isBusy) return;
+
+    setState(() => _loadingAction = ReceiptAction.share);
+
+    try {
+      final Uint8List pdfBytes = await PaymentReceiptPdfGenerator.generate(
+        context: context,
+        invoiceId: widget.invoiceId,
+        customerName: widget.customerName,
+        paymentType: widget.paymentType,
+        paymentMethod: widget.paymentMethod,
+        amount: widget.amount.toDouble(),
+      );
+
+      if (!mounted) return;
+
+      final dir = await getTemporaryDirectory();
+      final sanitized =
+          widget.invoiceId.replaceAll(RegExp(r'[/\\:*?"<>|]'), '_');
+      final filePath = '${dir.path}/receipt_$sanitized.pdf';
+      await File(filePath).writeAsBytes(pdfBytes);
+
+      if (!mounted) return;
+
+      await Share.shareXFiles(
+        [XFile(filePath, mimeType: 'application/pdf')],
+        subject: 'Payment Receipt - ${widget.invoiceId}',
+      );
+    } catch (e) {
+      debugPrint('❌ Share receipt error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('failed_to_share_pdf'.tr()),
+            backgroundColor: AppColors.errorRed,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loadingAction = null);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: OutlinedButton(
-        onPressed: _isLoading ? null : _printReceipt,
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+    return Row(
+      children: [
+        // ── Print Button ─────────────────────────────────────────────
+
+        Expanded(
+          child: SizedBox(
+            height: 50,
+            child: OutlinedButton(
+              onPressed: _isBusy ? null : _printReceipt,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: _loadingAction == ReceiptAction.print
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.print_outlined,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'print_receipt'.tr(),
+                          style: AppTextStyle.interSemiBold14.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.primary,
+
+        const SizedBox(width: 12),
+
+        // ── Share Button ─────────────────────────────────────────────
+        Expanded(
+          child: SizedBox(
+            height: 50,
+            child: OutlinedButton(
+              onPressed: _isBusy ? null : _shareReceipt,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 8,
-                children: [
-                  const Icon(
-                    Icons.print_outlined,
-                    color: AppColors.primary,
-                    size: 22,
-                  ),
-                  Text(
-                    'print_receipt'.tr(),
-                    style: AppTextStyle.interSemiBold14.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
               ),
-      ),
+              child:  _loadingAction == ReceiptAction.share
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.share_outlined,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'share'.tr(),
+                          style: AppTextStyle.interSemiBold14.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -364,7 +486,6 @@ class PaymentReceiptPdfGenerator {
                         child: pw.Image(
                           logoImage,
                           fit: pw.BoxFit.cover,
-                          
                         ),
                       ),
                     ),

@@ -202,6 +202,7 @@ class _OrderBody extends ConsumerWidget {
   final TextEditingController searchController;
   final ValueChanged<String> onSearchChanged;
   final bool isReturn;
+  Color get returnColor => isReturn ? AppColors.accent : AppColors.primary;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -227,6 +228,7 @@ class _OrderBody extends ConsumerWidget {
                 ? state.categories.map((e) => e.name).toList()
                 : ['All'],
             selectedIndex: state.selectedCategoryIndex,
+            returnColor: returnColor,
             onSelected: (i) =>
                 ref.read(newOrderControllerProvider.notifier).selectCategory(i),
           ),
@@ -245,10 +247,10 @@ class _OrderBody extends ConsumerWidget {
               child: ListView(
                 children: [
                   if (state.listState is AsyncLoading)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(bottom: 8),
                       child: LinearProgressIndicator(
-                        color: AppColors.primary,
+                        color: returnColor,
                         backgroundColor: AppColors.white,
                       ),
                     ),
@@ -288,6 +290,7 @@ class _OrderBody extends ConsumerWidget {
                           quantity: selected?.quantity ?? 0,
                           selectedUnit: selected?.unit ?? defaultUnit,
                           isSelected: isSelected,
+                          isReturn: isReturn,
                           onIncrement: () => ref
                               .read(newOrderControllerProvider.notifier)
                               .increment(item),

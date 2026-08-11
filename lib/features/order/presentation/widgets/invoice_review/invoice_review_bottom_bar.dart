@@ -8,6 +8,8 @@ import 'package:sabaa/features/order/presentation/widgets/invoice_review/new_ord
 import 'package:sabaa/features/order/presentation/widgets/invoice_review/return_order/return_order_bottom_bar.dart';
 import 'package:sabaa/features/order/presentation/widgets/invoice_review/view_only/view_only_bottom_bar.dart';
 
+import 'invoice_pdf_actions_service.dart';
+
 class InvoiceReviewBottomBar extends ConsumerWidget {
   const InvoiceReviewBottomBar({
     super.key,
@@ -16,7 +18,8 @@ class InvoiceReviewBottomBar extends ConsumerWidget {
     required this.fallbackInvoiceId,
     required this.onShare,
     required this.onPrint,
-    this.isOrder = false, // <-- ADD THIS
+    this.isOrder = false,
+    this.pdfActions,
   });
 
   final InvoiceReviewMode mode;
@@ -24,7 +27,8 @@ class InvoiceReviewBottomBar extends ConsumerWidget {
   final String? fallbackInvoiceId;
   final VoidCallback onShare;
   final VoidCallback onPrint;
-  final bool isOrder; // <-- ADD THIS
+  final bool isOrder;
+  final InvoicePdfActionsService? pdfActions;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isOrder) {
@@ -42,6 +46,15 @@ class InvoiceReviewBottomBar extends ConsumerWidget {
           onPrint: onPrint,
           isLoading: isLoading,
           invoiceId: state?.invoiceId ?? fallbackInvoiceId ?? '',
+          paymentReferences: state?.paymentReferences ?? [],
+          pdfActions: pdfActions, 
+          // ✅ Print specific payment entry
+          onPrintPayment: (paymentId) {
+            pdfActions?.printFromHtmlById(
+              documentId: paymentId,
+              docType: InvoiceDocType.paymentEntry,
+            );
+          },
         );
     }
   }

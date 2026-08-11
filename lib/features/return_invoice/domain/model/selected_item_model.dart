@@ -11,6 +11,7 @@ abstract class SelectedItem with _$SelectedItem {
     required InvoiceItemModel product,
     required int quantity,
     required String unit,
+    double? customRate,
   }) = _SelectedItem;
 
   factory SelectedItem.fromJson(Map<String, dynamic> json) =>

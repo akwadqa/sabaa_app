@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sabaa/features/order/domain/create_payment/create_payment_response.dart';
+import 'package:sabaa/features/order/domain/create_payment/credit_note_reconcile_response.dart';
 import 'package:sabaa/features/order/domain/order_summary/order_summary_model.dart';
 import 'package:sabaa/features/order/domain/upload_capture/upload_capture_response.dart';
 
@@ -15,7 +16,7 @@ class OrderState {
   final List<String>? images;
   final String selectedAction;
   final String? summaryAction;
-
+  final CreditNoteReconcileResponse? creditNoteResult;
   OrderState({
     this.uploadCaptureResponse,
     required this.ordersTypeFilter,
@@ -26,7 +27,7 @@ class OrderState {
     this.images,
     this.selectedAction = 'invoice',
     this.summaryAction,
-
+    this.creditNoteResult,
   });
 
   factory OrderState.init() {
@@ -52,8 +53,8 @@ class OrderState {
     bool? filterLoading,
     List<String>? images,
     String? selectedAction,
-String? summaryAction,
-
+    String? summaryAction,
+    CreditNoteReconcileResponse? creditNoteResult,
   }) {
     return OrderState(
       ordersTypeFilter: ordersTypeFilter ?? this.ordersTypeFilter,
@@ -65,9 +66,8 @@ String? summaryAction,
       filterLoading: filterLoading ?? this.filterLoading,
       images: images ?? this.images,
       selectedAction: selectedAction ?? this.selectedAction,
-summaryAction: summaryAction ?? this.summaryAction,
-
+      summaryAction: summaryAction ?? this.summaryAction,
+      creditNoteResult: creditNoteResult ?? this.creditNoteResult,
     );
   }
-
 }

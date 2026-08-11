@@ -23,6 +23,7 @@ class OrderItemCard extends ConsumerStatefulWidget {
     required this.onIncrement,
     required this.onDelete,
     required this.isSelected,
+    required this.isReturn,
     required this.onUnitChanged,
     required this.selectedUnit,
     this.allowEditPrice = false,
@@ -42,6 +43,7 @@ class OrderItemCard extends ConsumerStatefulWidget {
   });
   final List<UomLine> extraUomLines;
   final bool isSelected;
+  final bool isReturn;
   final ProductModel item;
   final int quantity;
   final VoidCallback onDecrement;
@@ -114,6 +116,9 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
     ];
   }
 
+  Color get returnColor =>
+      widget.isReturn ? AppColors.accent : AppColors.primary;
+
   @override
   Widget build(BuildContext context) {
     // ✅ Guard against empty uoms list
@@ -138,7 +143,7 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
         borderRadius: BorderRadius.circular(12),
         border: BorderDirectional(
           start: BorderSide(
-            color: widget.isSelected ? AppColors.primary : AppColors.borderGrey,
+            color: widget.isSelected ? returnColor : AppColors.borderGrey,
             width: widget.isSelected ? 5 : 1,
           ),
         ),
@@ -271,11 +276,12 @@ class _OrderItemCardState extends ConsumerState<OrderItemCard> {
                         orElse: () => uoms.first,
                       )
                       .availableStock,
+                  isReturn: widget.isReturn,
                 ),
               ],
             ),
 // Extra UOM lines section
-          if (widget.isSelected&& widget.showFreeToggle) ...[
+          if (widget.isSelected && widget.showFreeToggle) ...[
             const SizedBox(height: 10),
             _UomLinesSection(
               item: widget.item,
@@ -787,8 +793,7 @@ class _UomLinesSection extends ConsumerWidget {
                   controller.updateUomLineUnit(item.itemCode, index, uom),
               onQuantityChanged: (qty) =>
                   controller.updateUomLineQuantity(item.itemCode, index, qty),
-              onDelete: () =>
-                  controller.removeUomLine(item.itemCode, index),
+              onDelete: () => controller.removeUomLine(item.itemCode, index),
             ),
           );
         }),
@@ -879,8 +884,7 @@ class _UomLineRow extends StatelessWidget {
               // ── UOM Dropdown ────────────────────────────────────
               Container(
                 height: 36,
-                padding:
-                    const EdgeInsetsDirectional.only(start: 10, end: 6),
+                padding: const EdgeInsetsDirectional.only(start: 10, end: 6),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -925,8 +929,7 @@ class _UomLineRow extends StatelessWidget {
                       return DropdownMenuItem<String>(
                         value: uomModel.uom,
                         child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               uomModel.uom,

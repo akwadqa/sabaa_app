@@ -9,11 +9,13 @@ class OrderCategoryFilter extends StatelessWidget {
     required this.categories,
     required this.selectedIndex,
     required this.onSelected,
+    required this.returnColor,
   });
 
-  final List<String>    categories; // list of translation keys
-  final int             selectedIndex;
+  final List<String> categories; // list of translation keys
+  final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final Color returnColor;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,7 @@ class OrderCategoryFilter extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         // crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          
-          
-          categories.length, (i) {
+        children: List.generate(categories.length, (i) {
           final isActive = i == selectedIndex;
           return Padding(
             padding: EdgeInsets.only(right: i < categories.length - 1 ? 8 : 0),
@@ -35,7 +34,7 @@ class OrderCategoryFilter extends StatelessWidget {
                 height: 36,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : const Color(0xFFF1F5F9),
+                  color: isActive ? returnColor : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(9999),
                   border: isActive
                       ? null
@@ -46,8 +45,7 @@ class OrderCategoryFilter extends StatelessWidget {
                   categories[i].tr(),
                   style: AppTextStyle.interMedium14.copyWith(
                     color: isActive ? AppColors.white : AppColors.textHeading,
-                    fontWeight:
-                        isActive ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   ),
                 ),
               ),
