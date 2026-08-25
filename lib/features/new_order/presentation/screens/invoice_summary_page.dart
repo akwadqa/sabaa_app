@@ -169,7 +169,7 @@ class InvoiceSummaryPage extends ConsumerWidget {
             canDelete: productLines.length > 1,
             isOnlyLine: productLines.length == 1,
             isReturn: isReturn,
-          ).onlyPadding(bottom: isLastLine ? 0 : 8), // tight between lines
+          ).onlyPadding(bottom: 10), // tight between lines
         );
       }
 

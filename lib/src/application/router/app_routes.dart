@@ -22,4 +22,6 @@ abstract class AppRoutes {
   static const String barcodeScreen = '/barcode';
   static const String displayCaptureScreen = '/display_capture';
 
+  static const String reportsScreen = '/reports';
+  static const String customerReportScreen = '/customer-report';
 }

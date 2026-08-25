@@ -86,7 +86,7 @@ class _QuantityStepperState extends State<QuantityStepper> {
               onChanged: (value) {
                 final parsed = int.tryParse(value) ?? 0;
 
-                if (parsed > widget.maxStock) {
+                if ((parsed > widget.maxStock)&&!widget.isReturn) {
                   AppToast.errorToast(
                       "The limit of stock is ${widget.maxStock}");
                   controller.text = widget.maxStock.toString();

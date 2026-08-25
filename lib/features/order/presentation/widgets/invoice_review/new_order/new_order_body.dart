@@ -56,28 +56,24 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
     );
   }
 
-  double _effectivePrice(SelectedItem e) {
-    if (e.customRate != null) return e.customRate!;
-    if (e.product.uoms.isEmpty) return e.product.price;
-
-    return e.product.uoms
-        .firstWhere(
-          (u) => u.uom == e.unit,
-          orElse: () => e.product.uoms.first,
-        )
-        .price;
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(newOrderControllerProvider).value!;
     final controller = ref.read(newOrderControllerProvider.notifier);
-    final selectedProducts = state.selectedItems.values.toList();
     final isReturn = state.isReturn;
     final selectedLines = state.selectedLines;
+
 // ── Group lines by itemCode to keep them together ──────────────
     final grouped = <String, List<SelectedItemLine>>{};
     final orderOfProducts = <String>[]; // preserve original order
+
+    final tax = controller.calculateTotalTax();
+    final subtotal = controller.calculateSubtotal();
+
+    // final discount = controller.calculateDiscountAmount(subtotal);
+
+  final deliveryFee =
+      isReturn ? 0.0 : (double.tryParse(state.deliveryFee ?? '') ?? 0.0);
 
     for (final line in selectedLines) {
       final code = line.product.itemCode;
@@ -87,6 +83,7 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
       }
       grouped[code]!.add(line);
     }
+
     final allInvoiceItems = <InvoiceItemUI>[];
     double subtotalValue = 0;
 
@@ -101,17 +98,20 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
         final price = line.customRate ?? uomModel.price;
         final paidQty = line.isAllFree ? 0 : line.quantity;
 
+        final lineTax = line.isAllFree ? 0.0 : (uomModel.tax * paidQty);
+
         allInvoiceItems.add(InvoiceItemUI(
           name: line.product.productName,
           count: line.quantity,
           paidCount: paidQty,
           uom: line.unit,
-          pricePerItem: price.toStringAsFixed(2),
-          total: (price * paidQty).toCurrency(),
+          pricePerItem: price.toCurrency(withSymbol: false) ,
+          total: (price * paidQty).toCurrency(withSymbol: false),
           focQuantity: line.isFocEnabled ? line.focQuantity : 0,
           focUom: line.isFocEnabled ? line.focUom : null,
           isAllFree: line.isAllFree,
           freeQuantity: line.isAllFree ? line.quantity : 0,
+          itemTax: lineTax.toCurrency(withSymbol: false) , 
         ));
 
         if (!line.isAllFree) {
@@ -120,68 +120,12 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
       }
     }
 
-    // for (final e in selectedProducts) {
-    //   final price = _effectivePrice(e);
-
-    //   // ── Main line ────────────────────────────────────────────
-    //   allInvoiceItems.add(InvoiceItemUI(
-    //     name: e.product.productName,
-    //     count: e.quantity,
-    //     paidCount: e.isAllFree ? 0 : e.quantity,
-    //     uom: e.unit,
-    //     pricePerItem: price.toCurrency(),
-    //     total: e.isAllFree ? '0.00' : (price * e.quantity).toCurrency(),
-    //     focQuantity: e.isFocEnabled ? e.focQuantity : 0,
-    //     focUom: e.isFocEnabled ? e.focUom : null,
-    //     isAllFree: e.isAllFree,
-    //     freeQuantity: e.isAllFree ? e.quantity : e.freeQuantity,
-    //   ));
-
-    //   // ── Extra UOM lines ──────────────────────────────────────
-    //   for (final line in e.extraUomLines) {
-    //     final lineUomPrice = e.product.uoms
-    //         .firstWhere(
-    //           (u) => u.uom == line.uom,
-    //           orElse: () => e.product.uoms.first,
-    //         )
-    //         .price;
-
-    //     allInvoiceItems.add(InvoiceItemUI(
-    //       name: e.product.productName, // same name
-    //       count: line.quantity,
-    //       paidCount: line.quantity,
-    //       uom: line.uom, // different UOM
-    //       pricePerItem: lineUomPrice.toCurrency(),
-    //       total: (lineUomPrice * line.quantity).toCurrency(),
-    //       focQuantity: 0,
-    //       isAllFree: false,
-    //       freeQuantity: 0,
-    //     ));
-    //   }
-    // }
-
-// Use allInvoiceItems instead of items in InvoiceReviewCard
-
-// ── Subtotal includes extra lines ────────────────────────────
-    //  subtotalValue = selectedProducts.fold<double>(0, (sum, e) {
-    //   if (e.isAllFree) return sum;
-    //   final mainTotal = _effectivePrice(e) * e.quantity;
-    //   final extraTotal = e.extraUomLines.fold<double>(0, (s, line) {
-    //     final linePrice = e.product.uoms
-    //         .firstWhere(
-    //           (u) => u.uom == line.uom,
-    //           orElse: () => e.product.uoms.first,
-    //         )
-    //         .price;
-    //     return s + (linePrice * line.quantity);
-    //   });
-    //   return sum + mainTotal + extraTotal;
-    // });
-
-    final deliveryFee = double.tryParse(state.deliveryFee ?? '') ?? 0.0;
     final discountAmount = controller.calculateDiscountAmount(subtotalValue);
-    final totalValue = (subtotalValue + deliveryFee - discountAmount)
-        .clamp(0, double.infinity);
+  final totalValue = isReturn
+      ? (subtotalValue + tax).clamp(0, double.infinity) // return: no delivery/discount usually
+      : (subtotalValue + tax + deliveryFee - discountAmount)
+          .clamp(0, double.infinity);
+
 
     return KeyboardActions(
       config: _iosKeyboardConfig(),
@@ -212,15 +156,19 @@ class _NewOrderBodyState extends ConsumerState<NewOrderBody> {
             ],
             InvoiceReviewCard(
               items: allInvoiceItems,
-              subtotal: formatPrice(subtotalValue),
-              deliveyFee: state.deliveryFee ?? '0',
+              subtotal: subtotalValue.toCurrency(withSymbol: false) ,
+              tax: tax > 0 ? tax.toCurrency(withSymbol: false) : null,
+              deliveyFee: deliveryFee > 0 ? formatPrice(deliveryFee) : null,
               total: formatPrice(totalValue.toDouble()),
-              discountType: state.discountType,
-              discountValue: state.discountValue,
-              discountAmount: formatPrice(discountAmount),
+              discountType: state.hasDiscount ? state.discountType : null,
+              discountValue: state.hasDiscount ? state.discountValue : null,
+              discountAmount:
+                  state.hasDiscount ? formatPrice(discountAmount) : null,
               isReturn: state.isReturn,
             ).symmetricPadding(horizontal: 12, vertical: 16),
-             RemarkWidget(isReturn: state.isReturn,).symmetricPadding(horizontal: 12),
+            RemarkWidget(
+              isReturn: state.isReturn,
+            ).symmetricPadding(horizontal: 12),
           ],
         ),
       ),

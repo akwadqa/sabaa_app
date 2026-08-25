@@ -15,8 +15,8 @@ import 'package:sabaa/src/resourses/color_manager/app_colors.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum InvoiceDocType {
-  salesInvoice,   // "Sales Invoice"
-  paymentEntry,   // "Payment Entry"
+  salesInvoice, // "Sales Invoice"
+  paymentEntry, // "Payment Entry"
 }
 
 extension on InvoiceDocType {
@@ -67,11 +67,15 @@ class InvoicePdfActionsService {
   Future<void> printFromHtmlById({
     required String documentId,
     required InvoiceDocType docType,
+    String? fromDate,
+    String? toDate,
   }) async {
     onLoadingChange(true);
 
     try {
-      final html = await _fetchHtml(documentId, docType);
+      final html = await _fetchHtml(documentId,      docType,
+        fromDate: fromDate,
+        toDate: toDate,);
 
       debugPrint('📄 HTML received, length: ${html.length}');
       if (!isMounted()) return;
@@ -92,49 +96,50 @@ class InvoicePdfActionsService {
   }
 
   /// ✅ Share any document by ID
-Future<void> shareFromHtmlById({
-  required String documentId,
-  required InvoiceDocType docType,
-}) async {
-  onLoadingChange(true);
+  Future<void> shareFromHtmlById({
+    required String documentId,
+    required InvoiceDocType docType,
+        String? fromDate, 
+    String? toDate,   
+  }) async {
+    onLoadingChange(true);
 
-  try {
-    final html = await _fetchHtml(documentId, docType);
-    debugPrint('✅ HTML fetched: ${html.length}');
+    try {
+      final html = await _fetchHtml(documentId,  docType,
+        fromDate: fromDate,
+        toDate: toDate,);
+      debugPrint('✅ HTML fetched: ${html.length}');
 
-    if (!isMounted()) return;
-    onLoadingChange(false);
+      if (!isMounted()) return;
+      onLoadingChange(false);
 
-    // ✅ Share HTML file directly — opens in browser, WhatsApp, email etc.
-    final dir = await getTemporaryDirectory();
-    final fileName = '${docType.apiValue}_${_sanitize(documentId)}.html'
-        .replaceAll(' ', '_');
-    final filePath = '${dir.path}/$fileName';
-    await File(filePath).writeAsString(html);
+      // ✅ Share HTML file directly — opens in browser, WhatsApp, email etc.
+      final dir = await getTemporaryDirectory();
+      final fileName = '${docType.apiValue}_${_sanitize(documentId)}.html'
+          .replaceAll(' ', '_');
+      final filePath = '${dir.path}/$fileName';
+      await File(filePath).writeAsString(html);
 
-    debugPrint('✅ HTML file saved: $filePath');
+      debugPrint('✅ HTML file saved: $filePath');
 
-    if (!isMounted()) return;
+      if (!isMounted()) return;
 
-    await Share.shareXFiles(
-      [XFile(filePath, mimeType: 'text/html')],
-      subject: '${docType.apiValue} - $documentId',
-    );
+      await Share.shareXFiles(
+        [XFile(filePath, mimeType: 'text/html')],
+        subject: '${docType.apiValue} - $documentId',
+      );
 
-    debugPrint('✅ Share opened');
-  } catch (e, st) {
-    debugPrint('❌ Share failed: $e\n$st');
-    if (isMounted()) _showError('failed_to_share_pdf'.tr());
-    onLoadingChange(false);
+      debugPrint('✅ Share opened');
+    } catch (e, st) {
+      debugPrint('❌ Share failed: $e\n$st');
+      if (isMounted()) _showError('failed_to_share_pdf'.tr());
+      onLoadingChange(false);
+    }
   }
-}
-  
-  
+
   // ═══════════════════════════════════════════════════════════════════════
   // PUBLIC API — LOCAL PDF (FALLBACK)
   // ═══════════════════════════════════════════════════════════════════════
-
-
 
   Future<void> printFromLocalPdf() => _printFromLocalPdf();
   Future<void> shareFromLocalPdf() => _shareFromLocalPdf();
@@ -195,8 +200,7 @@ Future<void> shareFromHtmlById({
   //   }
   // }
 
-
-  //! Manual handle pdf// 
+  //! Manual handle pdf//
 // Future<void> _printInvoice() async {
 //     final detailsState = ref.read(invoiceDetailsControllerProvider);
 
@@ -298,11 +302,18 @@ Future<void> shareFromHtmlById({
   // HELPERS
   // ═══════════════════════════════════════════════════════════════════════
 
-  Future<String> _fetchHtml(String documentId, InvoiceDocType docType) async {
+  Future<String> _fetchHtml(
+    String documentId,
+    InvoiceDocType docType, {
+    String? fromDate, 
+    String? toDate,   
+  })  async {
     final repo = ref.read(orderRepositoryProvider);
     final html = await repo.getDocumentHtml(
       docName: documentId,
       docType: docType.apiValue,
+        fromDate: fromDate, 
+      toDate: toDate,    
     );
     return html;
   }
@@ -321,5 +332,4 @@ Future<void> shareFromHtmlById({
       SnackBar(content: Text(message), backgroundColor: AppColors.errorRed),
     );
   }
-
 }

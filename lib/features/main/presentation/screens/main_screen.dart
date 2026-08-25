@@ -6,6 +6,7 @@ import 'package:sabaa/features/customers/presentation/screens/customers_page.dar
 import 'package:sabaa/features/home/presentation/screens/home_screen.dart';
 import 'package:sabaa/features/main/presentation/widgets/bottom_nav_item.dart';
 import 'package:sabaa/features/my_trips/presentation/screens/my_route_page.dart';
+import 'package:sabaa/features/reports/presentation/screens/reports_page.dart';
 import 'package:sabaa/features/van_stock/presentation/screens/van_stock_page.dart';
 import 'package:sabaa/src/core/shared_widgets/app_toast.dart';
 import 'package:sabaa/src/core/utils/functions/check_role.dart';
@@ -47,7 +48,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return true;
   }
 
-  List<NavDestination> _destinations = [
+  final List<NavDestination> _destinations = [
     NavDestination(
       label: 'nav_home',
       icon: Icons.home_outlined,
@@ -62,6 +63,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       label: 'nav_customers',
       icon: Icons.people_alt_outlined,
       page: CustomersPage(),
+    ),
+        NavDestination(
+      label: 'reports',
+      icon: Icons.description_outlined,
+      page: const ReportsPage(),
     ),
     NavDestination(
       label: 'nav_stock',

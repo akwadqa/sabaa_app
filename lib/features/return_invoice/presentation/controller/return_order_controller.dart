@@ -375,6 +375,26 @@ Future<InvoiceModel?> createReturnOrder() async {
     return null;
   }
 }
+/// Tax = sum(item.tax × selected qty) — same idea as new order UOM tax
+// double calculateTotalTax() {
+//   final current = state.value;
+//   if (current == null) return 0;
+
+//   return current.selectedItems.values.fold(0.0, (sum, item) {
+//     final taxPerUnit = item.product.tax.toDouble(); // from InvoiceItemModel
+//     return sum + (taxPerUnit * item.quantity);
+//   });
+// }
+
+// double calculateSubtotal() {
+//   final current = state.value;
+//   if (current == null) return 0;
+
+//   return current.selectedItems.values.fold(0.0, (sum, item) {
+//     final price = (item.customRate ?? item.product.amount).toDouble();
+//     return sum + (price * item.quantity);
+//   });
+// }
 
 // return_order_controller.dart
 

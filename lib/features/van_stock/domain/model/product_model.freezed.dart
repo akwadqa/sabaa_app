@@ -533,6 +533,7 @@ mixin _$UomModel {
   String get uom;
   double get price;
   int get availableStock;
+  double get tax;
 
   /// Create a copy of UomModel
   /// with the given fields replaced by the non-null parameter values.
@@ -552,16 +553,17 @@ mixin _$UomModel {
             (identical(other.uom, uom) || other.uom == uom) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
-                other.availableStock == availableStock));
+                other.availableStock == availableStock) &&
+            (identical(other.tax, tax) || other.tax == tax));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uom, price, availableStock);
+  int get hashCode => Object.hash(runtimeType, uom, price, availableStock, tax);
 
   @override
   String toString() {
-    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock)';
+    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock, tax: $tax)';
   }
 }
 
@@ -570,7 +572,7 @@ abstract mixin class $UomModelCopyWith<$Res> {
   factory $UomModelCopyWith(UomModel value, $Res Function(UomModel) _then) =
       _$UomModelCopyWithImpl;
   @useResult
-  $Res call({String uom, double price, int availableStock});
+  $Res call({String uom, double price, int availableStock, double tax});
 }
 
 /// @nodoc
@@ -588,6 +590,7 @@ class _$UomModelCopyWithImpl<$Res> implements $UomModelCopyWith<$Res> {
     Object? uom = null,
     Object? price = null,
     Object? availableStock = null,
+    Object? tax = null,
   }) {
     return _then(_self.copyWith(
       uom: null == uom
@@ -602,6 +605,10 @@ class _$UomModelCopyWithImpl<$Res> implements $UomModelCopyWith<$Res> {
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as int,
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -699,13 +706,15 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String uom, double price, int availableStock)? $default, {
+    TResult Function(String uom, double price, int availableStock, double tax)?
+        $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _UomModel() when $default != null:
-        return $default(_that.uom, _that.price, _that.availableStock);
+        return $default(
+            _that.uom, _that.price, _that.availableStock, _that.tax);
       case _:
         return orElse();
     }
@@ -726,12 +735,14 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String uom, double price, int availableStock) $default,
+    TResult Function(String uom, double price, int availableStock, double tax)
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UomModel():
-        return $default(_that.uom, _that.price, _that.availableStock);
+        return $default(
+            _that.uom, _that.price, _that.availableStock, _that.tax);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -751,12 +762,14 @@ extension UomModelPatterns on UomModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String uom, double price, int availableStock)? $default,
+    TResult? Function(String uom, double price, int availableStock, double tax)?
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _UomModel() when $default != null:
-        return $default(_that.uom, _that.price, _that.availableStock);
+        return $default(
+            _that.uom, _that.price, _that.availableStock, _that.tax);
       case _:
         return null;
     }
@@ -767,7 +780,10 @@ extension UomModelPatterns on UomModel {
 @JsonSerializable()
 class _UomModel implements UomModel {
   const _UomModel(
-      {required this.uom, required this.price, required this.availableStock});
+      {required this.uom,
+      required this.price,
+      required this.availableStock,
+      this.tax = 0.0});
   factory _UomModel.fromJson(Map<String, dynamic> json) =>
       _$UomModelFromJson(json);
 
@@ -777,6 +793,9 @@ class _UomModel implements UomModel {
   final double price;
   @override
   final int availableStock;
+  @override
+  @JsonKey()
+  final double tax;
 
   /// Create a copy of UomModel
   /// with the given fields replaced by the non-null parameter values.
@@ -801,16 +820,17 @@ class _UomModel implements UomModel {
             (identical(other.uom, uom) || other.uom == uom) &&
             (identical(other.price, price) || other.price == price) &&
             (identical(other.availableStock, availableStock) ||
-                other.availableStock == availableStock));
+                other.availableStock == availableStock) &&
+            (identical(other.tax, tax) || other.tax == tax));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uom, price, availableStock);
+  int get hashCode => Object.hash(runtimeType, uom, price, availableStock, tax);
 
   @override
   String toString() {
-    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock)';
+    return 'UomModel(uom: $uom, price: $price, availableStock: $availableStock, tax: $tax)';
   }
 }
 
@@ -821,7 +841,7 @@ abstract mixin class _$UomModelCopyWith<$Res>
       __$UomModelCopyWithImpl;
   @override
   @useResult
-  $Res call({String uom, double price, int availableStock});
+  $Res call({String uom, double price, int availableStock, double tax});
 }
 
 /// @nodoc
@@ -839,6 +859,7 @@ class __$UomModelCopyWithImpl<$Res> implements _$UomModelCopyWith<$Res> {
     Object? uom = null,
     Object? price = null,
     Object? availableStock = null,
+    Object? tax = null,
   }) {
     return _then(_UomModel(
       uom: null == uom
@@ -853,6 +874,10 @@ class __$UomModelCopyWithImpl<$Res> implements _$UomModelCopyWith<$Res> {
           ? _self.availableStock
           : availableStock // ignore: cast_nullable_to_non_nullable
               as int,
+      tax: null == tax
+          ? _self.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }

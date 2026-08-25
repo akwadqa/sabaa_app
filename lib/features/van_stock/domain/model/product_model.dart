@@ -25,6 +25,7 @@ abstract class ProductModel with _$ProductModel {
     required String uom,
     required double price,
     required int availableStock,
+    @Default(0.0) double tax,
   }) = _UomModel;
 
   factory UomModel.fromJson(Map<String, dynamic> json) =>

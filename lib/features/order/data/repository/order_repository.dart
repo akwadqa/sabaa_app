@@ -35,12 +35,16 @@ class OrderRepository {
     String? status,
     required int page,
     String? action,
+    String? fromDate, // yyyy-MM-dd
+    String? toDate,
   }) async {
     final response = await _remoteDataSource.getOrderSummary(
       customerId: customerId,
       status: status,
       page: page,
       action: action,
+      fromDate: fromDate,
+      toDate: toDate,
     );
 
     if (response.status == 200) {
@@ -51,29 +55,30 @@ class OrderRepository {
   }
 // In order_repository.dart add:
 
-Future<CustomerDetailsModel> getCustomerDetails({
-  required String customerId,
-}) async {
-  final response = await _remoteDataSource.getCustomerDetails(
-    customerId: customerId,
-  );
-  if (response.status == 200 && response.data != null) {
-    return response.data!;
+  Future<CustomerDetailsModel> getCustomerDetails({
+    required String customerId,
+  }) async {
+    final response = await _remoteDataSource.getCustomerDetails(
+      customerId: customerId,
+    );
+    if (response.status == 200 && response.data != null) {
+      return response.data!;
+    }
+    throw AppException(response.message);
   }
-  throw AppException(response.message);
-}
 
-Future<CreditNoteReconcileResponse> reconcileCreditNotes({
-  required String invoiceId,
-  required List<String> creditNoteIds,
-}) async {
-  final response = await _remoteDataSource.reconcileCreditNotes(
-    invoiceId: invoiceId,
-    creditNoteIds: creditNoteIds,
-  );
-  if (response.hasSucceeded && response.data != null) return response.data!;
-  throw AppException(response.message);
-}
+  Future<CreditNoteReconcileResponse> reconcileCreditNotes({
+    required String invoiceId,
+    required List<String> creditNoteIds,
+  }) async {
+    final response = await _remoteDataSource.reconcileCreditNotes(
+      invoiceId: invoiceId,
+      creditNoteIds: creditNoteIds,
+    );
+    if (response.hasSucceeded && response.data != null) return response.data!;
+    throw AppException(response.message);
+  }
+
   Future<ApiResponse<PaymentResponseModel>> createPayment({
     required String invoiceId,
     required String amount,
@@ -124,10 +129,14 @@ Future<CreditNoteReconcileResponse> reconcileCreditNotes({
   Future<String> getDocumentHtml({
     required String docName,
     required String docType,
+    String? fromDate,
+    String? toDate,
   }) async {
     final response = await _remoteDataSource.getDocumentHtml(
       docName: docName,
       docType: docType,
+      fromDate: fromDate,
+      toDate: toDate,
     );
 
     if (response.hasSucceeded && response.data != null) {

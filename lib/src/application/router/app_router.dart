@@ -22,6 +22,8 @@ import 'package:sabaa/features/splash/splash_screen.dart';
 import 'package:sabaa/src/infrastructure/storage/local_storage_service.dart';
 
 import '../../../features/barcode_scanner/presentation/screen/barcode_scanner_page.dart';
+import '../../../features/reports/presentation/screens/customer_report_page.dart';
+import '../../../features/reports/presentation/screens/reports_page.dart';
 import '../../../features/return_invoice/presentation/screens/return_invoice_review_page.dart';
 import '../../../features/return_invoice/presentation/screens/return_items_page.dart';
 import 'app_routes.dart';
@@ -384,6 +386,23 @@ class AppRouter {
             );
           },
         ),
+        GoRoute(
+  path: AppRoutes.reportsScreen,
+  name: 'reports',
+  builder: (_, __) => const ReportsPage(),
+),
+GoRoute(
+  path: AppRoutes.customerReportScreen,
+  name: 'customerReport',
+  builder: (_, state) {
+    final extra = state.extra as Map<String, dynamic>;
+    return CustomerReportPage(
+      customer: extra['customer'] as CustomerModel,
+      fromDate: extra['fromDate'] as DateTime,
+      toDate: extra['toDate'] as DateTime,
+    );
+  },
+),
       ],
     );
   }

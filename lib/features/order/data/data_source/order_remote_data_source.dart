@@ -29,6 +29,8 @@ class OrderRemoteDataSource {
     String? status,
     required int page,
     String? action, // 👈 add this
+    String? fromDate, // yyyy-MM-dd
+    String? toDate,
   }) async {
     try {
       final response = await _networkService.get(
@@ -36,9 +38,11 @@ class OrderRemoteDataSource {
         queryParameters: {
           'customer_id': customerId,
           // 'customer_id': 1017,
-        if (status != null)   'status': status,
+          if (status != null) 'status': status,
           'page': page,
           if (action != null) 'action': action, // 👈 send only if provided
+          if (fromDate != null) 'from_date': fromDate, // ✅
+          if (toDate != null) 'to_date': toDate, // ✅
         },
       );
 
@@ -57,59 +61,59 @@ class OrderRemoteDataSource {
   }
 // In order_remote_data_source.dart add:
 
-Future<ApiResponse<CustomerDetailsModel>> getCustomerDetails({
-  required String customerId,
-}) async {
-  try {
-    final response = await _networkService.get(
-      ApiEndPoints.getCustomerDetails,
-      queryParameters: {
-        'customer_id': customerId,
-      },
-    );
+  Future<ApiResponse<CustomerDetailsModel>> getCustomerDetails({
+    required String customerId,
+  }) async {
+    try {
+      final response = await _networkService.get(
+        ApiEndPoints.getCustomerDetails,
+        queryParameters: {
+          'customer_id': customerId,
+        },
+      );
 
-    if (response.data == null || response.statusCode != 200) {
-      throw Exception('Failed to get customer details');
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to get customer details');
+      }
+
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) => CustomerDetailsModel.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      Dev.logError('Error in getCustomerDetails: $e');
+      rethrow;
     }
-
-    return ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (json) => CustomerDetailsModel.fromJson(json as Map<String, dynamic>),
-    );
-  } catch (e) {
-    Dev.logError('Error in getCustomerDetails: $e');
-    rethrow;
   }
-}
 
+  Future<ApiResponse<CreditNoteReconcileResponse>> reconcileCreditNotes({
+    required String invoiceId,
+    required List<String> creditNoteIds,
+  }) async {
+    try {
+      final response = await _networkService.get(
+        ApiEndPoints.reconcileCreditNotes,
+        queryParameters: {
+          'invoice_id': invoiceId,
+          'credit_notes': jsonEncode(creditNoteIds),
+        },
+      );
 
-Future<ApiResponse<CreditNoteReconcileResponse>> reconcileCreditNotes({
-  required String invoiceId,
-  required List<String> creditNoteIds,
-}) async {
-  try {
-    final response = await _networkService.get(
-      ApiEndPoints.reconcileCreditNotes,
-      queryParameters: {
-        'invoice_id': invoiceId,
-        'credit_notes': jsonEncode(creditNoteIds),
-      },
-    );
+      if (response.data == null || response.statusCode != 200) {
+        throw Exception('Failed to reconcile credit notes');
+      }
 
-    if (response.data == null || response.statusCode != 200) {
-      throw Exception('Failed to reconcile credit notes');
+      return ApiResponse.fromJson(
+        response.data as Map<String, dynamic>,
+        (json) =>
+            CreditNoteReconcileResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      Dev.logError('Error in reconcileCreditNotes: $e');
+      rethrow;
     }
-
-    return ApiResponse.fromJson(
-      response.data as Map<String, dynamic>,
-      (json) => CreditNoteReconcileResponse.fromJson(
-          json as Map<String, dynamic>),
-    );
-  } catch (e) {
-    Dev.logError('Error in reconcileCreditNotes: $e');
-    rethrow;
   }
-}
+
   Future<ApiResponse<PaymentResponseModel>> createPayment({
     required String invoiceId,
     required String amount,
@@ -234,6 +238,8 @@ Future<ApiResponse<CreditNoteReconcileResponse>> reconcileCreditNotes({
   Future<ApiResponse<String>> getDocumentHtml({
     required String docName,
     required String docType,
+    String? fromDate,
+    String? toDate,
   }) async {
     try {
       final response = await _networkService.get(
@@ -241,6 +247,8 @@ Future<ApiResponse<CreditNoteReconcileResponse>> reconcileCreditNotes({
         queryParameters: {
           'doctype': docType,
           'doc_name': docName,
+          if (fromDate != null) 'from_date': fromDate,
+          if (toDate != null) 'to_date': toDate,
         },
       );
 

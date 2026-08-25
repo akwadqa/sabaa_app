@@ -75,10 +75,13 @@ class OrderController extends _$OrderController {
     state = AsyncData(state.value!.copyWith(filterLoading: false));
   }
 
-  Future<OrderSummaryModel?> getOrderSummary(
-      {required String customerId,
-      required int page,
-      bool showLoading = true}) async {
+  Future<OrderSummaryModel?> getOrderSummary({
+    required String customerId,
+    required int page,
+    bool showLoading = true,
+    String? fromDate, // yyyy-MM-dd
+    String? toDate,
+  }) async {
     try {
       _isLoadingPage = true;
       if (showLoading) {
@@ -94,6 +97,8 @@ class OrderController extends _$OrderController {
                 : null,
             page: page,
             action: currentAction,
+            fromDate: fromDate, 
+            toDate: toDate, 
           );
 
       _currentPage = response.pagination!.currentPage;
@@ -186,50 +191,52 @@ class OrderController extends _$OrderController {
 
 // order_controller.dart
 
-Future<bool> reconcileCreditNotes({
-  required String invoiceId,
-  required List<String> creditNoteIds,
-  String? customerName, // ✅ pass customer name from bottom sheet
-}) async {
-  final current = state.value!;
-  state = AsyncData(current.copyWith(isPaying: true));
+  Future<bool> reconcileCreditNotes({
+    required String invoiceId,
+    required List<String> creditNoteIds,
+    String? customerName, // ✅ pass customer name from bottom sheet
+  }) async {
+    final current = state.value!;
+    state = AsyncData(current.copyWith(isPaying: true));
 
-  try {
-    final response = await ref.read(orderRepositoryProvider).reconcileCreditNotes(
-      invoiceId: invoiceId,
-      creditNoteIds: creditNoteIds,
-    );
+    try {
+      final response =
+          await ref.read(orderRepositoryProvider).reconcileCreditNotes(
+                invoiceId: invoiceId,
+                creditNoteIds: creditNoteIds,
+              );
 
-    // ✅ Calculate total allocated amount from all credit notes
-    final totalAllocated = response.allocations.fold<double>(
-      0,
-      (sum, a) => sum + a.allocatedAmount.toDouble(),
-    );
+      // ✅ Calculate total allocated amount from all credit notes
+      final totalAllocated = response.allocations.fold<double>(
+        0,
+        (sum, a) => sum + a.allocatedAmount.toDouble(),
+      );
 
-    // ✅ Build paymentData same as normal payment
-    final paymentData = PaymentResponseModel(
-      paymentId: response.invoiceId,        // Invoice ID
-      paymentType: 'Credit Note',            // Type
-      party: customerName ?? '',
-      partyName: customerName ?? '',
-      modeOfPayment: 'Credit Note',          // Mode
-      paidAmount: totalAllocated,            // Sum of allocations
-      currency: 'QAR',
-      docStatus: 1,
-    );
+      // ✅ Build paymentData same as normal payment
+      final paymentData = PaymentResponseModel(
+        paymentId: response.invoiceId, // Invoice ID
+        paymentType: 'Credit Note', // Type
+        party: customerName ?? '',
+        partyName: customerName ?? '',
+        modeOfPayment: 'Credit Note', // Mode
+        paidAmount: totalAllocated, // Sum of allocations
+        currency: 'QAR',
+        docStatus: 1,
+      );
 
-    state = AsyncData(current.copyWith(
-      isPaying: false,
-      paymentData: paymentData,
-    ));
+      state = AsyncData(current.copyWith(
+        isPaying: false,
+        paymentData: paymentData,
+      ));
 
-    return true;
-  } catch (e) {
-    state = AsyncData(current.copyWith(isPaying: false));
-    AppToast.errorToast('failed_to_apply_credit_notes'.tr());
-    return false;
+      return true;
+    } catch (e) {
+      state = AsyncData(current.copyWith(isPaying: false));
+      AppToast.errorToast('failed_to_apply_credit_notes'.tr());
+      return false;
+    }
   }
-}
+
   Future<UploadCaptureResponse?> uploadCapture({
     required String visitId,
     required String captureNote,

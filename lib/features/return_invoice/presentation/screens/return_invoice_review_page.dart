@@ -157,6 +157,8 @@ class _ReturnInvoiceReviewPageState
           InvoiceReviewCard(
             items: items,
             subtotal: formatPrice(subtotalValue),
+            tax: taxValue > 0 ? formatPrice(taxValue) : null, // ✅ Pass tax
+
             deliveyFee: null,
             total: formatPrice(totalValue),
             isReturn: true,

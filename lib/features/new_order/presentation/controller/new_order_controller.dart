@@ -862,6 +862,53 @@ class NewOrderController extends _$NewOrderController {
     state = AsyncData(current.copyWith(selectedItems: map));
   }
 
+/// Get tax for a single line (tax per unit × quantity)
+/// FOC and All Free lines have 0 tax
+double getLineTax(SelectedItemLine line) {
+  if (line.isAllFree) return 0;
+
+  final uomModel = line.product.uoms.firstWhere(
+    (u) => u.uom == line.unit,
+    orElse: () => line.product.uoms.first,
+  );
+
+  // ✅ tax is per unit, multiply by quantity
+  return uomModel.tax * line.quantity;
+}
+
+/// Total tax for all selected lines
+double calculateTotalTax() {
+  final current = state.value!;
+  return current.selectedLines.fold(0.0, (sum, line) {
+    return sum + getLineTax(line);
+  });
+}
+
+/// Subtotal (before tax, before discount)
+double calculateSubtotal() {
+  final current = state.value!;
+  return current.selectedLines.fold(0.0, (sum, line) {
+    if (line.isAllFree) return sum;
+
+    final uomModel = line.product.uoms.firstWhere(
+      (u) => u.uom == line.unit,
+      orElse: () => line.product.uoms.first,
+    );
+    final price = line.customRate ?? uomModel.price;
+    return sum + (price * line.quantity);
+  });
+}
+
+/// Grand total = subtotal - discount + tax + delivery
+double calculateGrandTotal() {
+  final current = state.value!;
+  final subtotal = calculateSubtotal();
+  final discount = calculateDiscountAmount(subtotal);
+  final tax = calculateTotalTax();
+  final delivery = double.tryParse(current.deliveryFee ?? '0') ?? 0;
+
+  return subtotal - discount + tax + delivery;
+}
 // ── Update UOM line quantity ────────────────────────────────────
   void updateUomLineQuantity(String itemCode, int lineIndex, int qty) {
     final current = state.value!;

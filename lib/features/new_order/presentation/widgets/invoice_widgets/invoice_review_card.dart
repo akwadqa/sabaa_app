@@ -17,6 +17,7 @@ class InvoiceItemUI {
   final bool isAllFree;
   final int freeQuantity;
   final String? originalPricePerItem;
+  final String? itemTax;
   InvoiceItemUI({
     required this.name,
     required this.count,
@@ -29,6 +30,7 @@ class InvoiceItemUI {
     this.isAllFree = false,
     this.freeQuantity = 0,
     this.originalPricePerItem,
+    this.itemTax,
   });
 }
 
@@ -42,7 +44,8 @@ class InvoiceReviewCard extends StatelessWidget {
     this.discountType,
     this.discountValue,
     this.discountAmount,
-    this.isReturn=false,
+    this.isReturn = false,
+    this.tax,
   });
 
   final List<InvoiceItemUI> items;
@@ -53,6 +56,7 @@ class InvoiceReviewCard extends StatelessWidget {
   final double? discountValue;
   final String? discountAmount;
   final bool isReturn;
+  final String? tax;
 
   bool get _hasDiscount =>
       discountType != null && discountValue != null && discountValue! > 0;
@@ -71,7 +75,8 @@ class InvoiceReviewCard extends StatelessWidget {
       return '$formatted QAR';
     }
   }
-Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
+
+  Color get returnColor => isReturn ? AppColors.accent : AppColors.primary;
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
@@ -128,7 +133,7 @@ Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
           Flexible(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(context).height * 0.35,
+                maxHeight: MediaQuery.sizeOf(context).height * 0.38,
               ),
               child: ListView.builder(
                 itemCount: items.length,
@@ -149,11 +154,12 @@ Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
 
                       // ✅ Thin divider between different products only
                       if (isLastOfProduct && !isLast)
-                        const Divider(
+                        Divider(
                           height: 8,
                           thickness: 0.8,
-                          color: Color(0xFFEEEEEE),
+                          color: AppColors.dividerColor,
                         ),
+                      10.verticalSpace,
                     ],
                   );
                 },
@@ -196,6 +202,15 @@ Color get returnColor=>isReturn?AppColors.accent:AppColors.primary;
           ),
 
           8.verticalSpace,
+
+          /// ── TAX ──────────────────────────── ✅ NEW
+          if (tax != null) ...[
+            _AmountRow(
+              title: 'total_taxes',
+              value: tax!,
+            ),
+            8.verticalSpace,
+          ],
 
           /// ── deliveyFee ───────────────────────────
           if (deliveyFee != null)
@@ -254,7 +269,7 @@ class _TableHeader extends StatelessWidget {
           flex: 6,
           child: Text(
             'selected_items'.tr(),
-            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            style: AppTextStyle.interBold14.copyWith(color: AppColors.primary),
           ),
         ),
 
@@ -263,7 +278,7 @@ class _TableHeader extends StatelessWidget {
           width: 38,
           child: Text(
             'uom'.tr(),
-            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            style: AppTextStyle.interBold14.copyWith(color: AppColors.primary),
             textAlign: TextAlign.center,
           ),
         ),
@@ -275,19 +290,28 @@ class _TableHeader extends StatelessWidget {
           flex: 4,
           child: Text(
             'qty'.tr(), // e.g. "Qty × Price"
-            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            style: AppTextStyle.interBold14.copyWith(color: AppColors.primary),
             textAlign: TextAlign.center,
           ),
         ),
 
         const SizedBox(width: 6),
+        SizedBox(
+          width: 55,
+          child: Text(
+            'tax'.tr(),
+            style: AppTextStyle.interBold14.copyWith(color: AppColors.primary),
+            textAlign: TextAlign.center,
+          ),
+        ),
 
+        const SizedBox(width: 6),
         // Total
         SizedBox(
           width: 60,
           child: Text(
             'total'.tr(),
-            style: AppTextStyle.interBold12.copyWith(color: AppColors.primary),
+            style: AppTextStyle.interBold14.copyWith(color: AppColors.primary),
             // textAlign: TextAlign.end,
           ),
         ),
@@ -336,6 +360,7 @@ class _InvoiceItemRow extends StatelessWidget {
           total: item.total,
           isFoc: false,
           originalPricePerItem: item.originalPricePerItem, // ✅ pass it
+          itemTax: item.itemTax, // ✅
         ),
 
         // FOC row — shown only when FOC is enabled with quantity
@@ -347,6 +372,7 @@ class _InvoiceItemRow extends StatelessWidget {
             pricePerItem: '0.00',
             total: '0.00',
             isFoc: true,
+            itemTax: '0.00',
           ),
       ],
     );
@@ -363,6 +389,7 @@ class _ItemLine extends StatelessWidget {
     required this.total,
     required this.isFoc,
     this.originalPricePerItem,
+    this.itemTax,
   });
 
   final String name;
@@ -372,6 +399,8 @@ class _ItemLine extends StatelessWidget {
   final String total;
   final bool isFoc;
   final String? originalPricePerItem;
+  final String? itemTax;
+
   @override
   Widget build(BuildContext context) {
     // ── Colors ──────────────────────────────────────────────────────────────
@@ -382,18 +411,18 @@ class _ItemLine extends StatelessWidget {
 
     // ── Text styles ──────────────────────────────────────────────────────────
     final TextStyle nameStyle = isFoc
-        ? AppTextStyle.interMedium12.copyWith(color: nameColor)
+        ? AppTextStyle.interMedium14.copyWith(color: nameColor)
         : AppTextStyle.interSemiBold14.copyWith(color: nameColor);
 
     final TextStyle metaStyle =
-        AppTextStyle.interRegular12.copyWith(color: metaColor);
+        AppTextStyle.interRegular14.copyWith(color: metaColor);
 
     final TextStyle qtyPriceStyle = isFoc
-        ? AppTextStyle.interMedium12.copyWith(color: metaColor)
-        : AppTextStyle.interSemiBold12.copyWith(color: metaColor);
+        ? AppTextStyle.interMedium14.copyWith(color: metaColor)
+        : AppTextStyle.interSemiBold14.copyWith(color: metaColor);
 
     final TextStyle totalStyle = isFoc
-        ? AppTextStyle.interMedium12.copyWith(color: totalColor)
+        ? AppTextStyle.interMedium14.copyWith(color: totalColor)
         : AppTextStyle.interSemiBold14.copyWith(color: totalColor);
     final bool hasPriceChange = originalPricePerItem != null;
 
@@ -431,7 +460,7 @@ class _ItemLine extends StatelessWidget {
 
           // ── UOM ─────────────────────────────────────────────────────────
           SizedBox(
-            width: 38,
+            width: 40,
             child: Text(
               uom,
               style: metaStyle,
@@ -489,10 +518,22 @@ class _ItemLine extends StatelessWidget {
           ),
 
           const SizedBox(width: 6),
-
-          // ── Total ────────────────────────────────────────────────────────
+          // ── Item Tax Column (Dynamic) ──────────────────────────────────── ✅
           SizedBox(
             width: 60,
+            child: Text(
+              isFoc ? "0" : (itemTax ?? "0"),
+              style: metaStyle,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+
+          const SizedBox(width: 6),
+          // ── Total ────────────────────────────────────────────────────────
+          SizedBox(
+            width: 50,
             child: Text(
               total,
               style: totalStyle,
@@ -580,13 +621,13 @@ class _AmountHeader extends StatelessWidget {
       children: [
         Text(
           'amount_details'.tr(),
-          style: AppTextStyle.interBold12.copyWith(
+          style: AppTextStyle.interBold14.copyWith(
             color: AppColors.primary,
           ),
         ),
         Text(
           'net_amount'.tr(),
-          style: AppTextStyle.interBold12.copyWith(
+          style: AppTextStyle.interBold14.copyWith(
             color: AppColors.primary,
           ),
         ),
@@ -687,7 +728,7 @@ class _TotalRow extends StatelessWidget {
       children: [
         Text(
           'total_amount'.tr(),
-          style: AppTextStyle.interBold12.copyWith(
+          style: AppTextStyle.interBold14.copyWith(
             color: AppColors.primary,
           ),
         ),

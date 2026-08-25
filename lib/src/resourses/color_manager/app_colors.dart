@@ -62,6 +62,7 @@ static const Color metricPurpleIcon = Color(0xFF7C3AED);
   static const Color dividerColor = Color(0xFFe9e9e9);
   static const Color white = Color(0xFFFFFFFF);
   static const Color cardWhite = Color(0xFFF5F5F5);
+  // static const Color dividerColor = Color(0xFFEEEEEE);
   static const Color shadow = Color(0x0C000000);
   static const Color darkShadow = Color(0x19000000);
   static const Color dark = Color(0xFF201C11);

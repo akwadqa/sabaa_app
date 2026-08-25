@@ -48,7 +48,8 @@ class ReturnOrderBody extends ConsumerWidget {
             return sum + (effectivePrice * e.quantity);
           },
         );
-
+        final tax = subtotal * 0.15; // 15% tax
+        final total = subtotal + tax;
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -56,6 +57,7 @@ class ReturnOrderBody extends ConsumerWidget {
               InvoiceReviewCard(
                 items: items,
                 subtotal: formatPrice(subtotal),
+                 tax: tax > 0 ? formatPrice(tax) : null,
                 deliveyFee: '0',
                 total: formatPrice(subtotal),
                 isReturn: true,
